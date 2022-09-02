@@ -29,15 +29,13 @@ yarn || npm install
 yarn dev || npm run dev
 ```
 
-Server should now be running on [localhost:3034](https://localhost:3034)
-
 <br/>
 
 # 🔧 Tools Used
 
-![Javascript](https://img.shields.io/badge/Javascript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=black)
+![Typescript](https://img.shields.io/badge/Typescript-3B82F6?style=for-the-badge&logo=Typescript&logoColor=white)
 ![ReactJS](https://img.shields.io/badge/ReactJs-1F2937?style=for-the-badge&logo=react&logoColor=white)
-![ViteJS](https://img.shields.io/badge/ViteJs-747bff?style=for-the-badge&logo=vite&logoColor=white)
+![ViteJS](https://img.shields.io/badge/ViteJs-1E3A8A?style=for-the-badge&logo=vite&logoColor=white)
 ![Emotion](https://img.shields.io/badge/emotion-352DAC?style=for-the-badge&logo=emotion&logoColor=white)
 
 <br/>
