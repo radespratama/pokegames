@@ -38,7 +38,7 @@ const PokeName = styled("div")(
     div: {
       position: "absolute",
       width: "100%",
-      background: colors["gray-500"],
+      background: colors["gray-700"],
       bottom: 0,
     },
   },

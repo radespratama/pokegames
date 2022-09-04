@@ -18,7 +18,7 @@ import * as T from "./index.style";
 const Explore: React.FC = () => {
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
   const [pokeUrl, setPokeURL] = useState<string>(
-    `${import.meta.env.VITE_POKEMON_API}?limit=10&offset=0`
+    `${import.meta.env.VITE_POKEMON_API}?limit=60&offset=0`
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [navHeight, setNavHeight] = useState<number>(0);

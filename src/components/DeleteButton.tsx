@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { units, colors } from "../libs/utils";
 
 const StyledDeleteButton = styled("button")({
-  padding: units.spacing.xs,
+  padding: units.spacing.sm,
   zIndex: 1,
   cursor: "pointer",
   "&:hover": {
@@ -20,8 +20,8 @@ const DeleteButton: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
   return (
     <StyledDeleteButton className="pxl-border" {...props}>
       <svg
-        width="15"
-        height="15"
+        width="14"
+        height="14"
         viewBox="0 0 15 15"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
