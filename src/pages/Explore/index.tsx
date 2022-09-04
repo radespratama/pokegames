@@ -1,4 +1,4 @@
-import React, { useState, createRef, useEffect } from "react";
+import React, { useState, createRef, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -24,6 +24,7 @@ const Explore: React.FC = () => {
   const [navHeight, setNavHeight] = useState<number>(0);
   const { state } = useGlobalContext();
   const navRef = createRef<HTMLDivElement>();
+  const shouldLog = useRef(true);
 
   async function loadPokemons() {
     if (pokeUrl) {
@@ -52,8 +53,11 @@ const Explore: React.FC = () => {
   }
 
   useEffect(() => {
-    setNavHeight(navRef.current?.clientHeight!);
-    loadPokemons()
+    if (shouldLog.current) {
+      shouldLog.current = false;
+      setNavHeight(navRef.current?.clientHeight!);
+      loadPokemons();
+    }
   }, []);
 
   return (
