@@ -10,6 +10,16 @@ export const globalStyle = css`
     scroll-behavior: smooth;
   }
 
+  html,
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
   *,
   ::before,
   ::after {
@@ -24,8 +34,8 @@ export const globalStyle = css`
   }
 
   a {
-    text-decoration: underline;
-    color: ${colors["gray-300"]}
+    text-decoration: none;
+    color: ${colors["gray-300"]};
   }
 
   .pxl-border {
@@ -42,7 +52,7 @@ export const globalStyle = css`
     text-align: center;
     vertical-align: middle;
     user-select: none;
-    background-color: ${colors["gray-300"]};
+    background-color: ${colors["gray-100"]};
     text-transform: uppercase;
     flex-grow: 1;
 

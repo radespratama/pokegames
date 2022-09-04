@@ -1,22 +1,26 @@
 import styled from "@emotion/styled";
 
-export const Container = styled.section`
-  background-image: url("/static/poke-group.gif");
-  background-position: center;
-  background-repeat: no-repeat;
-  min-width: 100vw;
-  background-size: cover;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-`;
+export const Container = styled("section")({
+  backgroundImage: "url('/static/poke-group.gif')",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  minWidth: "100vw",
+  backgroundSize: "cover",
+  minHeight: "100vh",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "column",
+});
 
-export const Centering = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 10px;
-`;
+export const Centering = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "column",
+  gap: "10px",
+});
+
+export const A = styled("a")({
+  textDecoration: "underline",
+});

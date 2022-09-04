@@ -4,10 +4,13 @@ import App from "./App";
 
 import { Global } from "@emotion/react";
 import { globalStyle } from "./emotion/global.style";
+import { GlobalProvider } from "./libs/context";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Global styles={globalStyle} />
-    <App />
+    <GlobalProvider>
+      <App />
+    </GlobalProvider>
   </React.StrictMode>
 );

@@ -37,15 +37,15 @@ const getStyle = ({ variant = "sky" }: IButtonProps) => {
     case "dark":
       return {
         ...style,
-        background: colors["gray-700"],
+        background: colors["gray-300"],
         "&:not(.no-inset)::after": {
-          boxShadow: `inset -4px -4px ${colors["gray-700"]}`,
+          boxShadow: `inset -4px -4px ${colors["gray-200"]}`,
         },
         "&:hover": {
-          backgroundColor: colors["gray-400"],
+          backgroundColor: colors["gray-200"],
         },
         "&:active::after": {
-          boxShadow: `inset 4px 4px ${colors["gray-700"]}`,
+          boxShadow: `inset 4px 4px ${colors["gray-300"]}`,
         },
       };
     default:

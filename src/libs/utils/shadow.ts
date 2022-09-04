@@ -1,9 +1,9 @@
 import { colors, shadowSpacing } from ".";
 
 export const textShadow = {
-  "light-base": `${shadowSpacing.base[2]} ${shadowSpacing.base[2]} 0 ${colors["gray-300"]}`,
-  "light-lg": `${shadowSpacing.lg[1]} ${shadowSpacing.lg[1]} 0 ${colors["gray-300"]}`,
-  "light-xl": `${shadowSpacing.xl[1]} ${shadowSpacing.xl[1]} 0 ${colors["gray-300"]}`,
+  "light-base": `${shadowSpacing.base[2]} ${shadowSpacing.base[2]} 0 ${colors["gray-400"]}`,
+  "light-lg": `${shadowSpacing.lg[1]} ${shadowSpacing.lg[1]} 0 ${colors["gray-400"]}`,
+  "light-xl": `${shadowSpacing.xl[1]} ${shadowSpacing.xl[1]} 0 ${colors["gray-400"]}`,
   "bold-base": `-${shadowSpacing.base[1]} -${shadowSpacing.base[1]} 0 ${colors["gray-800"]},
     ${shadowSpacing.base[1]} -${shadowSpacing.base[1]} 0 ${colors["gray-800"]},
     -${shadowSpacing.base[1]} ${shadowSpacing.base[1]} 0 ${colors["gray-800"]},

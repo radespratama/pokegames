@@ -4,6 +4,14 @@ const fontSize = {
   xl: "3.5rem",
 };
 
+const screenSize = {
+  sm: "640px",
+  md: "768px",
+  lg: "900px",
+  xl: "1280px",
+  "2xl": "1440px",
+};
+
 const spacing = {
   none: 0,
   xs: "4px",
@@ -21,4 +29,4 @@ export const shadowSpacing = {
   xl: ["0.111rem", "0.222rem", "0.333rem", "0.444rem"],
 };
 
-export const units = { fontSize, spacing };
+export const units = { fontSize, spacing, screenSize };

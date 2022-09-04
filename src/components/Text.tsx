@@ -4,7 +4,7 @@ import { colors, units, textShadow } from "../libs/utils";
 
 interface ITextProps extends HTMLAttributes<HTMLParagraphElement> {
   variant?: "default" | "darker" | "outlined" | "error";
-  size?: "base" | "lg" | "xl"
+  size?: "base" | "lg" | "xl";
   as?: "span" | "p" | "h1" | "h2" | "h3" | "h4";
 }
 
@@ -24,7 +24,7 @@ const getStyle = ({
     case "darker":
       return {
         as,
-        color: colors["gray-600"],
+        color: colors["gray-900"],
         textShadow: textShadow[`light-${size}`],
         fontSize: units.fontSize[size],
       };
@@ -38,7 +38,7 @@ const getStyle = ({
     default:
       return {
         as,
-        color: colors["gray-500"],
+        color: colors["gray-800"],
         textShadow: textShadow[`light-${size}`],
         fontSize: units.fontSize[size],
       };

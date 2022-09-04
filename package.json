@@ -15,11 +15,14 @@
     "axios": "^0.27.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-lazy-load-image-component": "^1.5.5",
     "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
+    "@types/node": "^18.7.14",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "@types/react-lazy-load-image-component": "^1.5.2",
     "@vitejs/plugin-react": "^2.0.1",
     "colorcrafts": "^1.0.4",
     "typescript": "^4.6.4",

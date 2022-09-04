@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes as Switch, Route } from "react-router-dom";
-import { StartScreen, Explore } from "./pages";
+import { StartScreen, Explore, Detail } from "./pages";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Switch>
         <Route path="/" element={<StartScreen />} />
-        <Route path="/explore" element={<Explore />} />
+        <Route path="/pokemons" element={<Explore />} />
+        <Route path="/pokemon/:name" element={<Detail />} />
       </Switch>
     </BrowserRouter>
   );

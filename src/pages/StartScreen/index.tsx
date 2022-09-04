@@ -14,9 +14,9 @@ const StartScreen: React.FC = () => {
         <Text as="h1" variant="outlined" size="xl">
           POKEGAMES
         </Text>
-        <Button onClick={() => navigate("/explore")} variant="light">Press Start</Button>
+        <Button onClick={() => navigate("/pokemons")} variant="light">Press Start</Button>
         <Text variant="outlined" size="base">
-          Source API <a href="https://pokeapi.co" target="_blank">here</a>
+          Source API <T.A href="https://pokeapi.co" target="_blank">here</T.A>
         </Text>
       </T.Centering>
     </T.Container>
