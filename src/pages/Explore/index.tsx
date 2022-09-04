@@ -2,16 +2,23 @@ import React, { useState, createRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-import { Text, Button, Loading, Navbar, PokeCard } from "../../components";
+import {
+  Text,
+  Button,
+  Loading,
+  Navbar,
+  PokeCard,
+  Modal,
+} from "../../components";
 import { IPokemon, IAllPokemonResponse } from "../../libs/types/pokemon";
 import { useGlobalContext } from "../../libs/context";
 
 import * as T from "./index.style";
 
 const Explore: React.FC = () => {
-  const [pokemon, setPokemon] = useState<IPokemon[]>([]);
+  const [pokemons, setPokemons] = useState<IPokemon[]>([]);
   const [pokeUrl, setPokeURL] = useState<string>(
-    `${import.meta.env.VITE_POKEMON_API}?limit=60&offset=0`
+    `${import.meta.env.VITE_POKEMON_API}?limit=10&offset=0`
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [navHeight, setNavHeight] = useState<number>(0);
@@ -35,7 +42,7 @@ const Explore: React.FC = () => {
           };
         });
 
-        setPokemon((prevState) => [...prevState, ...mapped]);
+        setPokemons((prevState) => [...prevState, ...mapped]);
         setPokeURL(data.next || "");
       } catch (error) {
         console.error(error);
@@ -46,7 +53,7 @@ const Explore: React.FC = () => {
 
   useEffect(() => {
     setNavHeight(navRef.current?.clientHeight!);
-    loadPokemons();
+    loadPokemons()
   }, []);
 
   return (
@@ -56,8 +63,8 @@ const Explore: React.FC = () => {
           Challenge &amp; catch them all
         </Text>
         <T.Grid>
-          {pokemon.length &&
-            pokemon.map((pokemon: IPokemon) => (
+          {pokemons.length &&
+            pokemons.map((pokemon: IPokemon) => (
               <Link
                 key={`${pokemon.name}-${Math.random()}`}
                 to={"/pokemon/" + pokemon.name}
