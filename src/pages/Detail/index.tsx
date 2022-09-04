@@ -18,7 +18,6 @@ import {
   Input,
   Modal,
 } from "../../components";
-import { units, colors } from "../../libs/utils";
 import { useGlobalContext } from "../../libs/context";
 import { generatePokeSummary } from "../../libs/helpers";
 import { IPokemonDetailResponse } from "../../libs/types/pokemon";
@@ -152,7 +151,13 @@ const DetailPokemon: React.FC = () => {
         <>
           <Modal open={!isCaught} overlay="error">
             <T.PostCatchModal>
-              <LazyLoadImage src={sprite} alt={name} width={320} height={320} />
+              <LazyLoadImage
+                style={{ margin: "0 auto" }}
+                src={sprite}
+                alt={name}
+                width={320}
+                height={320}
+              />
 
               <LazyLoadImage
                 src="/static/pokeball.png"
@@ -167,7 +172,13 @@ const DetailPokemon: React.FC = () => {
           </Modal>
           <Modal open={isCaught} overlay="light">
             <T.PostCatchModal>
-              <LazyLoadImage src={sprite} alt={name} width={320} height={320} />
+              <LazyLoadImage
+                style={{ margin: "0 auto" }}
+                src={sprite}
+                alt={name}
+                width={320}
+                height={320}
+              />
 
               <LazyLoadImage
                 src="/static/pokeball.png"
@@ -185,7 +196,13 @@ const DetailPokemon: React.FC = () => {
 
       <Modal open={nicknameModal} overlay="light" solid>
         <T.NicknamingModal>
-          <LazyLoadImage src={sprite} alt={name} width={320} height={320} />
+          <LazyLoadImage
+            style={{ margin: "0 auto" }}
+            src={sprite}
+            alt={name}
+            width={320}
+            height={320}
+          />
 
           {!isSaved ? (
             <T.NicknamingForm onSubmit={onNicknameSave}>

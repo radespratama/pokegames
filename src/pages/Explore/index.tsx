@@ -15,7 +15,7 @@ const Explore: React.FC = () => {
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [navHeight, setNavHeight] = useState<number>(0);
-  const { state, setState } = useGlobalContext();
+  const { state } = useGlobalContext();
   const navRef = createRef<HTMLDivElement>();
 
   async function loadPokemons() {
