@@ -17,10 +17,10 @@ const Overlay = styled("div")(
     height: "100vh",
     background:
       overlay === "dark"
-        ? colors["gray-600"]
+        ? colors["gray-800"]
         : overlay === "light"
         ? colors["gray-100"]
-        : colors["yellow-200"],
+        : colors["red-500"],
     opacity: solid ? 1 : 0.9,
     zIndex: open ? 50 : 0,
   })
