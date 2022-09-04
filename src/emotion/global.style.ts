@@ -8,6 +8,7 @@ export const globalStyle = css`
     margin: 0;
     padding: 0;
     scroll-behavior: smooth;
+    user-select: "none";
   }
 
   html,
@@ -15,7 +16,7 @@ export const globalStyle = css`
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   ::-webkit-scrollbar {
     display: none;
   }

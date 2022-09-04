@@ -52,7 +52,7 @@ const Navbar = React.forwardRef<HTMLDivElement, INavbar>(
         <OuterNav>
           {children}
           <InnerNav>
-            <NavItem href="/" label="Explore" />
+            <NavItem href="/pokemons" label="Explore" />
             <NavItem href="/my-pokemon" label="My Pokemon" variant="light" />
           </InnerNav>
         </OuterNav>

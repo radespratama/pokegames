@@ -1,5 +1,6 @@
 import React, { ButtonHTMLAttributes } from "react";
 import styled from "@emotion/styled";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Text } from ".";
 import { units, colors } from "../libs/utils";
@@ -78,7 +79,7 @@ const Button: React.FC<IButtonProps> = ({
   return (
     <PixelatedButton className="pxl-border" {...props}>
       {icon && (
-        <img
+        <LazyLoadImage
           src={icon}
           alt="button icon"
           width={size === "xl" ? 40 : 20}

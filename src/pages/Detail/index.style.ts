@@ -17,10 +17,6 @@ const Page = styled("div")({
   },
 });
 
-const PokeImg = styled("img")({
-  margin: "0 auto",
-});
-
 const PokeName = styled("div")(
   {
     position: "relative",
@@ -145,10 +141,16 @@ const Grid = styled("div")(
   `
 );
 
+const AnotherWrapper = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  flexDirection: "column",
+  gap: 16,
+});
+
 export {
   Content,
   Page,
-  PokeImg,
   PokeName,
   CatchingModal,
   PostCatchModal,
@@ -157,4 +159,5 @@ export {
   DescriptionLoadingWrapper,
   ImageLoadingWrapper,
   Grid,
+  AnotherWrapper,
 };

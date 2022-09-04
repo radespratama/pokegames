@@ -1,6 +1,5 @@
 import React, { useState, createRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import styled from "@emotion/styled";
 import axios from "axios";
 
 import { Text, Button, Loading, Navbar, PokeCard } from "../../components";
