@@ -11,6 +11,7 @@ export const Container = styled("section")({
   alignItems: "center",
   justifyContent: "center",
   flexDirection: "column",
+  position: "relative",
 });
 
 export const Centering = styled("div")({
