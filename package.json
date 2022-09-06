@@ -12,6 +12,7 @@
     "@emotion/is-prop-valid": "^1.2.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@loadable/component": "^5.15.2",
     "axios": "^0.27.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -19,6 +20,7 @@
     "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
+    "@types/loadable__component": "^5.13.4",
     "@types/node": "^18.7.14",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",

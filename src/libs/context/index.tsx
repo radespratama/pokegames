@@ -9,7 +9,6 @@ interface IGlobalContext {
 
 interface IState {
   pokeSummary?: IPokeSummary[];
-  // startScreen?: boolean;
 }
 
 const loadMyPokemon = (): IMyPokemon[] => {
@@ -20,7 +19,6 @@ const loadMyPokemon = (): IMyPokemon[] => {
 
 const initialState: IState = {
   pokeSummary: generatePokeSummary(loadMyPokemon()),
-  // startScreen: true,
 };
 
 const GlobalContext = createContext<IGlobalContext>({
