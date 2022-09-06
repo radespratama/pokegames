@@ -21,6 +21,11 @@ cd pokegames
 
 # Install deps
 yarn || npm install
+
+# Copy Pokemon API in .env file
+# You can visit https://pokeapi.co
+
+VITE_POKEMON_API= <API URL HERE>
 ```
 
 ### Starting server
