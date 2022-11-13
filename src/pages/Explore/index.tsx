@@ -2,14 +2,7 @@ import React, { useState, createRef, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-import {
-  Text,
-  Button,
-  Loading,
-  Navbar,
-  PokeCard,
-  Modal,
-} from "../../components";
+import { Text, Button, Loading, Navbar, PokeCard, Modal } from "../../components";
 import { IPokemon, IAllPokemonResponse } from "../../libs/types/pokemon";
 import { useGlobalContext } from "../../libs/context";
 
@@ -67,16 +60,16 @@ const Explore: React.FC = () => {
           Challenge &amp; catch them all
         </Text>
         <T.Grid>
-          {pokemons.length &&
-            pokemons.map((pokemon: IPokemon) => (
-              <Link
-                key={`${pokemon.name}-${Math.random()}`}
-                to={"/pokemon/" + pokemon.name}
-                style={{ display: "flex" }}
-              >
-                <PokeCard name={pokemon.name} captured={pokemon.captured} />
-              </Link>
-            ))}
+          {pokemons.length
+            ? pokemons.map((pokemon: IPokemon) => (
+                <Link
+                  key={`${pokemon.name}-${Math.random()}`}
+                  to={"/pokemon/" + pokemon.name}
+                  style={{ display: "flex" }}>
+                  <PokeCard name={pokemon.name} captured={pokemon.captured} />
+                </Link>
+              ))
+            : null}
         </T.Grid>
         {!isLoading ? (
           pokeUrl && (

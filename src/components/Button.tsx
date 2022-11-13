@@ -66,16 +66,9 @@ const getStyle = ({ variant = "sky" }: IButtonProps) => {
   }
 };
 
-const PixelatedButton = styled("button")((props: IButtonProps) =>
-  getStyle(props)
-);
+const PixelatedButton = styled("button")((props: IButtonProps) => getStyle(props));
 
-const Button: React.FC<IButtonProps> = ({
-  children,
-  size = "lg",
-  icon,
-  ...props
-}) => {
+const Button: React.FC<IButtonProps> = ({ children, size = "lg", icon, ...props }) => {
   return (
     <PixelatedButton className="pxl-border" {...props}>
       {icon && (

@@ -38,27 +38,24 @@ const InnerNav = styled("div")({
   gap: units.spacing.base,
 });
 
-const Navbar = React.forwardRef<HTMLDivElement, INavbar>(
-  ({ fadeHeight = 124, children }, ref) => {
-    return (
-      <GradientBakcdrop
-        style={{
-          height: fadeHeight,
-          background:
-            "linear-gradient(180deg, #FDFDFD 0%, rgba(253, 253, 253, 0) 0.01%, rgba(253, 253, 253, 0.97) 30.37%, #FDFDFD 100%)",
-        }}
-        ref={ref}
-      >
-        <OuterNav>
-          {children}
-          <InnerNav>
-            <NavItem href="/pokemons" label="Explore" />
-            <NavItem href="/my-pokemon" label="My Pokemon" variant="light" />
-          </InnerNav>
-        </OuterNav>
-      </GradientBakcdrop>
-    );
-  }
-);
+const Navbar = React.forwardRef<HTMLDivElement, INavbar>(({ fadeHeight = 124, children }, ref) => {
+  return (
+    <GradientBakcdrop
+      style={{
+        height: fadeHeight,
+        background:
+          "linear-gradient(180deg, #FDFDFD 0%, rgba(253, 253, 253, 0) 0.01%, rgba(253, 253, 253, 0.97) 30.37%, #FDFDFD 100%)",
+      }}
+      ref={ref}>
+      <OuterNav>
+        {children}
+        <InnerNav>
+          <NavItem href="/pokemons" label="Explore" />
+          <NavItem href="/my-pokemon" label="My Pokemon" variant="light" />
+        </InnerNav>
+      </OuterNav>
+    </GradientBakcdrop>
+  );
+});
 
 export default Navbar;

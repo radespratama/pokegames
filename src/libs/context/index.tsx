@@ -37,9 +37,5 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     setGlobalContext({ ...state, ...param });
   };
 
-  return (
-    <GlobalContext.Provider value={{ state, setState }}>
-      {children}
-    </GlobalContext.Provider>
-  );
+  return <GlobalContext.Provider value={{ state, setState }}>{children}</GlobalContext.Provider>;
 };

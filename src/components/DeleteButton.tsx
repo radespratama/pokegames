@@ -14,9 +14,7 @@ const StyledDeleteButton = styled("button")({
   },
 });
 
-const DeleteButton: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
-  ...props
-}) => {
+const DeleteButton: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({ ...props }) => {
   return (
     <StyledDeleteButton className="pxl-border" {...props}>
       <svg
@@ -24,8 +22,7 @@ const DeleteButton: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
         height="14"
         viewBox="0 0 15 15"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+        xmlns="http://www.w3.org/2000/svg">
         <path
           fillRule="evenodd"
           clipRule="evenodd"

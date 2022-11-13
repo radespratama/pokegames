@@ -8,11 +8,7 @@ interface ITextProps extends HTMLAttributes<HTMLParagraphElement> {
   as?: "span" | "p" | "h1" | "h2" | "h3" | "h4";
 }
 
-const getStyle = ({
-  variant = "default",
-  size = "base",
-  as = "p",
-}: ITextProps) => {
+const getStyle = ({ variant = "default", size = "base", as = "p" }: ITextProps) => {
   switch (variant) {
     case "outlined":
       return {

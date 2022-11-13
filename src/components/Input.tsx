@@ -14,10 +14,7 @@ const PixelatedInput = styled("div")({
   },
 });
 
-const Input: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
-  placeholder,
-  ...props
-}) => {
+const Input: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({ placeholder, ...props }) => {
   return (
     <PixelatedInput className="pxl-border no-inset">
       <input required placeholder={placeholder} {...props} />

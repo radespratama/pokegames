@@ -27,9 +27,7 @@ const getStyle = ({ nickname }: IPokeCard) => {
     background-color: ${nickname ? colors["gray-100"] : colors["gray-200"]};
   }
   &:active::after {
-    box-shadow: inset ${nickname ? "-4px -4px" : "4px 4px"} ${
-    colors["gray-300"]
-  };
+    box-shadow: inset ${nickname ? "-4px -4px" : "4px 4px"} ${colors["gray-300"]};
   }
   img {
     margin: 0 auto;
@@ -37,17 +35,9 @@ const getStyle = ({ nickname }: IPokeCard) => {
   `;
 };
 
-const PixelatedPokemonCard = styled("div")((props: IPokeCard) =>
-  getStyle(props)
-);
+const PixelatedPokemonCard = styled("div")((props: IPokeCard) => getStyle(props));
 
-const PokeCard: React.FC<IPokeCard> = ({
-  name,
-  nickname,
-  captured,
-  sprite,
-  children,
-}) => {
+const PokeCard: React.FC<IPokeCard> = ({ name, nickname, captured, sprite, children }) => {
   return (
     <PixelatedPokemonCard nickname={nickname} className="pxl-border">
       {nickname && (
@@ -62,12 +52,7 @@ const PokeCard: React.FC<IPokeCard> = ({
       {children}
       {captured ? (
         <div className="capture-qty">
-          <LazyLoadImage
-            src="/static/pokeball.png"
-            alt="pokeball"
-            width={16}
-            height={16}
-          />
+          <LazyLoadImage src="/static/pokeball.png" alt="pokeball" width={16} height={16} />
           <Text>x{captured}</Text>
         </div>
       ) : null}

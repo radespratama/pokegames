@@ -30,8 +30,7 @@ const Loading: React.FC<{ label?: string }> = ({ label }) => {
         height="40"
         viewBox="0 0 40 40"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+        xmlns="http://www.w3.org/2000/svg">
         <path d="M19 15H21V17H19V15Z" fill={colors["gray-600"]} />
         <path d="M19 12H17V10H15V12H17V14H19V12Z" fill={colors["gray-600"]} />
         <path d="M19 12V10H21V12H19Z" fill={colors["gray-600"]} />

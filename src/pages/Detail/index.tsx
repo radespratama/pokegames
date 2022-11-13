@@ -1,23 +1,9 @@
-import React, {
-  FormEvent,
-  ChangeEvent,
-  useEffect,
-  useState,
-  createRef,
-} from "react";
+import React, { FormEvent, ChangeEvent, useEffect, useState, createRef } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import {
-  Button,
-  Navbar,
-  Text,
-  Loading,
-  TypeCard,
-  Input,
-  Modal,
-} from "../../components";
+import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "../../components";
 import { useGlobalContext } from "../../libs/context";
 import { generatePokeSummary } from "../../libs/helpers";
 import { IPokemonDetailResponse } from "../../libs/types/pokemon";
@@ -48,9 +34,7 @@ const DetailPokemon: React.FC = () => {
       setIsLoading(true);
       const {
         data: { types, sprites, moves },
-      } = await axios.get<IPokemonDetailResponse>(
-        `${import.meta.env.VITE_POKEMON_API}/${name}`
-      );
+      } = await axios.get<IPokemonDetailResponse>(`${import.meta.env.VITE_POKEMON_API}/${name}`);
       setTypes(types.map((type: any) => type.type.name));
       setMoves(moves.map((move: any) => move.move.name));
       setSprite(sprites.front_default);
@@ -159,12 +143,7 @@ const DetailPokemon: React.FC = () => {
                 height={320}
               />
 
-              <LazyLoadImage
-                src="/static/pokeball.png"
-                alt="pokeball"
-                width={128}
-                height={128}
-              />
+              <LazyLoadImage src="/static/pokeball.png" alt="pokeball" width={128} height={128} />
               <Text variant="outlined" size="xl">
                 Oh no, {name?.toUpperCase()} broke free
               </Text>
@@ -180,12 +159,7 @@ const DetailPokemon: React.FC = () => {
                 height={320}
               />
 
-              <LazyLoadImage
-                src="/static/pokeball.png"
-                alt="pokeball"
-                width={128}
-                height={128}
-              />
+              <LazyLoadImage src="/static/pokeball.png" alt="pokeball" width={128} height={128} />
               <Text variant="outlined" size="xl">
                 Gotcha! {name?.toUpperCase()} was caught!
               </Text>
@@ -211,9 +185,7 @@ const DetailPokemon: React.FC = () => {
                   <Text>Congratulations!</Text>
                   <Text>You just caught a {name?.toUpperCase()}</Text>
                   <br />
-                  <Text>
-                    Now please give {name?.toUpperCase()} a nickname...
-                  </Text>
+                  <Text>Now please give {name?.toUpperCase()} a nickname...</Text>
                 </div>
               ) : (
                 <div className="pxl-border" style={{ textAlign: "left" }}>
@@ -283,10 +255,7 @@ const DetailPokemon: React.FC = () => {
           <div>
             <Text as="h3">Type</Text>
             {!isLoading ? (
-              types &&
-              types.map((type, index: any) => (
-                <TypeCard key={index} type={type} />
-              ))
+              types && types.map((type, index: any) => <TypeCard key={index} type={type} />)
             ) : (
               <T.DescriptionLoadingWrapper>
                 <Loading label="Loading types..." />
@@ -303,8 +272,7 @@ const DetailPokemon: React.FC = () => {
                     <div
                       key={index}
                       className="pxl-border"
-                      style={{ marginBottom: 16, marginRight: 16 }}
-                    >
+                      style={{ marginBottom: 16, marginRight: 16 }}>
                       <Text>{move}</Text>
                     </div>
                   ))}
@@ -324,8 +292,7 @@ const DetailPokemon: React.FC = () => {
             variant="dark"
             onClick={() => throwPokeball()}
             size="xl"
-            icon="/static/pokeball.png"
-          >
+            icon="/static/pokeball.png">
             Catch
           </Button>
         )}

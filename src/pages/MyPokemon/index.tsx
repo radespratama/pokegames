@@ -1,14 +1,7 @@
 import React, { createRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import {
-  Button,
-  Navbar,
-  Text,
-  Modal,
-  PokeCard,
-  DeleteButton,
-} from "../../components";
+import { Button, Navbar, Text, Modal, PokeCard, DeleteButton } from "../../components";
 import { useGlobalContext } from "../../libs/context";
 import { generatePokeSummary } from "../../libs/helpers";
 import { IMyPokemon } from "../../libs/types/pokemon";
@@ -35,9 +28,7 @@ const MyPokemon: React.FC = () => {
   }, []);
 
   async function releasePokemon(nickname: string) {
-    const newCollection = pokemons.filter(
-      (pokemon: IMyPokemon) => pokemon.nickname !== nickname
-    );
+    const newCollection = pokemons.filter((pokemon: IMyPokemon) => pokemon.nickname !== nickname);
     localStorage.setItem("pokegames@myPokemon", JSON.stringify(newCollection));
     loadMyPokemon();
     setState({ pokeSummary: generatePokeSummary(newCollection) });
@@ -50,9 +41,7 @@ const MyPokemon: React.FC = () => {
           <div className="pxl-border" style={{ textAlign: "left" }}>
             <Text>Are you sure you want to release {selectedPokemon}?</Text>
             <br />
-            <Text>
-              You'll have to catch another one and cannot undo this action
-            </Text>
+            <Text>You'll have to catch another one and cannot undo this action</Text>
           </div>
 
           <div>
@@ -61,8 +50,7 @@ const MyPokemon: React.FC = () => {
               onClick={() => {
                 releasePokemon(selectedPokemon);
                 setDeleteConfirmation(false);
-              }}
-            >
+              }}>
               Release
             </Button>
             <Button onClick={() => setDeleteConfirmation(false)}>Back</Button>
@@ -84,15 +72,8 @@ const MyPokemon: React.FC = () => {
           <T.Grid>
             {pokemons.length &&
               [...pokemons].reverse().map((pokemon: IMyPokemon) => (
-                <div
-                  key={pokemon.nickname}
-                  style={{ display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <PokeCard
-                    name={pokemon.name}
-                    nickname={pokemon.nickname}
-                    sprite={pokemon.sprite}
-                  >
+                <T.WrapperCardList key={pokemon.nickname}>
+                  <PokeCard name={pokemon.name} nickname={pokemon.nickname} sprite={pokemon.sprite}>
                     <DeleteButton
                       onClick={() => {
                         setSelectedPokemon(pokemon.nickname);
@@ -100,7 +81,7 @@ const MyPokemon: React.FC = () => {
                       }}
                     />
                   </PokeCard>
-                </div>
+                </T.WrapperCardList>
               ))}
           </T.Grid>
         ) : (

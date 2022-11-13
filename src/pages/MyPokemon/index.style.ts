@@ -55,4 +55,10 @@ const DeleteConfirmationModal = styled("div")({
   },
 });
 
-export { Page, Header, Grid, EmptyState, DeleteConfirmationModal };
+const WrapperCardList = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+});
+
+export { Page, Header, Grid, EmptyState, DeleteConfirmationModal, WrapperCardList };

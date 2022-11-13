@@ -25,9 +25,7 @@ const StartScreen: React.FC = () => {
         </Text>
       </T.Centering>
       <div style={{ position: "absolute", bottom: 18 }}>
-        <Text variant="outlined">
-          &copy;{new Date().getFullYear()} radespratama
-        </Text>
+        <Text variant="outlined">&copy;{new Date().getFullYear()} radespratama</Text>
       </div>
     </T.Container>
   );
