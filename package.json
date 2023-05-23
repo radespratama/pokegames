@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "set PORT=3011 && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "format": "prettier --write ."
   },

@@ -12,6 +12,7 @@ import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "component
 
 import { POKEMON_API } from "configs/api";
 
+import "react-lazy-load-image-component/src/effects/blur.css";
 import * as T from "./index.style";
 
 const DetailPokemon: React.FC = () => {
@@ -41,7 +42,10 @@ const DetailPokemon: React.FC = () => {
       } = await axios.get<IPokemonDetailResponse>(`${POKEMON_API}/${name}`);
       setTypes(types.map((type: any) => type.type.name));
       setMoves(moves.map((move: any) => move.move.name));
-      setSprite(sprites.front_default);
+      setSprite(
+        sprites?.versions?.["generation-v"]?.["black-white"]?.animated?.front_default ||
+          sprites.front_default
+      );
       setIsLoading(false);
     } catch (error) {
       toast("Oops!. Fail get pokemons. Please try again!");
@@ -242,19 +246,22 @@ const DetailPokemon: React.FC = () => {
             {name}
           </Text>
         </T.PokeName>
-        {!isLoading ? (
-          <LazyLoadImage
-            style={{ margin: "0 auto" }}
-            src={sprite}
-            alt={name}
-            width={256}
-            height={256}
-          />
-        ) : (
-          <T.ImageLoadingWrapper>
-            <Loading />
-          </T.ImageLoadingWrapper>
-        )}
+        <T.BoxImage>
+          {!isLoading ? (
+            <LazyLoadImage
+              src={sprite}
+              alt={name}
+              width={250}
+              height={250}
+              effect="blur"
+              loading="lazy"
+            />
+          ) : (
+            <T.ImageLoadingWrapper>
+              <Loading />
+            </T.ImageLoadingWrapper>
+          )}
+        </T.BoxImage>
 
         <T.Content>
           <div>

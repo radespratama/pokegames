@@ -1,14 +1,19 @@
 import React, { HTMLAttributes } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import styled from "@emotion/styled";
+
 import { Text } from "..";
-import { colors } from "../../utils";
+import { colors } from "utils";
+import { POKEMON_IMAGE } from "configs/api";
+
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   name?: string;
   nickname?: string;
   captured?: number;
   sprite?: string;
+  pokemonId?: number | string;
 }
 
 const getStyle = ({ nickname }: Props) => {
@@ -37,17 +42,26 @@ const getStyle = ({ nickname }: Props) => {
 
 const PixelatedPokemonCard = styled("div")((props: Props) => getStyle(props));
 
-const PokeCard: React.FC<Props> = ({ name, nickname, captured, sprite, children }) => {
+const PokeCard: React.FC<Props> = ({ name, nickname, captured, sprite, pokemonId, children }) => {
   return (
     <PixelatedPokemonCard nickname={nickname} className="pxl-border">
       {nickname ? (
         <>
-          <LazyLoadImage src={sprite} alt={name} width={96} height={96} />
+          <LazyLoadImage src={sprite} alt={name} width={96} height={96} loading="lazy" />
           <Text variant="darker" size="lg">
             {nickname}
           </Text>
         </>
-      ) : null}
+      ) : (
+        <LazyLoadImage
+          src={`${POKEMON_IMAGE}/${pokemonId}.png`}
+          alt={name}
+          width={96}
+          height={96}
+          loading="lazy"
+          effect="blur"
+        />
+      )}
       <Text>{name}</Text>
       {children}
       {captured ? (
