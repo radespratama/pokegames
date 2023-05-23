@@ -2,8 +2,8 @@ import React, { ButtonHTMLAttributes } from "react";
 import styled from "@emotion/styled";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-import { Text } from ".";
-import { units, colors } from "../libs/utils";
+import { Text } from "..";
+import { units, colors } from "../../utils";
 
 interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "light" | "dark" | "sky";

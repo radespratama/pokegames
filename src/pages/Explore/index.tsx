@@ -1,23 +1,26 @@
-import React, { useState, createRef, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import React, { useState, createRef, useEffect, useRef } from "react";
 
-import { Text, Button, Loading, Navbar, PokeCard, Modal } from "../../components";
-import { IPokemon, IAllPokemonResponse } from "../../libs/types/pokemon";
-import { useGlobalContext } from "../../libs/context";
+import { useGlobalContext } from "context";
+import { IPokemon, IAllPokemonResponse } from "types/pokemon";
+import { Text, Button, Loading, Navbar, PokeCard } from "components";
+
+import { POKEMON_API } from "configs/api";
 
 import * as T from "./index.style";
 
 const Explore: React.FC = () => {
+  const { state } = useGlobalContext();
+  const isCanceled = useRef<boolean>(false);
+  const navRef = createRef<HTMLDivElement>();
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
-  const [pokeUrl, setPokeURL] = useState<string>(
-    `${import.meta.env.VITE_POKEMON_API}?limit=60&offset=0`
-  );
+
+  const [pokeUrl, setPokeURL] = useState<string>(`${POKEMON_API}?limit=60&offset=0`);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [navHeight, setNavHeight] = useState<number>(0);
-  const { state } = useGlobalContext();
-  const navRef = createRef<HTMLDivElement>();
-  const shouldLog = useRef(true);
 
   async function loadPokemons() {
     if (pokeUrl) {
@@ -26,7 +29,7 @@ const Explore: React.FC = () => {
         const { data } = await axios.get<IAllPokemonResponse>(pokeUrl);
 
         const mapped = data.results?.map((result) => {
-          const summaryIdx = state.pokeSummary!.findIndex(
+          const summaryIdx = state?.pokeSummary!.findIndex(
             (el) => el.name === result.name.toUpperCase()
           );
           return {
@@ -38,19 +41,19 @@ const Explore: React.FC = () => {
 
         setPokemons((prevState) => [...prevState, ...mapped]);
         setPokeURL(data.next || "");
+        setIsLoading(false);
       } catch (error) {
-        console.error(error);
+        if (!isCanceled.current) {
+          toast("Oops!. Fail get pokemons. Please try again!");
+          setIsLoading(false);
+        }
       }
-      setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    if (shouldLog.current) {
-      shouldLog.current = false;
-      setNavHeight(navRef.current?.clientHeight!);
-      loadPokemons();
-    }
+    setNavHeight(navRef.current?.clientHeight!);
+    loadPokemons();
   }, []);
 
   return (

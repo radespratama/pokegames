@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { units } from "../../libs/utils";
+import { units } from "../../utils";
 
 const Page = styled("div")({
   padding: "0 16px",

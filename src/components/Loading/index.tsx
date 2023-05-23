@@ -2,8 +2,8 @@ import React from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 
-import { Text } from ".";
-import { colors } from "../libs/utils";
+import { Text } from "..";
+import { colors } from "../../utils";
 
 const spin = keyframes`
   from { transform: rotate(0deg) }

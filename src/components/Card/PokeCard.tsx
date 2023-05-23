@@ -1,17 +1,17 @@
 import React, { HTMLAttributes } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import styled from "@emotion/styled";
-import { Text } from ".";
-import { colors } from "../libs/utils";
+import { Text } from "..";
+import { colors } from "../../utils";
 
-interface IPokeCard extends HTMLAttributes<HTMLDivElement> {
+interface Props extends HTMLAttributes<HTMLDivElement> {
   name?: string;
   nickname?: string;
   captured?: number;
   sprite?: string;
 }
 
-const getStyle = ({ nickname }: IPokeCard) => {
+const getStyle = ({ nickname }: Props) => {
   return `
   .capture-qty,
   button {
@@ -35,19 +35,19 @@ const getStyle = ({ nickname }: IPokeCard) => {
   `;
 };
 
-const PixelatedPokemonCard = styled("div")((props: IPokeCard) => getStyle(props));
+const PixelatedPokemonCard = styled("div")((props: Props) => getStyle(props));
 
-const PokeCard: React.FC<IPokeCard> = ({ name, nickname, captured, sprite, children }) => {
+const PokeCard: React.FC<Props> = ({ name, nickname, captured, sprite, children }) => {
   return (
     <PixelatedPokemonCard nickname={nickname} className="pxl-border">
-      {nickname && (
+      {nickname ? (
         <>
           <LazyLoadImage src={sprite} alt={name} width={96} height={96} />
           <Text variant="darker" size="lg">
             {nickname}
           </Text>
         </>
-      )}
+      ) : null}
       <Text>{name}</Text>
       {children}
       {captured ? (

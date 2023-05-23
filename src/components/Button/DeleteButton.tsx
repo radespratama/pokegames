@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes } from "react";
 import styled from "@emotion/styled";
-import { units, colors } from "../libs/utils";
+import { units, colors } from "../../utils";
 
 const StyledDeleteButton = styled("button")({
   padding: units.spacing.sm,

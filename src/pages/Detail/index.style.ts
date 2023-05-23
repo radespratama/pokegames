@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { colors, units } from "../../libs/utils";
+import { colors, units } from "../../utils";
 
 const Page = styled("div")({
   "#pokeball-bg": {

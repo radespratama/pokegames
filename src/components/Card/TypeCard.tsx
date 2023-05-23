@@ -1,14 +1,14 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-import { Text } from ".";
-import { skillColor } from "../libs/utils";
+import { Text } from "..";
+import { skillColor } from "../../utils";
 
-interface ITypeCard {
+interface Props {
   type: string;
 }
 
-const PixelatedTypeCard = styled("div")(({ type }: ITypeCard) => {
+const PixelatedTypeCard = styled("div")(({ type }: Props) => {
   return {
     marginRight: 16,
     background: skillColor[type + "-200"],
@@ -20,7 +20,7 @@ const PixelatedTypeCard = styled("div")(({ type }: ITypeCard) => {
   };
 });
 
-const TypeCard: React.FC<ITypeCard> = ({ type }) => {
+const TypeCard: React.FC<Props> = ({ type }) => {
   return (
     <PixelatedTypeCard type={type} className="pxl-border">
       <Text variant="outlined" size="lg">

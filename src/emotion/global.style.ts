@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { colors } from "../libs/utils";
+import { colors } from "../utils";
 
 export const globalStyle = css`
   * {

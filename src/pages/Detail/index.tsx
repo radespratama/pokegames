@@ -1,12 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { FormEvent, ChangeEvent, useEffect, useState, createRef } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "../../components";
-import { useGlobalContext } from "../../libs/context";
-import { generatePokeSummary } from "../../libs/helpers";
-import { IPokemonDetailResponse } from "../../libs/types/pokemon";
+import { useGlobalContext } from "../../context";
+import { generatePokeSummary } from "../../helpers";
+import { IPokemonDetailResponse } from "../../types/pokemon";
+
+import { POKEMON_API } from "../../configs/api";
 
 import * as T from "./index.style";
 
@@ -34,7 +37,7 @@ const DetailPokemon: React.FC = () => {
       setIsLoading(true);
       const {
         data: { types, sprites, moves },
-      } = await axios.get<IPokemonDetailResponse>(`${import.meta.env.VITE_POKEMON_API}/${name}`);
+      } = await axios.get<IPokemonDetailResponse>(`${POKEMON_API}/${name}`);
       setTypes(types.map((type: any) => type.type.name));
       setMoves(moves.map((move: any) => move.move.name));
       setSprite(sprites.front_default);
