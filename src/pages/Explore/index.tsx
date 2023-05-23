@@ -14,6 +14,7 @@ import * as T from "./index.style";
 
 const Explore: React.FC = () => {
   const { state } = useGlobalContext();
+  const controller = new AbortController();
   const isCanceled = useRef<boolean>(false);
   const navRef = createRef<HTMLDivElement>();
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
@@ -26,7 +27,9 @@ const Explore: React.FC = () => {
     if (pokeUrl) {
       try {
         setIsLoading(true);
-        const { data } = await axios.get<IAllPokemonResponse>(pokeUrl);
+        const { data } = await axios.get<IAllPokemonResponse>(pokeUrl, {
+          signal: controller.signal,
+        });
 
         const mapped = data.results?.map((result) => {
           const summaryIdx = state?.pokeSummary!.findIndex(
@@ -54,6 +57,10 @@ const Explore: React.FC = () => {
   useEffect(() => {
     setNavHeight(navRef.current?.clientHeight!);
     loadPokemons();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   return (
@@ -63,7 +70,7 @@ const Explore: React.FC = () => {
           Challenge &amp; catch them all
         </Text>
         <T.Grid>
-          {pokemons.length
+          {pokemons?.length
             ? pokemons.map((pokemon: IPokemon) => (
                 <Link
                   key={`${pokemon.name}-${Math.random()}`}
