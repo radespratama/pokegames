@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { createRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Button, Navbar, Text, Modal, PokeCard, DeleteButton } from "../../components";
-import { useGlobalContext } from "../../libs/context";
-import { generatePokeSummary } from "../../libs/helpers";
-import { IMyPokemon } from "../../libs/types/pokemon";
+import { useGlobalContext } from "../../context";
+import { generatePokeSummary } from "../../helpers";
+import { IMyPokemon } from "../../types/pokemon";
 
 import * as T from "./index.style";
 
@@ -30,6 +31,7 @@ const MyPokemon: React.FC = () => {
   async function releasePokemon(nickname: string) {
     const newCollection = pokemons.filter((pokemon: IMyPokemon) => pokemon.nickname !== nickname);
     localStorage.setItem("pokegames@myPokemon", JSON.stringify(newCollection));
+
     loadMyPokemon();
     setState({ pokeSummary: generatePokeSummary(newCollection) });
   }
@@ -68,7 +70,7 @@ const MyPokemon: React.FC = () => {
           </Text>
         </T.Header>
 
-        {pokemons.length ? (
+        {pokemons?.length ? (
           <T.Grid>
             {pokemons.length &&
               [...pokemons].reverse().map((pokemon: IMyPokemon) => (

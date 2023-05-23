@@ -1,16 +1,16 @@
 import styled from "@emotion/styled";
-import { units } from "../../libs/utils";
+import { units } from "../../utils";
 
-export const Container = styled("section")({
-  maxWidth: `${units.screenSize["xl"]}`,
-  margin: "0 auto",
-  padding: "10px 16px",
-  textAlign: "center",
+export const Container = styled.section`
+  max-width: ${units.screenSize["xl"]};
+  margin: 0 auto;
+  padding: 10px 16px;
+  text-align: center;
 
-  '@media screen and (min-width: ${units.screenSize["xl"]})': {
-    padding: "10px 0",
-  },
-});
+  @media screen and (min-width: ${units.screenSize["xl"]}) {
+    padding: 10px 0;
+  }
+`;
 
 export const Grid = styled("div")({
   display: "grid",

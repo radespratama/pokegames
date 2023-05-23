@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from "react";
 import styled from "@emotion/styled";
 
-import { colors } from "../libs/utils";
+import { colors } from "../../utils";
 
 interface IModal extends HTMLAttributes<HTMLDivElement> {
   open: boolean;

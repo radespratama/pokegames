@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-
 import { Global } from "@emotion/react";
-import { globalStyle } from "./emotion/global.style";
-import { GlobalProvider } from "./libs/context";
+import { Toaster } from "react-hot-toast";
+
+import App from "./App";
+import { GlobalProvider } from "context";
+import { globalStyle } from "emotion/global.style";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -12,5 +13,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <GlobalProvider>
       <App />
     </GlobalProvider>
+
+    <Toaster position="top-right" />
   </React.StrictMode>
 );
