@@ -15,7 +15,6 @@ import * as T from "./index.style";
 const Explore: React.FC = () => {
   const { state } = useGlobalContext();
   const controller = new AbortController();
-  const isCanceled = useRef<boolean>(false);
   const navRef = createRef<HTMLDivElement>();
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
 
@@ -46,10 +45,8 @@ const Explore: React.FC = () => {
         setPokeURL(data.next || "");
         setIsLoading(false);
       } catch (error) {
-        if (!isCanceled.current) {
-          toast("Oops!. Fail get pokemons. Please try again!");
-          setIsLoading(false);
-        }
+        toast("Oops!. Fail get pokemons. Please try again!");
+        setIsLoading(false);
       }
     }
   }

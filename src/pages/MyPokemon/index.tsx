@@ -2,10 +2,10 @@
 import React, { createRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Button, Navbar, Text, Modal, PokeCard, DeleteButton } from "../../components";
-import { useGlobalContext } from "../../context";
-import { generatePokeSummary } from "../../helpers";
-import { IMyPokemon } from "../../types/pokemon";
+import { IMyPokemon } from "types/pokemon";
+import { useGlobalContext } from "context";
+import { generatePokeSummary } from "helpers";
+import { Button, Navbar, Text, Modal, PokeCard, DeleteButton } from "components";
 
 import * as T from "./index.style";
 

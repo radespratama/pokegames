@@ -1,15 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FormEvent, ChangeEvent, useEffect, useState, createRef } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useParams, Link } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import React, { FormEvent, ChangeEvent, useEffect, useState, createRef } from "react";
 
-import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "../../components";
-import { useGlobalContext } from "../../context";
-import { generatePokeSummary } from "../../helpers";
-import { IPokemonDetailResponse } from "../../types/pokemon";
+import { useGlobalContext } from "context";
+import { generatePokeSummary } from "helpers";
+import { IPokemonDetailResponse } from "types/pokemon";
+import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "components";
 
-import { POKEMON_API } from "../../configs/api";
+import { POKEMON_API } from "configs/api";
 
 import * as T from "./index.style";
 
@@ -41,10 +42,11 @@ const DetailPokemon: React.FC = () => {
       setTypes(types.map((type: any) => type.type.name));
       setMoves(moves.map((move: any) => move.move.name));
       setSprite(sprites.front_default);
+      setIsLoading(false);
     } catch (error) {
-      console.error(error);
+      toast("Oops!. Fail get pokemons. Please try again!");
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   async function catchPokemon() {
