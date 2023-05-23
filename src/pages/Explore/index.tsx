@@ -2,7 +2,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import React, { useState, createRef, useEffect, useRef } from "react";
+import React, { useState, createRef, useEffect } from "react";
 
 import { useGlobalContext } from "context";
 import { IPokemon, IAllPokemonResponse } from "types/pokemon";
@@ -11,22 +11,24 @@ import { Text, Button, Loading, Navbar, PokeCard } from "components";
 import { POKEMON_API } from "configs/api";
 
 import * as T from "./index.style";
+import { getPokemonId } from "utils";
 
 const Explore: React.FC = () => {
   const { state } = useGlobalContext();
-  const isCanceled = useRef<boolean>(false);
   const navRef = createRef<HTMLDivElement>();
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
 
-  const [pokeUrl, setPokeURL] = useState<string>(`${POKEMON_API}?limit=60&offset=0`);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [pokeUrl, setPokeURL] = useState<string>(`${POKEMON_API}?limit=50&offset=0`);
+  const [isFetchingPokemon, setIsFetchingPokemon] = useState<boolean>(false);
   const [navHeight, setNavHeight] = useState<number>(0);
 
   async function loadPokemons() {
     if (pokeUrl) {
       try {
-        setIsLoading(true);
+        setIsFetchingPokemon(true);
         const { data } = await axios.get<IAllPokemonResponse>(pokeUrl);
+
+        console.log("INI DATA : ", data);
 
         const mapped = data.results?.map((result) => {
           const summaryIdx = state?.pokeSummary!.findIndex(
@@ -41,12 +43,10 @@ const Explore: React.FC = () => {
 
         setPokemons((prevState) => [...prevState, ...mapped]);
         setPokeURL(data.next || "");
-        setIsLoading(false);
+        setIsFetchingPokemon(false);
       } catch (error) {
-        if (!isCanceled.current) {
-          toast("Oops!. Fail get pokemons. Please try again!");
-          setIsLoading(false);
-        }
+        toast("Oops!. Fail get pokemons. Please try again!");
+        setIsFetchingPokemon(false);
       }
     }
   }
@@ -63,18 +63,22 @@ const Explore: React.FC = () => {
           Challenge &amp; catch them all
         </Text>
         <T.Grid>
-          {pokemons.length
+          {pokemons?.length
             ? pokemons.map((pokemon: IPokemon) => (
                 <Link
                   key={`${pokemon.name}-${Math.random()}`}
                   to={"/pokemon/" + pokemon.name}
                   style={{ display: "flex" }}>
-                  <PokeCard name={pokemon.name} captured={pokemon.captured} />
+                  <PokeCard
+                    pokemonId={getPokemonId(pokemon?.url ?? "")}
+                    name={pokemon.name}
+                    captured={pokemon.captured}
+                  />
                 </Link>
               ))
             : null}
         </T.Grid>
-        {!isLoading ? (
+        {!isFetchingPokemon ? (
           pokeUrl && (
             <T.Footer>
               <Button onClick={() => loadPokemons()}>Load More</Button>

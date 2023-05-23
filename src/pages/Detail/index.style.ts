@@ -71,6 +71,11 @@ const Content = styled("div")({
   },
 });
 
+const BoxImage = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+});
+
 const shake = keyframes`
   0% { transform: translate(0, 0) rotate(0); }
   20% { transform: translate(-10px, 0) rotate(-20deg); }
@@ -160,4 +165,5 @@ export {
   ImageLoadingWrapper,
   Grid,
   AnotherWrapper,
+  BoxImage,
 };

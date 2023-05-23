@@ -8,7 +8,6 @@
 
 ![Typescript](https://img.shields.io/badge/Typescript-3B82F6?style=for-the-badge&logo=Typescript&logoColor=white)
 ![ReactJS](https://img.shields.io/badge/ReactJs-1F2937?style=for-the-badge&logo=react&logoColor=white)
-![ViteJS](https://img.shields.io/badge/ViteJs-1E3A8A?style=for-the-badge&logo=vite&logoColor=white)
 ![Emotion](https://img.shields.io/badge/Emotion-352DAC?style=for-the-badge&logo=emotion&logoColor=white)
 ![Forks](https://img.shields.io/github/forks/radespratama/pokegames?style=for-the-badge)
 ![Contributors](https://img.shields.io/github/contributors/radespratama/pokegames?style=for-the-badge)
@@ -21,12 +20,12 @@ By using Pokegames you can:
 - [x] Get all list pokemon.
 - [x] Catch a pokemon and bring it to inventory.
 - [x] Animation pokeball when catch the pokemon.
+- [] Pokemon stats
 
 ## Technology 👨‍💻
 Pokegames is created using:
 - [Typescript](https://www.typescriptlang.org) - TypeScript is JavaScript with syntax for types.
 - [React](https://reactjs.org) - React a JavaScript library for building user interfaces.
-- [Vite](https://vitejs.dev) - Vite Next Generation Frontend Tooling.
 - [Emotion](https://emotion.sh/docs/introduction) - Emotion is a library designed for writing css styles with JavaScript.
 - [Vercel](https://vercel.com/) - Vercel is a cloud platform that we use to deploy our apps.
 
