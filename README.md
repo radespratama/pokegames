@@ -13,7 +13,7 @@
 ![Contributors](https://img.shields.io/github/contributors/radespratama/pokegames?style=for-the-badge)
 ![Stars](https://img.shields.io/github/stars/radespratama/pokegames?style=for-the-badge)
 
-A pokemon minigame where you can explore and catch them all. Built with React JS + Vite and consumes public <a href="https://pokeapi.co">PokeAPI</a>.🍺
+A pokemon minigame where you can explore and catch them all. Built with React JS and consumes public <a href="https://pokeapi.co">PokeAPI</a>.🍺
 
 ## Features💡
 By using Pokegames you can:
@@ -49,12 +49,13 @@ yarn || npm install
 # Copy Pokemon API in .env file
 # You can visit https://pokeapi.co
 
-VITE_POKEMON_API= <API URL HERE>
+REACT_APP_PUBLIC_POKEMON_API= <API URL HERE>
+REACT_APP_PUBLIC_POKEMON_IMAGE=https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/
 ```
 #### Starting server
 
 ```bash
-yarn dev || npm run dev
+yarn start || npm run start
 ```
 
 ## 🤞 Contributing
