@@ -80,6 +80,23 @@ const ImageContainer = styled("div")({
   },
 });
 
+const AbilitiesWrapper = styled("div")({
+  display: "grid",
+  gridTemplateColumns: "repeat(1, 1fr)",
+
+  "> div:nth-of-type(1)": {
+    marginBottom: "20px",
+  },
+
+  "@media (min-width: 768px)": {
+    gridTemplateColumns: "repeat(2, 1fr)",
+
+    "> div:nth-of-type(1)": {
+      marginBottom: "0px",
+    },
+  },
+});
+
 const PokemonContainer = styled("div")({
   display: "grid",
   gridTemplateColumns: "1fr",
@@ -214,4 +231,5 @@ export {
   AnotherWrapper,
   PokemonContainer,
   PokemonStatsWrapper,
+  AbilitiesWrapper,
 };

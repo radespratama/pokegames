@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 
 import { NavItem } from "..";
-import { units } from "../../utils";
+import { units } from "utils";
 
 interface INavbar {
   children?: React.ReactNode;

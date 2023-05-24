@@ -3,7 +3,7 @@ import { useNavigate, useResolvedPath, useMatch } from "react-router-dom";
 import styled from "@emotion/styled";
 
 import { Text } from "..";
-import { units, colors } from "../../utils";
+import { units, colors } from "utils";
 
 interface INavItem extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "light" | "dark" | "sky";
