@@ -54,13 +54,6 @@ const Explore: React.FC = () => {
     loadPokemons();
   }, []);
 
-  // useEffect(() => {
-  //   window.scroll({
-  //     top: 0,
-  //     behavior: "smooth",
-  //   });
-  // }, []);
-
   return (
     <>
       <T.Container style={{ marginBottom: navHeight }}>

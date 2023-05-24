@@ -116,6 +116,13 @@ const DetailPokemon: React.FC = () => {
     loadPokemon();
   }, []);
 
+  useEffect(() => {
+    window.scroll({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
   return (
     <>
       <Modal open={isCatching}>
