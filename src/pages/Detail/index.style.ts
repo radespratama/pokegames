@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { colors, units } from "../../utils";
+import { colors, units } from "utils";
 
 const Page = styled("div")({
   "#pokeball-bg": {
@@ -63,17 +63,44 @@ const Content = styled("div")({
   flexDirection: "column",
   gap: units.spacing.xl,
   padding: "0 16px",
-  "@media (min-width: 1024px)": {
-    padding: "0 128px",
-  },
+  maxWidth: "1340px",
+  margin: "0 auto",
   h3: {
     marginBottom: units.spacing.base,
   },
 });
 
-const BoxImage = styled("div")({
-  display: "flex",
-  justifyContent: "center",
+const PokemonContainer = styled("div")({
+  display: "grid",
+  gridTemplateColumns: "1fr",
+  maxWidth: "1340px",
+  margin: "0 auto",
+  padding: "20px 0",
+
+  "> div.img-pokemon": {
+    order: 1,
+  },
+  "> div.card-pxl": {
+    margin: "0 20px",
+    marginTop: "20px",
+    order: 2,
+  },
+
+  "@media (min-width: 768px)": {
+    gridTemplateColumns: "40% 1fr",
+
+    "> div.img-pokemon": {
+      order: 2,
+    },
+    "> div.card-pxl": {
+      order: 1,
+    },
+  },
+
+  "@media (min-width: 1024px)": {
+    marginTop: "10px",
+    gridTemplateColumns: "30% 1fr",
+  },
 });
 
 const shake = keyframes`
@@ -129,6 +156,15 @@ const ImageLoadingWrapper = styled("div")({
   margin: "0 auto",
 });
 
+const PokemonStatsWrapper = styled("div")({
+  marginTop: "20px",
+  textAlign: "left",
+
+  "> h4": {
+    marginBottom: "10px",
+  },
+});
+
 const Grid = styled("div")(
   {
     display: "grid",
@@ -165,5 +201,6 @@ export {
   ImageLoadingWrapper,
   Grid,
   AnotherWrapper,
-  BoxImage,
+  PokemonContainer,
+  PokemonStatsWrapper,
 };
