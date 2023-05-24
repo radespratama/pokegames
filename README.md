@@ -20,7 +20,7 @@ By using Pokegames you can:
 - [x] Get all list pokemon.
 - [x] Catch a pokemon and bring it to inventory.
 - [x] Animation pokeball when catch the pokemon.
-- [] Pokemon stats
+- [x] Pokemon stats
 
 ## Technology 👨‍💻
 Pokegames is created using:
