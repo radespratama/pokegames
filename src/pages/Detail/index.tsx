@@ -22,6 +22,7 @@ const DetailPokemon: React.FC = () => {
   const [moves, setMoves] = useState<string[]>([]);
   const [sprite, setSprite] = useState<string>("");
   const [stats, setStats] = useState<IPokemonDetailResponse["stats"]>([]);
+  const [abilities, setAbilities] = useState<IPokemonDetailResponse["abilities"]>([]);
   const [nickname, setNickname] = useState<string>("");
   const [navHeight, setNavHeight] = useState<number>(0);
   const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -39,7 +40,7 @@ const DetailPokemon: React.FC = () => {
     try {
       setIsLoading(true);
       const {
-        data: { types, sprites, moves, stats },
+        data: { types, sprites, moves, stats, abilities },
       } = await axios.get<IPokemonDetailResponse>(`${POKEMON_API}/${name}`);
       setTypes(types.map((type: any) => type?.type?.name));
       setMoves(moves.map((move: any) => move?.move?.name));
@@ -48,6 +49,7 @@ const DetailPokemon: React.FC = () => {
           sprites.front_default
       );
       setStats(stats);
+      setAbilities(abilities);
       setIsLoading(false);
     } catch (error) {
       toast("Oops!. Fail get pokemons. Please try again!");
@@ -303,18 +305,33 @@ const DetailPokemon: React.FC = () => {
           </div>
         </T.PokemonContainer>
 
-        <T.Content>
-          <div>
-            <Text as="h3">Type</Text>
-            {!isLoading ? (
-              types && types.map((type, index: any) => <TypeCard key={index} type={type} />)
-            ) : (
-              <T.DescriptionLoadingWrapper>
-                <Loading label="Loading types..." />
-              </T.DescriptionLoadingWrapper>
-            )}
-          </div>
+        <T.Content style={{ marginTop: "30px" }}>
+          <T.AbilitiesWrapper>
+            <div className="pxl-type">
+              <Text as="h3">Type</Text>
+              {!isLoading ? (
+                types && types.map((type, index: any) => <TypeCard key={index} type={type} />)
+              ) : (
+                <T.DescriptionLoadingWrapper>
+                  <Loading label="Loading types..." />
+                </T.DescriptionLoadingWrapper>
+              )}
+            </div>
 
+            <div className="pxl-abilities">
+              <Text as="h3">Abilities</Text>
+              {!isLoading ? (
+                abilities &&
+                abilities.map((ability, index: any) => (
+                  <TypeCard key={index} type={ability.ability?.name} />
+                ))
+              ) : (
+                <T.DescriptionLoadingWrapper>
+                  <Loading label="Loading abilities..." />
+                </T.DescriptionLoadingWrapper>
+              )}
+            </div>
+          </T.AbilitiesWrapper>
           <div>
             <Text as="h3">Moves</Text>
             {!isLoading ? (

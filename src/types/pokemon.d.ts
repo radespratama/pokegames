@@ -27,6 +27,14 @@ export interface IAllPokemonResponse {
 
 export interface IPokemonDetailResponse {
   name: string;
+  abilities: Array<{
+    ability: {
+      name: string;
+      url: string;
+    };
+    is_hidden: boolean;
+    slot: number;
+  }>;
   moves: {
     move?: {
       name?: string;
