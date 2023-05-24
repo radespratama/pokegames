@@ -120,13 +120,16 @@ const DetailPokemon: React.FC = () => {
     <>
       <Modal open={isCatching}>
         <T.CatchingModal>
-          <LazyLoadImage
-            style={{ margin: "0 auto" }}
-            src={sprite}
-            alt={name}
-            width={320}
-            height={320}
-          />
+          <T.ImageContainer>
+            <LazyLoadImage
+              src={sprite}
+              alt={name}
+              width={320}
+              height={320}
+              effect="blur"
+              loading="lazy"
+            />
+          </T.ImageContainer>
           <div style={{ display: "grid", placeItems: "center" }}>
             <LazyLoadImage
               className="pokeball"
@@ -146,13 +149,16 @@ const DetailPokemon: React.FC = () => {
         <>
           <Modal open={!isCaught} overlay="error">
             <T.PostCatchModal>
-              <LazyLoadImage
-                style={{ margin: "0 auto" }}
-                src={sprite}
-                alt={name}
-                width={320}
-                height={320}
-              />
+              <T.ImageContainer>
+                <LazyLoadImage
+                  src={sprite}
+                  alt={name}
+                  width={320}
+                  height={320}
+                  effect="blur"
+                  loading="lazy"
+                />
+              </T.ImageContainer>
 
               <LazyLoadImage src="/static/pokeball.png" alt="pokeball" width={128} height={128} />
               <Text variant="outlined" size="xl">
@@ -162,13 +168,16 @@ const DetailPokemon: React.FC = () => {
           </Modal>
           <Modal open={isCaught} overlay="light">
             <T.PostCatchModal>
-              <LazyLoadImage
-                style={{ margin: "0 auto" }}
-                src={sprite}
-                alt={name}
-                width={320}
-                height={320}
-              />
+              <T.ImageContainer>
+                <LazyLoadImage
+                  src={sprite}
+                  alt={name}
+                  width={320}
+                  height={320}
+                  effect="blur"
+                  loading="lazy"
+                />
+              </T.ImageContainer>
 
               <LazyLoadImage src="/static/pokeball.png" alt="pokeball" width={128} height={128} />
               <Text variant="outlined" size="xl">
@@ -181,13 +190,16 @@ const DetailPokemon: React.FC = () => {
 
       <Modal open={nicknameModal} overlay="light" solid>
         <T.NicknamingModal>
-          <LazyLoadImage
-            style={{ margin: "0 auto" }}
-            src={sprite}
-            alt={name}
-            width={320}
-            height={320}
-          />
+          <T.ImageContainer>
+            <LazyLoadImage
+              src={sprite}
+              alt={name}
+              width={320}
+              height={320}
+              effect="blur"
+              loading="lazy"
+            />
+          </T.ImageContainer>
 
           {!isSaved ? (
             <T.NicknamingForm onSubmit={onNicknameSave}>

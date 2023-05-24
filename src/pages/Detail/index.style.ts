@@ -70,6 +70,16 @@ const Content = styled("div")({
   },
 });
 
+const ImageContainer = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  marginBottom: "15px",
+
+  "@media (min-width: 768px)": {
+    marginBottom: "20px",
+  },
+});
+
 const PokemonContainer = styled("div")({
   display: "grid",
   gridTemplateColumns: "1fr",
@@ -200,6 +210,7 @@ export {
   DescriptionLoadingWrapper,
   ImageLoadingWrapper,
   Grid,
+  ImageContainer,
   AnotherWrapper,
   PokemonContainer,
   PokemonStatsWrapper,
