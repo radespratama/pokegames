@@ -21,15 +21,16 @@ const DetailPokemon: React.FC = () => {
   const [types, setTypes] = useState<string[]>([]);
   const [moves, setMoves] = useState<string[]>([]);
   const [sprite, setSprite] = useState<string>("");
+  const [stats, setStats] = useState<IPokemonDetailResponse["stats"]>([]);
+  const [nickname, setNickname] = useState<string>("");
+  const [navHeight, setNavHeight] = useState<number>(0);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [isCaught, setIsCaught] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCatching, setIsCatching] = useState<boolean>(false);
   const [isEndPhase, setIsEndPhase] = useState<boolean>(false);
-  const [isCaught, setIsCaught] = useState<boolean>(false);
-  const [nickname, setNickname] = useState<string>("");
   const [nicknameModal, setNicknameModal] = useState<boolean>(false);
   const [nicknameIsValid, setNicknameIsValid] = useState<boolean>(true);
-  const [isSaved, setIsSaved] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [navHeight, setNavHeight] = useState<number>(0);
 
   const { setState } = useGlobalContext();
   const navRef = createRef<HTMLDivElement>();
@@ -38,14 +39,15 @@ const DetailPokemon: React.FC = () => {
     try {
       setIsLoading(true);
       const {
-        data: { types, sprites, moves },
+        data: { types, sprites, moves, stats },
       } = await axios.get<IPokemonDetailResponse>(`${POKEMON_API}/${name}`);
-      setTypes(types.map((type: any) => type.type.name));
-      setMoves(moves.map((move: any) => move.move.name));
+      setTypes(types.map((type: any) => type?.type?.name));
+      setMoves(moves.map((move: any) => move?.move?.name));
       setSprite(
         sprites?.versions?.["generation-v"]?.["black-white"]?.animated?.front_default ||
           sprites.front_default
       );
+      setStats(stats);
       setIsLoading(false);
     } catch (error) {
       toast("Oops!. Fail get pokemons. Please try again!");
@@ -246,22 +248,41 @@ const DetailPokemon: React.FC = () => {
             {name}
           </Text>
         </T.PokeName>
-        <T.BoxImage>
-          {!isLoading ? (
-            <LazyLoadImage
-              src={sprite}
-              alt={name}
-              width={250}
-              height={250}
-              effect="blur"
-              loading="lazy"
-            />
-          ) : (
-            <T.ImageLoadingWrapper>
-              <Loading />
-            </T.ImageLoadingWrapper>
-          )}
-        </T.BoxImage>
+        <T.PokemonContainer>
+          <div className="pxl-border card-pxl">
+            <Text as="h4" variant="outlined" size="lg">
+              Pokemon Stats:
+            </Text>
+            <T.PokemonStatsWrapper>
+              {stats?.map((stat, index) => {
+                const pokemonBaseStat = stat?.base_stat ?? 0;
+                const pokemonStatName = stat?.stat;
+
+                return (
+                  <Text as="h4" key={index} variant="outlined" size="base">
+                    {pokemonStatName?.name} : {pokemonBaseStat}
+                  </Text>
+                );
+              })}
+            </T.PokemonStatsWrapper>
+          </div>
+          <div className="img-pokemon" style={{ display: "flex", justifyContent: "center" }}>
+            {!isLoading ? (
+              <LazyLoadImage
+                src={sprite}
+                alt={name}
+                width={256}
+                height={256}
+                effect="blur"
+                loading="lazy"
+              />
+            ) : (
+              <T.ImageLoadingWrapper>
+                <Loading />
+              </T.ImageLoadingWrapper>
+            )}
+          </div>
+        </T.PokemonContainer>
 
         <T.Content>
           <div>

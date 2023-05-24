@@ -28,9 +28,7 @@ const Explore: React.FC = () => {
         setIsFetchingPokemon(true);
         const { data } = await axios.get<IAllPokemonResponse>(pokeUrl);
 
-        console.log("INI DATA : ", data);
-
-        const mapped = data.results?.map((result) => {
+        const filteredSummary = data.results?.map((result) => {
           const summaryIdx = state?.pokeSummary!.findIndex(
             (el) => el.name === result.name.toUpperCase()
           );
@@ -41,7 +39,7 @@ const Explore: React.FC = () => {
           };
         });
 
-        setPokemons((prevState) => [...prevState, ...mapped]);
+        setPokemons((prevState) => [...prevState, ...filteredSummary]);
         setPokeURL(data.next || "");
         setIsFetchingPokemon(false);
       } catch (error) {

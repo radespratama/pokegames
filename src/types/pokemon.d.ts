@@ -56,5 +56,13 @@ export interface IPokemonDetailResponse {
     };
     [other: string]: unknown;
   };
+  stats: Array<{
+    base_stat: number;
+    effort?: number;
+    stat: {
+      name?: string;
+      url: string;
+    };
+  }>;
   [other: string]: unknown;
 }
