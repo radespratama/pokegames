@@ -2,12 +2,13 @@
   <img align="center" width="600" src="https://github.com/radespratama/pokegames/blob/main/public/static/pokegames-banner.avif?raw=true" />
   <h3 align="center">Pokegames</h3>
   <p align="center">⚡ Pokemon Apps ヾ(≧▽≦*)o</p>
-</div> 
+</div>
 
 <hr />
 
 ![Typescript](https://img.shields.io/badge/Typescript-3B82F6?style=for-the-badge&logo=Typescript&logoColor=white)
 ![ReactJS](https://img.shields.io/badge/ReactJs-1F2937?style=for-the-badge&logo=react&logoColor=white)
+![ViteJS](https://img.shields.io/badge/ViteJS-1F2937?style=for-the-badge&logo=vite&logoColor=white)
 ![Emotion](https://img.shields.io/badge/Emotion-352DAC?style=for-the-badge&logo=emotion&logoColor=white)
 ![Forks](https://img.shields.io/github/forks/radespratama/pokegames?style=for-the-badge)
 ![Contributors](https://img.shields.io/github/contributors/radespratama/pokegames?style=for-the-badge)
@@ -16,28 +17,37 @@
 A pokemon minigame where you can explore and catch them all. Built with React JS and consumes public <a href="https://pokeapi.co">PokeAPI</a>.🍺
 
 ## Features💡
+
 By using Pokegames you can:
+
 - [x] Get all list pokemon.
 - [x] Catch a pokemon and bring it to inventory.
 - [x] Animation pokeball when catch the pokemon.
 - [x] Pokemon stats
 
 ## Technology 👨‍💻
+
 Pokegames is created using:
+
 - [Typescript](https://www.typescriptlang.org) - TypeScript is JavaScript with syntax for types.
 - [React](https://reactjs.org) - React a JavaScript library for building user interfaces.
+- [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling.
 - [Emotion](https://emotion.sh/docs/introduction) - Emotion is a library designed for writing css styles with JavaScript.
 - [Vercel](https://vercel.com/) - Vercel is a cloud platform that we use to deploy our apps.
 
 ## Requirements 📦
+
 - Node JS 16 or later
 - Typescript v4 or later
 
 ## Installation 🛠️
+
 #### Run the website locally
+
 ```
 git clone https://github.com/radespratama/pokegames.git pokegames
 ```
+
 #### Setting up the project
 
 ```bash
@@ -52,6 +62,7 @@ yarn || npm install
 REACT_APP_PUBLIC_POKEMON_API= <API URL HERE>
 REACT_APP_PUBLIC_POKEMON_IMAGE=https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/
 ```
+
 #### Starting server
 
 ```bash

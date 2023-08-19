@@ -3,23 +3,23 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams, Link } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import React, { FormEvent, ChangeEvent, useEffect, useState, createRef } from "react";
+import { FormEvent, ChangeEvent, useEffect, useState, createRef } from "react";
 
-import { useGlobalContext } from "context";
-import { generatePokeSummary } from "helpers";
-import { IPokemonDetailResponse } from "types/pokemon";
-import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "components";
+import { useGlobalContext } from "../../context";
+import { generatePokeSummary } from "../../helpers";
+import { IPokemonDetailResponse } from "../../types/pokemon";
+import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "../../components";
 
-import { POKEMON_API } from "configs/api";
+import { POKEMON_API } from "../../configs/api";
 
 import "react-lazy-load-image-component/src/effects/blur.css";
 import * as T from "./index.style";
 
 const DetailPokemon = () => {
-  const { name } = useParams();
+  const { name = "" } = useParams();
 
-  const [types, setTypes] = useState<string[]>([]);
-  const [moves, setMoves] = useState<string[]>([]);
+  const [types, setTypes] = useState<string[] | any>([]);
+  const [moves, setMoves] = useState<string[] | any>([]);
   const [sprite, setSprite] = useState<string>("");
   const [stats, setStats] = useState<IPokemonDetailResponse["stats"]>([]);
   const [abilities, setAbilities] = useState<IPokemonDetailResponse["abilities"]>([]);
@@ -42,11 +42,11 @@ const DetailPokemon = () => {
       const {
         data: { types, sprites, moves, stats, abilities },
       } = await axios.get<IPokemonDetailResponse>(`${POKEMON_API}/${name}`);
-      setTypes(types.map((type: any) => type?.type?.name));
-      setMoves(moves.map((move: any) => move?.move?.name));
+      setTypes(types.map((type) => type?.type?.name));
+      setMoves(moves.map((move) => move?.move?.name));
       setSprite(
         sprites?.versions?.["generation-v"]?.["black-white"]?.animated?.front_default ||
-          sprites.front_default
+          sprites.front_default,
       );
       setStats(stats);
       setAbilities(abilities);
@@ -90,7 +90,7 @@ const DetailPokemon = () => {
       JSON.parse(currentCollection!) || [];
 
     let isUnique = true;
-    for (let collection of parsed) {
+    for (const collection of parsed) {
       if (collection.nickname === nickname) {
         setNicknameIsValid(false);
         isUnique = false;
@@ -114,7 +114,7 @@ const DetailPokemon = () => {
   }
 
   useEffect(() => {
-    setNavHeight(navRef.current?.clientHeight!);
+    setNavHeight(navRef.current?.clientHeight as number);
     loadPokemon();
   }, []);
 
@@ -310,7 +310,8 @@ const DetailPokemon = () => {
             <div className="pxl-type">
               <Text as="h3">Type</Text>
               {!isLoading ? (
-                types && types.map((type, index: any) => <TypeCard key={index} type={type} />)
+                types &&
+                types.map((type: string, index: number) => <TypeCard key={index} type={type} />)
               ) : (
                 <T.DescriptionLoadingWrapper>
                   <Loading label="Loading types..." />
@@ -322,7 +323,7 @@ const DetailPokemon = () => {
               <Text as="h3">Abilities</Text>
               {!isLoading ? (
                 abilities &&
-                abilities.map((ability, index: any) => (
+                abilities.map((ability, index) => (
                   <TypeCard key={index} type={ability.ability?.name} />
                 ))
               ) : (
@@ -337,7 +338,7 @@ const DetailPokemon = () => {
             {!isLoading ? (
               <T.Grid>
                 {moves &&
-                  moves.map((move, index: any) => (
+                  moves.map((move: string, index: number) => (
                     <div
                       key={index}
                       className="pxl-border"

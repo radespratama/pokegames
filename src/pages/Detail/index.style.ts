@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { colors, units } from "utils";
+import { colors, units } from "../../utils";
 
 const Page = styled("div")({
   "#pokeball-bg": {
@@ -55,7 +55,7 @@ const PokeName = styled("div")(
       height: 0.75rem;
       right: 0;
     }
-  `
+  `,
 );
 
 const Content = styled("div")({
@@ -206,7 +206,7 @@ const Grid = styled("div")(
   @media (min-width: 1024px) {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
-  `
+  `,
 );
 
 const AnotherWrapper = styled("div")({

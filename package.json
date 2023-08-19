@@ -2,32 +2,16 @@
   "name": "pokedex",
   "author": "Putu Rades Pratama",
   "version": "1.0.2",
+  "type": "module",
   "repository": {
     "url": "https://github.com/radespratama/pokegames"
   },
   "scripts": {
-    "dev": "set PORT=3011 && react-scripts start",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
     "format": "prettier --write ."
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.2.1",
@@ -45,12 +29,18 @@
   "devDependencies": {
     "@tabler/icons-react": "^2.31.0",
     "@types/loadable__component": "^5.13.4",
-    "@types/node": "^16.7.13",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/react-lazy-load-image-component": "^1.5.3",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react-swc": "^3.3.2",
     "colorcrafts": "^1.0.4",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
     "prettier": "^3.0.2",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9"
   }
 }

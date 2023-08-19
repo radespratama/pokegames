@@ -8,3 +8,4 @@ export { default as NavItem } from "./Navbar/NavItem";
 export { default as TypeCard } from "./Card/TypeCard";
 export { default as PokeCard } from "./Card/PokeCard";
 export { default as DeleteButton } from "./Button/DeleteButton";
+export { default as NoSignal } from "./NoSignal";

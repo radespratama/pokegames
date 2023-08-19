@@ -1,6 +1,6 @@
 import React, { InputHTMLAttributes } from "react";
 import styled from "@emotion/styled";
-import { units, colors } from "utils";
+import { units, colors } from "../../utils";
 
 const PixelatedInput = styled("div")({
   input: {

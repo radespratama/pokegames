@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
+import { Button, Text } from "../../../components";
 import * as T from "./index.style";
-import { Button, Text } from "components";
 
 export default function NotFoundPage() {
   const navigate = useNavigate();

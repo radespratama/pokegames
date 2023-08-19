@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { Global } from "@emotion/react";
 import { Toaster, toast } from "react-hot-toast";
 
-import Routes from "routes";
-import { GlobalProvider } from "context";
-import NoSignal from "components/NoSignal";
-import { globalStyle } from "emotion/global.style";
-import withOnlineStatus from "utils/hoc/onlineStatus";
+import Routes from "./routes";
+import { GlobalProvider } from "./context";
+import NoSignal from "./components/NoSignal";
+import { globalStyle } from "./emotion/global.style";
+import withOnlineStatus from "./utils/hoc/onlineStatus";
 
 interface AppProps {
   onlineStatus?: boolean;

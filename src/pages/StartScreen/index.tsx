@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Text, Button } from "components";
+import { Text, Button } from "../../components";
 
 import * as T from "./index.style";
 

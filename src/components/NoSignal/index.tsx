@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { IconBroadcastOff } from "@tabler/icons-react";
-import Text from "components/Text";
+import Text from "../../components/Text";
 
 const Container = styled("div")({
   display: "flex",

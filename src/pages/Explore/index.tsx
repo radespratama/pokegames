@@ -4,12 +4,12 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useState, createRef, useEffect } from "react";
 
-import { useGlobalContext } from "context";
-import { IPokemon, IAllPokemonResponse } from "types/pokemon";
-import { Text, Button, Loading, Navbar, PokeCard } from "components";
+import { useGlobalContext } from "../../context";
+import { IPokemon, IAllPokemonResponse } from "../../types/pokemon";
+import { Text, Button, Loading, Navbar, PokeCard } from "../../components";
 
-import { getPokemonId } from "utils";
-import { POKEMON_API } from "configs/api";
+import { getPokemonId } from "../../utils";
+import { POKEMON_API } from "../../configs/api";
 
 import * as T from "./index.style";
 
@@ -50,7 +50,7 @@ const Explore = () => {
   }
 
   useEffect(() => {
-    setNavHeight(navRef.current?.clientHeight!);
+    setNavHeight(navRef.current?.clientHeight as number);
     loadPokemons();
   }, []);
 

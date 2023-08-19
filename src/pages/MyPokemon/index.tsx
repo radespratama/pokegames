@@ -2,10 +2,10 @@
 import React, { createRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { IMyPokemon } from "types/pokemon";
-import { useGlobalContext } from "context";
-import { generatePokeSummary } from "helpers";
-import { Button, Navbar, Text, Modal, PokeCard, DeleteButton } from "components";
+import { IMyPokemon } from "../../types/pokemon";
+import { useGlobalContext } from "../../context";
+import { generatePokeSummary } from "../../helpers";
+import { Button, Navbar, Text, Modal, PokeCard, DeleteButton } from "../../components";
 
 import * as T from "./index.style";
 
@@ -24,7 +24,7 @@ const MyPokemon: React.FC = () => {
   }
 
   useEffect(() => {
-    setNavHeight(navRef.current?.clientHeight!);
+    setNavHeight(navRef.current?.clientHeight as number);
     loadMyPokemon();
   }, []);
 
