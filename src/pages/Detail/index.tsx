@@ -15,7 +15,7 @@ import { POKEMON_API } from "configs/api";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import * as T from "./index.style";
 
-const DetailPokemon: React.FC = () => {
+const DetailPokemon = () => {
   const { name } = useParams();
 
   const [types, setTypes] = useState<string[]>([]);

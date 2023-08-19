@@ -7,6 +7,7 @@ import * as T from "./index.style";
 
 const StartScreen: React.FC = () => {
   const navigate = useNavigate();
+
   return (
     <T.Container>
       <T.Centering>
