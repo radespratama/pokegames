@@ -23,6 +23,8 @@ By using Pokegames you can:
 - [x] Get all list pokemon.
 - [x] Catch a pokemon and bring it to inventory.
 - [x] Animation pokeball when catch the pokemon.
+- [x] Give nickname to a pokemon
+- [x] Releasing a pokemon
 - [x] Pokemon stats
 
 ## Technology 👨‍💻
