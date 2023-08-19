@@ -3,7 +3,7 @@ import { useNavigate, useResolvedPath, useMatch } from "react-router-dom";
 import styled from "@emotion/styled";
 
 import { Text } from "..";
-import { units, colors } from "utils";
+import { units, colors } from "../../utils";
 
 interface INavItem extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "light" | "dark" | "sky";
@@ -17,7 +17,7 @@ interface IStyleProps {
 }
 
 const getStyle = ({ variant = "sky", matched }: IStyleProps) => {
-  let style = {
+  const style = {
     display: "flex",
     gap: units.spacing.sm,
     justifyContent: "center",
@@ -85,8 +85,8 @@ const ALink = styled("a")({
 const PixelatedNavItem = styled("button")((props: IStyleProps) => getStyle(props));
 
 const NavItem: React.FC<INavItem> = ({ variant = "sky", label, href }) => {
-  let resolved = useResolvedPath(href);
-  let matched = useMatch({ path: resolved.pathname });
+  const resolved = useResolvedPath(href);
+  const matched = useMatch({ path: resolved.pathname });
   const navigate = useNavigate();
 
   return (

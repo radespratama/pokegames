@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext } from "react";
-import { IMyPokemon, IPokeSummary } from "types/pokemon";
-import { generatePokeSummary } from "helpers";
+import { IMyPokemon, IPokeSummary } from "../types/pokemon";
+import { generatePokeSummary } from "../helpers";
 
 interface IGlobalContext {
   state: IState;

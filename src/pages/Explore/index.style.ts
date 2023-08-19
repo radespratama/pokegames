@@ -23,7 +23,7 @@ export const Grid = styled("div")({
     gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
   },
   "@media (min-width: 1280px)": {
-    gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+    gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
   },
 });
 

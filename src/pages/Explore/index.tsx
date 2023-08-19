@@ -2,18 +2,18 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import React, { useState, createRef, useEffect } from "react";
+import { useState, createRef, useEffect } from "react";
 
-import { useGlobalContext } from "context";
-import { IPokemon, IAllPokemonResponse } from "types/pokemon";
-import { Text, Button, Loading, Navbar, PokeCard } from "components";
+import { useGlobalContext } from "../../context";
+import { IPokemon, IAllPokemonResponse } from "../../types/pokemon";
+import { Text, Button, Loading, Navbar, PokeCard } from "../../components";
 
-import { POKEMON_API } from "configs/api";
+import { getPokemonId } from "../../utils";
+import { POKEMON_API } from "../../configs/api";
 
 import * as T from "./index.style";
-import { getPokemonId } from "utils";
 
-const Explore: React.FC = () => {
+const Explore = () => {
   const { state } = useGlobalContext();
   const navRef = createRef<HTMLDivElement>();
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
@@ -30,7 +30,7 @@ const Explore: React.FC = () => {
 
         const filteredSummary = data.results?.map((result) => {
           const summaryIdx = state?.pokeSummary!.findIndex(
-            (el) => el.name === result.name.toUpperCase()
+            (el) => el.name === result.name.toUpperCase(),
           );
           return {
             name: result.name,
@@ -43,14 +43,14 @@ const Explore: React.FC = () => {
         setPokeURL(data.next || "");
         setIsFetchingPokemon(false);
       } catch (error) {
-        toast("Oops!. Fail get pokemons. Please try again!");
+        toast.error("Oops!. Fail get pokemons. Please try again!");
         setIsFetchingPokemon(false);
       }
     }
   }
 
   useEffect(() => {
-    setNavHeight(navRef.current?.clientHeight!);
+    setNavHeight(navRef.current?.clientHeight as number);
     loadPokemons();
   }, []);
 

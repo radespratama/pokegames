@@ -3,8 +3,8 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import styled from "@emotion/styled";
 
 import { Text } from "..";
-import { colors } from "utils";
-import { POKEMON_IMAGE } from "configs/api";
+import { colors } from "../../utils";
+import { POKEMON_IMAGE } from "../../configs/api";
 
 import "react-lazy-load-image-component/src/effects/blur.css";
 
