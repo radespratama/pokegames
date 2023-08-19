@@ -61,8 +61,8 @@ yarn || npm install
 # Copy Pokemon API in .env file
 # You can visit https://pokeapi.co
 
-REACT_APP_PUBLIC_POKEMON_API= <API URL HERE>
-REACT_APP_PUBLIC_POKEMON_IMAGE=https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/
+VITE_POKEMON_API= <API URL HERE>
+VITE_POKEMON_IMAGE=https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/
 ```
 
 #### Starting server
