@@ -43,6 +43,7 @@
     "react-scripts": "^5.0.1"
   },
   "devDependencies": {
+    "@tabler/icons-react": "^2.31.0",
     "@types/loadable__component": "^5.13.4",
     "@types/node": "^16.7.13",
     "@types/react": "^18.2.20",
