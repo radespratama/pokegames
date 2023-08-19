@@ -24,8 +24,21 @@ const StartScreen: React.FC = () => {
           </T.A>
         </Text>
       </T.Centering>
-      <div style={{ position: "absolute", bottom: 18 }}>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 18,
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+        }}>
         <Text variant="outlined">&copy;{new Date().getFullYear()} radespratama</Text>
+        <Text variant="outlined">
+          | Want to contribute?{" "}
+          <T.A href="https://github.com/radespratama/pokegames" target="_blank">
+            GitHub
+          </T.A>
+        </Text>
       </div>
     </T.Container>
   );
