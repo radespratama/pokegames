@@ -14,9 +14,8 @@ import { POKEMON_API } from "../../configs/api";
 import * as T from "./index.style";
 
 const Explore = () => {
-  const { state } = useGlobalContext();
+  const { state, setState } = useGlobalContext();
   const navRef = createRef<HTMLDivElement>();
-  const [pokemons, setPokemons] = useState<IPokemon[]>([]);
 
   const [pokeUrl, setPokeURL] = useState<string>(`${POKEMON_API}?limit=50&offset=0`);
   const [isFetchingPokemon, setIsFetchingPokemon] = useState<boolean>(false);
@@ -26,7 +25,9 @@ const Explore = () => {
     if (pokeUrl) {
       try {
         setIsFetchingPokemon(true);
-        const { data } = await axios.get<IAllPokemonResponse>(pokeUrl);
+        const { data } = await axios.get<IAllPokemonResponse>(POKEMON_API, {
+          params: { limit: 50, offset: state.pokemons?.length || 0 },
+        });
 
         const filteredSummary = data.results?.map((result) => {
           const summaryIdx = state?.pokeSummary!.findIndex(
@@ -39,7 +40,7 @@ const Explore = () => {
           };
         });
 
-        setPokemons((prevState) => [...prevState, ...filteredSummary]);
+        setState({ pokemons: [...(state.pokemons || []), ...filteredSummary] });
         setPokeURL(data.next || "");
         setIsFetchingPokemon(false);
       } catch (error) {
@@ -51,7 +52,9 @@ const Explore = () => {
 
   useEffect(() => {
     setNavHeight(navRef.current?.clientHeight as number);
-    loadPokemons();
+    if (!state.pokemons?.length) {
+      loadPokemons();
+    }
   }, []);
 
   return (
@@ -61,8 +64,8 @@ const Explore = () => {
           Challenge &amp; catch them all
         </Text>
         <T.Grid>
-          {pokemons?.length
-            ? pokemons.map((pokemon: IPokemon) => (
+          {state?.pokemons?.length
+            ? state?.pokemons.map((pokemon: IPokemon) => (
                 <Link
                   key={`${pokemon.name}-${Math.random()}`}
                   to={"/pokemon/" + pokemon.name}

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from "react";
-import { IMyPokemon, IPokeSummary } from "../types/pokemon";
+import { IMyPokemon, IPokeSummary, IPokemon } from "../types/pokemon";
 import { generatePokeSummary } from "../helpers";
 
 interface IGlobalContext {
@@ -9,6 +9,7 @@ interface IGlobalContext {
 
 interface IState {
   pokeSummary?: IPokeSummary[];
+  pokemons?: IPokemon[];
 }
 
 const loadMyPokemon = (): IMyPokemon[] => {
@@ -19,6 +20,7 @@ const loadMyPokemon = (): IMyPokemon[] => {
 
 const initialState: IState = {
   pokeSummary: generatePokeSummary(loadMyPokemon()),
+  pokemons: [],
 };
 
 const GlobalContext = createContext<IGlobalContext>({
