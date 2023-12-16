@@ -47,7 +47,13 @@ const PokeCard: React.FC<Props> = ({ name, nickname, captured, sprite, pokemonId
     <PixelatedPokemonCard nickname={nickname} className="pxl-border">
       {nickname ? (
         <>
-          <LazyLoadImage src={sprite} alt={name} width={96} height={96} loading="lazy" />
+          <LazyLoadImage
+            src={sprite}
+            alt={`pokemon ${name}`}
+            width={96}
+            height={96}
+            loading="lazy"
+          />
           <Text variant="darker" size="lg">
             {nickname}
           </Text>
@@ -55,7 +61,7 @@ const PokeCard: React.FC<Props> = ({ name, nickname, captured, sprite, pokemonId
       ) : (
         <LazyLoadImage
           src={`${POKEMON_IMAGE}/${pokemonId}.png`}
-          alt={name}
+          alt={`pokemon ${name}`}
           width={96}
           height={96}
           loading="lazy"
