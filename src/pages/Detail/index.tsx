@@ -141,6 +141,14 @@ const DetailPokemon = () => {
   }, []);
 
   useEffect(() => {
+    document.title = `Pokegames - ${name?.toUpperCase()}`;
+
+    return () => {
+      document.title = "Pokegames";
+    };
+  }, []);
+
+  useEffect(() => {
     window.scroll({
       top: 0,
       behavior: "smooth",
