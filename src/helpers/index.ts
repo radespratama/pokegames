@@ -26,3 +26,10 @@ export const generatePokeSummary = (pokemons: IMyPokemon[]): IPokeSummary[] => {
 
   return results;
 };
+
+export const loadMyPokemonFromLocalStorage = (): IMyPokemon[] => {
+  const rawPokemons = localStorage.getItem("pokegames@myPokemon");
+  const parsed = JSON.parse(rawPokemons!) || [];
+
+  return parsed;
+};
