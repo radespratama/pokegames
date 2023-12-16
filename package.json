@@ -29,6 +29,7 @@
   "devDependencies": {
     "@tabler/icons-react": "^2.31.0",
     "@types/loadable__component": "^5.13.4",
+    "@types/node": "^20.10.4",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/react-lazy-load-image-component": "^1.5.3",
