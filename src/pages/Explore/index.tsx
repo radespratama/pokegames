@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useState, createRef, useEffect } from "react";
 
 import { useGlobalContext } from "../../context";
-import { IPokemon, IAllPokemonResponse } from "../../types/pokemon";
+import { IPokemon } from "../../types/pokemon";
 import { Text, Button, Loading, Navbar, PokeCard } from "../../components";
 
 import { getPokemonId } from "../../utils";
 import { POKEMON_API } from "../../configs/api";
 
 import * as T from "./index.style";
+import { getAllPokemon } from "../../services/pokemon";
 
 const Explore = () => {
   const { state, setState } = useGlobalContext();
@@ -25,23 +25,22 @@ const Explore = () => {
     if (pokeUrl) {
       try {
         setIsFetchingPokemon(true);
-        const { data } = await axios.get<IAllPokemonResponse>(POKEMON_API, {
-          params: { limit: 50, offset: state.pokemons?.length || 0 },
-        });
 
-        const filteredSummary = data.results?.map((result) => {
-          const summaryIdx = state?.pokeSummary!.findIndex(
-            (el) => el.name === result.name.toUpperCase(),
-          );
-          return {
-            name: result.name,
-            url: result.url,
-            captured: state.pokeSummary![summaryIdx]?.captured || 0,
-          };
-        });
+        const response = await getAllPokemon(50, state?.pokemons?.length || 0);
+
+        const filteredSummary =
+          response?.results?.map((result) => {
+            const summaryIdx =
+              state?.pokeSummary?.findIndex((el) => el.name === result.name.toUpperCase()) || 0;
+            return {
+              name: result.name,
+              url: result.url,
+              captured: state?.pokeSummary?.[summaryIdx]?.captured ?? 0,
+            };
+          }) || [];
 
         setState({ pokemons: [...(state.pokemons || []), ...filteredSummary] });
-        setPokeURL(data.next || "");
+        setPokeURL(response?.next || "");
         setIsFetchingPokemon(false);
       } catch (error) {
         toast.error("Oops!. Fail get pokemons. Please try again!");
@@ -68,12 +67,12 @@ const Explore = () => {
             ? state?.pokemons.map((pokemon: IPokemon) => (
                 <Link
                   key={`${pokemon.name}-${Math.random()}`}
-                  to={"/pokemon/" + pokemon.name}
+                  to={`/pokemon/${pokemon?.name}`}
                   style={{ display: "flex" }}>
                   <PokeCard
                     pokemonId={getPokemonId(pokemon?.url ?? "")}
-                    name={pokemon.name}
-                    captured={pokemon.captured}
+                    name={pokemon?.name}
+                    captured={pokemon?.captured}
                   />
                 </Link>
               ))

@@ -1,35 +1,42 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams, Link } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { FormEvent, ChangeEvent, useEffect, useState, createRef } from "react";
+import { clearTimeout, setTimeout } from "worker-timers";
+import { FormEvent, ChangeEvent, useEffect, useState, createRef, useRef } from "react";
 
 import { useGlobalContext } from "../../context";
 import { generatePokeSummary } from "../../helpers";
 import { IPokemonDetailResponse } from "../../types/pokemon";
 import { Button, Navbar, Text, Loading, TypeCard, Input, Modal } from "../../components";
 
-import { POKEMON_API } from "../../configs/api";
-
 import "react-lazy-load-image-component/src/effects/blur.css";
 import * as T from "./index.style";
+import { getDetailPokemon } from "../../services/pokemon";
+
+type TypesPokemon = { type: { name: string } };
+type MovesPokemon = { move: { name: string } };
 
 const DetailPokemon = () => {
   const { name = "" } = useParams();
 
-  const [types, setTypes] = useState<string[] | any>([]);
-  const [moves, setMoves] = useState<string[] | any>([]);
+  const catchPokemonTimeout = useRef<NodeJS.Timeout | number>(0);
+  const throwBallTimeout = useRef<NodeJS.Timeout | number>(0);
+
   const [sprite, setSprite] = useState<string>("");
-  const [stats, setStats] = useState<IPokemonDetailResponse["stats"]>([]);
-  const [abilities, setAbilities] = useState<IPokemonDetailResponse["abilities"]>([]);
+  const [types, setTypes] = useState<string[]>([]);
+  const [moves, setMoves] = useState<string[]>([]);
   const [nickname, setNickname] = useState<string>("");
   const [navHeight, setNavHeight] = useState<number>(0);
+  const [stats, setStats] = useState<IPokemonDetailResponse["stats"]>([]);
+  const [abilities, setAbilities] = useState<IPokemonDetailResponse["abilities"]>([]);
+
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isCaught, setIsCaught] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCatching, setIsCatching] = useState<boolean>(false);
   const [isEndPhase, setIsEndPhase] = useState<boolean>(false);
+
   const [nicknameModal, setNicknameModal] = useState<boolean>(false);
   const [nicknameIsValid, setNicknameIsValid] = useState<boolean>(true);
 
@@ -39,27 +46,31 @@ const DetailPokemon = () => {
   async function loadPokemon() {
     try {
       setIsLoading(true);
-      const {
-        data: { types, sprites, moves, stats, abilities },
-      } = await axios.get<IPokemonDetailResponse>(`${POKEMON_API}/${name}`);
-      setTypes(types.map((type) => type?.type?.name));
-      setMoves(moves.map((move) => move?.move?.name));
+
+      const response = await getDetailPokemon(name);
+
+      setTypes(response?.types.map((type: TypesPokemon) => type.type?.name));
+      setMoves(response?.moves.map((move: MovesPokemon) => move.move?.name));
       setSprite(
-        sprites?.versions?.["generation-v"]?.["black-white"]?.animated?.front_default ||
-          sprites.front_default,
+        response?.sprites.versions?.["generation-v"]?.["black-white"].animated.front_default ||
+          response?.sprites.front_default,
       );
-      setStats(stats);
-      setAbilities(abilities);
+
+      setStats(response?.stats);
+      setAbilities(response?.abilities);
       setIsLoading(false);
     } catch (error) {
       toast("Oops!. Fail get pokemons. Please try again!");
       setIsLoading(false);
+      console.error({ error });
     }
   }
 
   async function catchPokemon() {
+    if (catchPokemonTimeout.current) clearTimeout(catchPokemonTimeout.current as number);
+
     return new Promise((resolve) => {
-      setTimeout(() => {
+      catchPokemonTimeout.current = setTimeout(() => {
         resolve(Math.random() < 0.5 ? false : true);
       }, 2000);
     });
@@ -76,7 +87,10 @@ const DetailPokemon = () => {
     } else {
       setIsCaught(false);
     }
-    setTimeout(() => {
+
+    if (throwBallTimeout.current) clearTimeout(throwBallTimeout.current as number);
+
+    throwBallTimeout.current = setTimeout(() => {
       setIsEndPhase(false);
       isCaught && setNicknameModal(true);
     }, 1200);
@@ -116,6 +130,14 @@ const DetailPokemon = () => {
   useEffect(() => {
     setNavHeight(navRef.current?.clientHeight as number);
     loadPokemon();
+
+    return () => {
+      setTypes([]);
+      setMoves([]);
+      setStats([]);
+      setSprite("");
+      setAbilities([]);
+    };
   }, []);
 
   useEffect(() => {

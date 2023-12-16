@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { IMyPokemon } from "../../types/pokemon";
 import { useGlobalContext } from "../../context";
-import { generatePokeSummary } from "../../helpers";
+import { generatePokeSummary, loadMyPokemonFromLocalStorage } from "../../helpers";
 import { Button, Navbar, Text, Modal, PokeCard, DeleteButton } from "../../components";
 
 import * as T from "./index.style";
@@ -17,9 +17,8 @@ const MyPokemon: React.FC = () => {
   const { setState } = useGlobalContext();
   const navRef = createRef<HTMLDivElement>();
 
-  async function loadMyPokemon() {
-    const rawPokemons = localStorage.getItem("pokegames@myPokemon");
-    const parsed = JSON.parse(rawPokemons!) || [];
+  function loadMyPokemon() {
+    const parsed = loadMyPokemonFromLocalStorage();
     setPokemons(parsed);
   }
 
@@ -28,7 +27,7 @@ const MyPokemon: React.FC = () => {
     loadMyPokemon();
   }, []);
 
-  async function releasePokemon(nickname: string) {
+  function releasePokemon(nickname: string) {
     const newCollection = pokemons.filter((pokemon: IMyPokemon) => pokemon.nickname !== nickname);
     localStorage.setItem("pokegames@myPokemon", JSON.stringify(newCollection));
 
@@ -72,7 +71,7 @@ const MyPokemon: React.FC = () => {
 
         {pokemons?.length ? (
           <T.Grid>
-            {pokemons.length &&
+            {pokemons?.length &&
               [...pokemons].reverse().map((pokemon: IMyPokemon) => (
                 <T.WrapperCardList key={pokemon.nickname}>
                   <PokeCard name={pokemon.name} nickname={pokemon.nickname} sprite={pokemon.sprite}>
