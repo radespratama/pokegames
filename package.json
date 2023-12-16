@@ -23,7 +23,8 @@
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-lazy-load-image-component": "^1.6.0",
-    "react-router-dom": "^6.17.0"
+    "react-router-dom": "^6.17.0",
+    "worker-timers": "^7.0.80"
   },
   "devDependencies": {
     "@tabler/icons-react": "^2.31.0",

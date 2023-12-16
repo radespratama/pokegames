@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from "react";
-import { IMyPokemon, IPokeSummary, IPokemon } from "../types/pokemon";
-import { generatePokeSummary } from "../helpers";
+
+import { IPokeSummary, IPokemon } from "../types/pokemon";
+import { generatePokeSummary, loadMyPokemonFromLocalStorage } from "../helpers";
 
 interface IGlobalContext {
   state: IState;
@@ -12,14 +13,8 @@ interface IState {
   pokemons?: IPokemon[];
 }
 
-const loadMyPokemon = (): IMyPokemon[] => {
-  const rawPokemons = localStorage.getItem("pokegames@myPokemon");
-  const parsed = JSON.parse(rawPokemons!) || [];
-  return parsed;
-};
-
 const initialState: IState = {
-  pokeSummary: generatePokeSummary(loadMyPokemon()),
+  pokeSummary: generatePokeSummary(loadMyPokemonFromLocalStorage()),
   pokemons: [],
 };
 
