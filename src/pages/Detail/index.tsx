@@ -309,7 +309,9 @@ const DetailPokemon = () => {
               })}
             </T.PokemonStatsWrapper>
           </div>
-          <div className="img-pokemon" style={{ display: "flex", justifyContent: "center" }}>
+          <T.WrappedPokemonAvatar
+            className="img-pokemon"
+            style={{ display: "flex", justifyContent: "center" }}>
             {!isLoading ? (
               <LazyLoadImage
                 src={sprite}
@@ -318,13 +320,14 @@ const DetailPokemon = () => {
                 height={256}
                 effect="blur"
                 loading="lazy"
+                className="pokemon-dt"
               />
             ) : (
               <T.ImageLoadingWrapper>
                 <Loading />
               </T.ImageLoadingWrapper>
             )}
-          </div>
+          </T.WrappedPokemonAvatar>
         </T.PokemonContainer>
 
         <T.Content style={{ marginTop: "30px" }}>
