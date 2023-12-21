@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import toast from "react-hot-toast";
+import styled from "@emotion/styled";
 import { useParams, Link } from "react-router-dom";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import { clearTimeout, setTimeout } from "worker-timers";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import { FormEvent, ChangeEvent, useEffect, useState, createRef, useRef } from "react";
 
 import { useGlobalContext } from "../../context";
@@ -16,6 +17,12 @@ import { getDetailPokemon } from "../../services/pokemon";
 
 type TypesPokemon = { type: { name: string } };
 type MovesPokemon = { move: { name: string } };
+
+const PokemonAvatar = styled(LazyLoadImage)`
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+`;
 
 const DetailPokemon = () => {
   const { name = "" } = useParams();
@@ -160,13 +167,14 @@ const DetailPokemon = () => {
       <Modal open={isCatching}>
         <T.CatchingModal>
           <T.ImageContainer>
-            <LazyLoadImage
+            <PokemonAvatar
               src={sprite}
               alt={name}
               width={320}
               height={320}
               effect="blur"
               loading="lazy"
+              className="pokemon-dt"
             />
           </T.ImageContainer>
           <div style={{ display: "grid", placeItems: "center" }}>
@@ -196,6 +204,7 @@ const DetailPokemon = () => {
                   height={320}
                   effect="blur"
                   loading="lazy"
+                  className="pokemon-dt"
                 />
               </T.ImageContainer>
 
@@ -208,13 +217,14 @@ const DetailPokemon = () => {
           <Modal open={isCaught} overlay="light">
             <T.PostCatchModal>
               <T.ImageContainer>
-                <LazyLoadImage
+                <PokemonAvatar
                   src={sprite}
                   alt={name}
                   width={320}
                   height={320}
                   effect="blur"
                   loading="lazy"
+                  className="pokemon-dt"
                 />
               </T.ImageContainer>
 
@@ -230,13 +240,14 @@ const DetailPokemon = () => {
       <Modal open={nicknameModal} overlay="light" solid>
         <T.NicknamingModal>
           <T.ImageContainer>
-            <LazyLoadImage
+            <PokemonAvatar
               src={sprite}
               alt={name}
               width={320}
               height={320}
               effect="blur"
               loading="lazy"
+              className="pokemon-dt"
             />
           </T.ImageContainer>
 
@@ -317,11 +328,9 @@ const DetailPokemon = () => {
               })}
             </T.PokemonStatsWrapper>
           </div>
-          <T.WrappedPokemonAvatar
-            className="img-pokemon"
-            style={{ display: "flex", justifyContent: "center" }}>
+          <div className="img-pokemon" style={{ display: "flex", justifyContent: "center" }}>
             {!isLoading ? (
-              <LazyLoadImage
+              <PokemonAvatar
                 src={sprite}
                 alt={name}
                 width={256}
@@ -335,7 +344,7 @@ const DetailPokemon = () => {
                 <Loading />
               </T.ImageLoadingWrapper>
             )}
-          </T.WrappedPokemonAvatar>
+          </div>
         </T.PokemonContainer>
 
         <T.Content style={{ marginTop: "30px" }}>

@@ -40,6 +40,12 @@ const getStyle = ({ nickname }: Props) => {
   `;
 };
 
+const PokemonAvatar = styled(LazyLoadImage)`
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+`;
+
 const PixelatedPokemonCard = styled("div")((props: Props) => getStyle(props));
 
 const PokeCard: React.FC<Props> = ({ name, nickname, captured, sprite, pokemonId, children }) => {
@@ -47,7 +53,7 @@ const PokeCard: React.FC<Props> = ({ name, nickname, captured, sprite, pokemonId
     <PixelatedPokemonCard nickname={nickname} className="pxl-border">
       {nickname ? (
         <>
-          <LazyLoadImage
+          <PokemonAvatar
             src={sprite}
             alt={`pokemon ${name}`}
             width={96}
