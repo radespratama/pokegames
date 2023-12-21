@@ -80,3 +80,7 @@ git add .
 git commit -m "commit message"
 git push YOUR_REPO_URL YOUR_BRANCH
 ```
+
+## 🎉 Thanks to 
+
+- @kuronekony4n [#15] img blurred (heres how to fix it)

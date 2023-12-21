@@ -2,9 +2,18 @@ import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { colors, units } from "../../utils";
 
+const WrappedPokemonAvatar = styled.div`
+  & img.pokemon-dt {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+`;
+
 const Page = styled("div")({
   "#pokeball-bg": {
     position: "fixed",
+
     right: "-64vw",
     top: 0,
     zIndex: -1,
@@ -232,4 +241,5 @@ export {
   PokemonContainer,
   PokemonStatsWrapper,
   AbilitiesWrapper,
+  WrappedPokemonAvatar,
 };
