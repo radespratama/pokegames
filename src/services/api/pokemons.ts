@@ -4,6 +4,25 @@ export interface IMyPokemon {
   name: string;
   nickname: string;
   sprite?: string;
+  sprite_back?: string;
+  base_experience?: number;
+  battle_state: {
+    level: number;
+    experience: number;
+  };
+  stats: {
+    hp: number;
+    attack: number;
+    defense: number;
+    special_attack: number;
+    special_defense: number;
+    speed: number;
+  };
+  types: Array<string>;
+  moves: Array<{
+    name: string;
+    power: number;
+  }>;
 }
 
 export interface IPokemon {
@@ -25,8 +44,26 @@ export interface IAllPokemonResponse {
   results: Array<IPokemon>;
 }
 
+interface IPokemonStats {
+  base_stat: number;
+  effort?: number;
+  stat: {
+    name?: string;
+    url: string;
+  };
+}
+
+interface IPokemonTypes {
+  slot: number;
+  type: {
+    name?: string;
+    url: string;
+  };
+}
+
 export interface IPokemonDetailResponse {
   name: string;
+  base_experience: number;
   abilities: Array<{
     ability: {
       name: string;
@@ -42,20 +79,16 @@ export interface IPokemonDetailResponse {
     };
     [other: string]: unknown;
   }>;
-  types: Array<{
-    type?: {
-      name?: string;
-      [other: string]: unknown;
-    };
-    [other: string]: unknown;
-  }>;
+  types: Array<IPokemonTypes>;
   sprites: {
     front_default: string;
+    back_default: string;
     versions?: {
       "generation-v"?: {
         "black-white"?: {
           animated?: {
             front_default: string;
+            back_default: string;
           };
           [other: string]: unknown;
         };
@@ -64,14 +97,7 @@ export interface IPokemonDetailResponse {
     };
     [other: string]: unknown;
   };
-  stats: Array<{
-    base_stat: number;
-    effort?: number;
-    stat: {
-      name?: string;
-      url: string;
-    };
-  }>;
+  stats: Array<IPokemonStats>;
   [other: string]: unknown;
 }
 
@@ -94,7 +120,9 @@ export const getAllPokemon = async ({
   return result.data;
 };
 
-export const getDetailPokemon = async (name: string): Promise<unknown> => {
+export const getDetailPokemon = async (
+  name: string | number,
+): Promise<IPokemonDetailResponse | undefined> => {
   const result = await axios.get(`/pokemon/${name}`);
 
   return result.data;

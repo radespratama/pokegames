@@ -60,3 +60,7 @@ export const loadMyPokemonFromLocalStorage = (): Array<IMyPokemon> => {
     return [];
   }
 };
+
+export const randomNumber = (min: number = 1, max: number = 999): number => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};

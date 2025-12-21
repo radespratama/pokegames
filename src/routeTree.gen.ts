@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root";
+import { Route as VsBattleRouteImport } from "./routes/vs-battle";
 import { Route as MyPokemonRouteImport } from "./routes/my-pokemon";
 import { Route as IndexRouteImport } from "./routes/index";
 import { Route as PokemonsIndexRouteImport } from "./routes/pokemons.index";
 import { Route as PokemonsPokemonNameRouteImport } from "./routes/pokemons.$pokemonName";
 
+const VsBattleRoute = VsBattleRouteImport.update({
+  id: "/vs-battle",
+  path: "/vs-battle",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const MyPokemonRoute = MyPokemonRouteImport.update({
   id: "/my-pokemon",
   path: "/my-pokemon",
@@ -38,12 +44,14 @@ const PokemonsPokemonNameRoute = PokemonsPokemonNameRouteImport.update({
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
   "/my-pokemon": typeof MyPokemonRoute;
+  "/vs-battle": typeof VsBattleRoute;
   "/pokemons/$pokemonName": typeof PokemonsPokemonNameRoute;
   "/pokemons": typeof PokemonsIndexRoute;
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute;
   "/my-pokemon": typeof MyPokemonRoute;
+  "/vs-battle": typeof VsBattleRoute;
   "/pokemons/$pokemonName": typeof PokemonsPokemonNameRoute;
   "/pokemons": typeof PokemonsIndexRoute;
 }
@@ -51,18 +59,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   "/": typeof IndexRoute;
   "/my-pokemon": typeof MyPokemonRoute;
+  "/vs-battle": typeof VsBattleRoute;
   "/pokemons/$pokemonName": typeof PokemonsPokemonNameRoute;
   "/pokemons/": typeof PokemonsIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/my-pokemon" | "/pokemons/$pokemonName" | "/pokemons";
+  fullPaths:
+    | "/"
+    | "/my-pokemon"
+    | "/vs-battle"
+    | "/pokemons/$pokemonName"
+    | "/pokemons";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/my-pokemon" | "/pokemons/$pokemonName" | "/pokemons";
+  to:
+    | "/"
+    | "/my-pokemon"
+    | "/vs-battle"
+    | "/pokemons/$pokemonName"
+    | "/pokemons";
   id:
     | "__root__"
     | "/"
     | "/my-pokemon"
+    | "/vs-battle"
     | "/pokemons/$pokemonName"
     | "/pokemons/";
   fileRoutesById: FileRoutesById;
@@ -70,12 +90,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   MyPokemonRoute: typeof MyPokemonRoute;
+  VsBattleRoute: typeof VsBattleRoute;
   PokemonsPokemonNameRoute: typeof PokemonsPokemonNameRoute;
   PokemonsIndexRoute: typeof PokemonsIndexRoute;
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
+    "/vs-battle": {
+      id: "/vs-battle";
+      path: "/vs-battle";
+      fullPath: "/vs-battle";
+      preLoaderRoute: typeof VsBattleRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     "/my-pokemon": {
       id: "/my-pokemon";
       path: "/my-pokemon";
@@ -110,6 +138,7 @@ declare module "@tanstack/react-router" {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MyPokemonRoute: MyPokemonRoute,
+  VsBattleRoute: VsBattleRoute,
   PokemonsPokemonNameRoute: PokemonsPokemonNameRoute,
   PokemonsIndexRoute: PokemonsIndexRoute,
 };

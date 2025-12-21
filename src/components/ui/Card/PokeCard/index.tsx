@@ -4,6 +4,7 @@ import type { HTMLAttributes } from "react";
 
 import { POKEMON_IMAGE } from "@/configs/api";
 import Text from "@/components/ui/Text";
+import { usePokemonLevel } from "@/hooks/common/battle/usePokemonLevel";
 
 import "react-lazy-load-image-component/src/effects/blur.css";
 
@@ -13,6 +14,10 @@ export interface PokeCardProps extends HTMLAttributes<HTMLDivElement> {
   captured?: number;
   sprite?: string;
   pokemonId?: number | string;
+  level?: number;
+  exp?: number;
+  selectedPokemon?: string;
+  setSelectedPokemon?: () => void;
 }
 
 const PokeCard = ({
@@ -21,10 +26,25 @@ const PokeCard = ({
   captured,
   sprite,
   pokemonId,
+  level,
+  exp,
   children,
+  selectedPokemon,
+  setSelectedPokemon,
 }: PokeCardProps) => {
+  const { getExpProgress } = usePokemonLevel();
+
+  const expData = nickname ? getExpProgress(nickname) : null;
+
   return (
-    <PixelatedPokemonCard nickname={nickname} className="pxl-border">
+    <PixelatedPokemonCard
+      nickname={nickname}
+      className="pxl-border"
+      style={{
+        cursor: "pointer",
+      }}
+      selectedPokemon={selectedPokemon}
+      onClick={setSelectedPokemon}>
       {nickname ? (
         <>
           <PokemonAvatar
@@ -38,6 +58,40 @@ const PokeCard = ({
           <Text variant="darker" size="lg">
             {nickname}
           </Text>
+
+          {level !== undefined && (
+            <div style={{ width: "100%", marginTop: "8px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "4px",
+                }}>
+                <Text as="span">Lv. {level}</Text>
+                <Text as="span">
+                  {expData?.current || exp || 0}/{expData?.needed || 100} EXP
+                </Text>
+              </div>
+
+              <div
+                style={{
+                  width: "100%",
+                  height: "8px",
+                  backgroundColor: "#ddd",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                }}>
+                <div
+                  style={{
+                    width: `${expData?.percentage || 0}%`,
+                    height: "100%",
+                    backgroundColor: "#4CAF50",
+                    transition: "width 0.3s ease",
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <LazyLoadImage
@@ -51,6 +105,7 @@ const PokeCard = ({
       )}
 
       <Text>{name}</Text>
+
       {children}
 
       {captured ? (
