@@ -39,8 +39,8 @@ Pokegames is created using:
 
 ## Requirements 📦
 
-- Node JS 16 or later
-- Typescript v4 or later
+- Node JS 20 or later
+- Typescript v5 or later
 
 ## Installation 🛠️
 
@@ -68,7 +68,7 @@ VITE_POKEMON_IMAGE=https://raw.githubusercontent.com/PokeAPI/sprites/master/spri
 #### Starting server
 
 ```bash
-yarn start || npm run start
+yarn dev || npm run dev
 ```
 
 ## 🤞 Contributing
@@ -81,6 +81,6 @@ git commit -m "commit message"
 git push YOUR_REPO_URL YOUR_BRANCH
 ```
 
-## 🎉 Thanks to 
+## 🎉 Thanks to
 
 - @kuronekony4n [#15] img blurred (heres how to fix it)
