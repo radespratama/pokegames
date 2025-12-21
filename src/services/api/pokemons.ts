@@ -1,0 +1,101 @@
+import axios from "@/libs/axios";
+
+export interface IMyPokemon {
+  name: string;
+  nickname: string;
+  sprite?: string;
+}
+
+export interface IPokemon {
+  name: string;
+  captured?: number;
+  url?: string;
+  sprite?: string;
+}
+
+export interface IPokeSummary {
+  name: string;
+  captured: number;
+}
+
+export interface IAllPokemonResponse {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: Array<IPokemon>;
+}
+
+export interface IPokemonDetailResponse {
+  name: string;
+  abilities: Array<{
+    ability: {
+      name: string;
+      url: string;
+    };
+    is_hidden: boolean;
+    slot: number;
+  }>;
+  moves: Array<{
+    move?: {
+      name?: string;
+      [other: string]: unknown;
+    };
+    [other: string]: unknown;
+  }>;
+  types: Array<{
+    type?: {
+      name?: string;
+      [other: string]: unknown;
+    };
+    [other: string]: unknown;
+  }>;
+  sprites: {
+    front_default: string;
+    versions?: {
+      "generation-v"?: {
+        "black-white"?: {
+          animated?: {
+            front_default: string;
+          };
+          [other: string]: unknown;
+        };
+      };
+      [other: string]: unknown;
+    };
+    [other: string]: unknown;
+  };
+  stats: Array<{
+    base_stat: number;
+    effort?: number;
+    stat: {
+      name?: string;
+      url: string;
+    };
+  }>;
+  [other: string]: unknown;
+}
+
+interface IGetAllPokemonParams {
+  limit?: number;
+  offset?: number;
+}
+
+export const getAllPokemon = async ({
+  limit = 20,
+  offset = 0,
+}: IGetAllPokemonParams): Promise<IAllPokemonResponse | undefined> => {
+  const result = await axios.get("/pokemon", {
+    params: {
+      limit,
+      offset,
+    },
+  });
+
+  return result.data;
+};
+
+export const getDetailPokemon = async (name: string): Promise<unknown> => {
+  const result = await axios.get(`/pokemon/${name}`);
+
+  return result.data;
+};

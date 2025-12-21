@@ -1,24 +1,22 @@
+import { URL, fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import { devtools } from "@tanstack/devtools-vite";
+import viteReact from "@vitejs/plugin-react";
 
-// https://vitejs.dev/config/
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
+
 export default defineConfig({
-  plugins: [react()],
-  build: {
-    minify: true,
-    cssCodeSplit: true,
-    cssMinify: true,
-    chunkSizeWarningLimit: 1300,
-    sourcemap: false,
-
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            return id.toString().split("node_modules/")[1].split("/")[0].toString();
-          }
-        },
-      },
+  plugins: [
+    devtools(),
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+    }),
+    viteReact(),
+  ],
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
 });
