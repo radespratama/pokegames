@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { Link } from "@tanstack/react-router";
 import * as T from "./index.style";
@@ -11,7 +11,7 @@ const ExplorePokemonsModule = () => {
   const navRef = useRef<HTMLDivElement>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  const { pokeSummary } = usePokemonStore();
+  const pokemons = usePokemonStore((state) => state.pokemons);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     usePokemons({ isEnabled: true, limit: 50 });
@@ -38,18 +38,27 @@ const ExplorePokemonsModule = () => {
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const allPokemons =
-    data?.pages.flatMap((page) =>
-      page?.results.map((pokemon) => {
-        const summaryIdx = pokeSummary.findIndex(
-          (el) => el.name === pokemon.name.toUpperCase(),
-        );
-        return {
+  const pokeSummary = useMemo(() => {
+    const summary: Record<string, number> = {};
+
+    pokemons.forEach((p) => {
+      const upperName = p.name.toUpperCase();
+      summary[upperName] = (summary[upperName] || 0) + 1;
+    });
+
+    return summary;
+  }, [pokemons]);
+
+  const allPokemons = useMemo(() => {
+    return (
+      data?.pages.flatMap((page) =>
+        page?.results.map((pokemon) => ({
           ...pokemon,
-          captured: summaryIdx >= 0 ? pokeSummary[summaryIdx].captured : 0,
-        };
-      }),
-    ) || [];
+          captured: pokeSummary[pokemon.name.toUpperCase()] || 0,
+        })),
+      ) || []
+    );
+  }, [data, pokeSummary]);
 
   return (
     <>

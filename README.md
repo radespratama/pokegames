@@ -26,6 +26,8 @@ By using Pokegames you can:
 - [x] Give nickname to a pokemon
 - [x] Releasing a pokemon
 - [x] Pokemon stats
+- [x] Battle with wild pokemon (Wild pokemon use random stat and turn base mechanism)
+- [ ] Leveling your current pokemon
 
 ## Technology 👨‍💻
 
@@ -39,8 +41,8 @@ Pokegames is created using:
 
 ## Requirements 📦
 
-- Node JS 16 or later
-- Typescript v4 or later
+- Node JS 20 or later
+- Typescript v5 or later
 
 ## Installation 🛠️
 
@@ -71,16 +73,16 @@ VITE_POKEMON_IMAGE=https://raw.githubusercontent.com/PokeAPI/sprites/master/spri
 yarn start || npm run start
 ```
 
-## 🤞 Contributing
+## 🤝 Contributing
 
-After setting up the project, and making changes:
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-```git
-git add .
-git commit -m "commit message"
-git push YOUR_REPO_URL YOUR_BRANCH
-```
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 🎉 Thanks to 
+## 🎉 Thanks to
 
 - @kuronekony4n [#15] img blurred (heres how to fix it)

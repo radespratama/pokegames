@@ -1,10 +1,9 @@
 import { useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import * as T from "./index.style";
 import type { IMyPokemon } from "@/services/api/pokemons";
-import { POKEMON_STORE_KEY, usePokemonStore } from "@/store/app/pokemonStore";
-import { generatePokeSummary } from "@/utils";
+import { usePokemonStore } from "@/store/app/pokemonStore";
 import {
   Button,
   DeleteButton,
@@ -15,25 +14,16 @@ import {
 } from "@/components/ui";
 
 const MyPokemonModule = () => {
+  const navigate = useNavigate();
   const navRef = useRef<HTMLDivElement>(null);
 
-  const { pokemons, setState } = usePokemonStore();
+  const { pokemons, removePokemon } = usePokemonStore();
 
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
   const [selectedPokemon, setSelectedPokemon] = useState<string>("");
 
   function releasePokemon(nickname: string) {
-    const newCollection = pokemons.filter(
-      (pokemon: IMyPokemon) => pokemon.nickname !== nickname,
-    );
-
-    localStorage.setItem(POKEMON_STORE_KEY, JSON.stringify(newCollection));
-
-    setState({
-      pokemons: newCollection,
-      pokeSummary: generatePokeSummary(newCollection),
-    });
-
+    removePokemon(nickname);
     setDeleteConfirmation(false);
   }
 
@@ -77,7 +67,18 @@ const MyPokemonModule = () => {
                 <PokeCard
                   name={pokemon.name}
                   nickname={pokemon.nickname}
-                  sprite={pokemon.sprite}>
+                  sprite={pokemon.sprite}
+                  level={pokemon.battle_state.level}
+                  exp={pokemon.battle_state.experience}
+                  selectedPokemon={selectedPokemon}
+                  setSelectedPokemon={() =>
+                    selectedPokemon !== ""
+                      ? setSelectedPokemon("")
+                      : setSelectedPokemon(
+                          pokemon.nickname.toLowerCase().replace(" ", "-") ||
+                            "",
+                        )
+                  }>
                   <DeleteButton
                     onClick={() => {
                       setSelectedPokemon(pokemon.nickname);
@@ -98,7 +99,21 @@ const MyPokemonModule = () => {
         )}
       </T.Page>
 
-      <Navbar ref={navRef} />
+      <Navbar ref={navRef}>
+        <Button
+          variant="dark"
+          size="lg"
+          onClick={() =>
+            navigate({
+              to: "/vs-battle",
+              search: {
+                pokemon: selectedPokemon, // dibuat menjadi lowercase dan ganti spasi dengan dash (-)
+              },
+            })
+          }>
+          PRACTICE BATTLE
+        </Button>
+      </Navbar>
     </>
   );
 };

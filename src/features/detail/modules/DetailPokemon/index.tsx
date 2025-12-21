@@ -19,6 +19,12 @@ import {
 } from "@/components/ui";
 
 import "react-lazy-load-image-component/src/effects/blur.css";
+import {
+  getBaseStat,
+  pickRandomMoves,
+  powerFromMoveName,
+  scaleStat,
+} from "@/utils/pokemon-utils";
 
 interface DetailPokemonProps {
   pokemonName: string;
@@ -28,16 +34,22 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
   const navRef = useRef<HTMLDivElement>(null);
   const nicknameRef = useRef<string>("");
 
-  const { data, isFetching: isLoading } = usePokemonDetail({ pokemonName });
-  const { pokeSummary, pokemons, setState } = usePokemonStore();
+  const { data: pokemonDetail, isFetching: isLoading } = usePokemonDetail({
+    pokemonName,
+  });
+  const { pokemons, addPokemon } = usePokemonStore();
 
   const { isCatching, isCaught, isEndPhase, throwPokeball } = useCatchPokemon(
     () => setNicknameModal(true),
   );
 
   const [sprite, setSprite] = useState<string>("");
+  const [backSprite, setBackSprite] = useState<string>("");
+
   const [types, setTypes] = useState<Array<string>>([]);
   const [moves, setMoves] = useState<Array<string>>([]);
+
+  const [baseExperience, setBaseExperience] = useState<number>(0);
   const [stats, setStats] = useState<IPokemonDetailResponse["stats"]>([]);
   const [abilities, setAbilities] = useState<
     IPokemonDetailResponse["abilities"]
@@ -61,51 +73,78 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
 
     setNicknameIsValid(true);
 
-    const newPokemons = [
-      ...pokemons,
-      {
-        name: pokemonName.toUpperCase(),
-        nickname: nicknameRef.current,
-        sprite,
-      },
-    ];
+    if (!pokemonDetail) return;
 
-    setState({
-      pokemons: newPokemons,
-      pokeSummary: newPokemons.reduce(
-        (acc, poke) => {
-          const existing = acc.find((p) => p.name === poke.name);
+    const baseHp = getBaseStat(pokemonDetail, "hp");
+    const baseAtk = getBaseStat(pokemonDetail, "attack");
+    const baseDef = getBaseStat(pokemonDetail, "defense");
+    const baseSpA = getBaseStat(pokemonDetail, "special-attack");
+    const baseSpD = getBaseStat(pokemonDetail, "special-defense");
+    const baseSpeed = getBaseStat(pokemonDetail, "speed");
 
-          if (existing) {
-            existing.captured++;
-          } else {
-            acc.push({ name: poke.name, captured: 1 });
-          }
+    const scaledStats = {
+      hp: scaleStat(baseHp, 1),
+      attack: scaleStat(baseAtk, 1),
+      defense: scaleStat(baseDef, 1),
+      special_attack: scaleStat(baseSpA, 1),
+      special_defense: scaleStat(baseSpD, 1),
+      speed: scaleStat(baseSpeed, 1),
+    };
 
-          return acc;
-        },
-        [] as typeof pokeSummary,
-      ),
+    const typesBuild = pokemonDetail.types.map((t) => t.type.name || "");
+
+    const pickedMoves = pickRandomMoves(pokemonDetail.moves, 6).map((m) => {
+      const moveName = m.move?.name || "unknown-move";
+
+      return {
+        name: moveName,
+        power: powerFromMoveName(moveName),
+      };
     });
+
+    const newPokemons = {
+      name: pokemonName.toUpperCase(),
+      nickname: nicknameRef.current,
+      sprite,
+      sprite_back: backSprite,
+      base_experience: baseExperience,
+      stats: scaledStats,
+      types: typesBuild,
+      moves: pickedMoves,
+      battle_state: {
+        level: 1,
+        experience: 0,
+      },
+    };
+
+    addPokemon(newPokemons);
 
     setIsSaved(true);
   }
 
+  function setValuePokemon(result: IPokemonDetailResponse) {
+    const spritedFront =
+      result.sprites.versions?.["generation-v"]?.["black-white"]?.animated
+        ?.front_default;
+
+    const spritedBack =
+      result.sprites.versions?.["generation-v"]?.["black-white"]?.animated
+        ?.back_default;
+
+    setBaseExperience(result.base_experience);
+    setTypes(result.types.map((type) => type.type.name || ""));
+    setMoves(result.moves.map((move) => move.move?.name || ""));
+    setSprite(spritedFront || result.sprites.front_default);
+    setBackSprite(spritedBack || result.sprites.back_default);
+    setStats(result.stats);
+    setAbilities(result.abilities);
+  }
+
   useEffect(() => {
-    if (data) {
-      const response = data as IPokemonDetailResponse;
-
-      setTypes(response.types.map((type) => type.type?.name || ""));
-      setMoves(response.moves.map((move) => move.move?.name || ""));
-      setSprite(
-        response.sprites.versions?.["generation-v"]?.["black-white"]?.animated
-          ?.front_default || response.sprites.front_default,
-      );
-
-      setStats(response.stats);
-      setAbilities(response.abilities);
+    if (pokemonDetail) {
+      setValuePokemon(pokemonDetail);
     }
-  }, [data]);
+  }, [pokemonDetail]);
 
   useEffect(() => {
     document.title = `Pokegames - ${pokemonName.toUpperCase()}`;

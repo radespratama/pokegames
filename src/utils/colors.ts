@@ -5,6 +5,9 @@ export const colors = {
   ...Colors.Yellow,
   ...Colors.Red,
   ...Colors.Sky,
+  ...Colors.White,
+  ...Colors.Black,
+  ...Colors.Green,
 };
 
 export const skillColor: { [key: string]: string } = {

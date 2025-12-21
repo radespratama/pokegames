@@ -30,7 +30,13 @@ const usePokemons = ({
   });
 };
 
-const usePokemonDetail = ({ pokemonName }: { pokemonName: string }) => {
+const usePokemonDetail = ({
+  pokemonName,
+  isEnabled,
+}: {
+  pokemonName: string | number;
+  isEnabled?: boolean;
+}) => {
   const QUERY_KEY = ["pokemon-detail", pokemonName];
 
   const staleOneDay = 1000 * 60 * 60 * 24;
@@ -39,7 +45,7 @@ const usePokemonDetail = ({ pokemonName }: { pokemonName: string }) => {
     queryKey: QUERY_KEY,
     queryFn: async () => await getDetailPokemon(pokemonName),
     staleTime: staleOneDay,
-    enabled: !!pokemonName,
+    enabled: !!pokemonName && isEnabled,
     retry: false,
   });
 };
