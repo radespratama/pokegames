@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import type { IButtonProps } from ".";
 import { colors, units } from "@/utils";
 
-const getStyle = ({ variant = "sky" }: IButtonProps) => {
+const getStyle = ({ variant = "sky", disabled }: IButtonProps) => {
   const style = {
     display: "flex",
     gap: units.spacing.sm,
@@ -26,6 +26,11 @@ const getStyle = ({ variant = "sky" }: IButtonProps) => {
         "&:active::after": {
           boxShadow: `inset 4px 4px ${colors["yellow-300"]}`,
         },
+        ...(disabled && {
+          cursor: "not-allowed",
+          opacity: 0.6,
+          pointerEvents: "none" as const,
+        }),
       };
     case "dark":
       return {
@@ -40,6 +45,11 @@ const getStyle = ({ variant = "sky" }: IButtonProps) => {
         "&:active::after": {
           boxShadow: `inset 4px 4px ${colors["red-300"]}`,
         },
+        ...(disabled && {
+          cursor: "not-allowed",
+          opacity: 0.6,
+          pointerEvents: "none" as const,
+        }),
       };
     default:
       return {
@@ -54,6 +64,11 @@ const getStyle = ({ variant = "sky" }: IButtonProps) => {
         "&:active::after": {
           boxShadow: `inset 4px 4px ${colors["sky-300"]}`,
         },
+        ...(disabled && {
+          cursor: "not-allowed",
+          opacity: 0.6,
+          pointerEvents: "none" as const,
+        }),
       };
   }
 };

@@ -179,7 +179,7 @@ export const ResetButton = styled(StyledButton)({
 export const EnemySection = styled("div")({
   position: "absolute",
   top: "20%",
-  right: "25%",
+  right: "30%",
   zIndex: 10,
   display: "flex",
   flexDirection: "column",
@@ -200,8 +200,8 @@ export const EnemySpriteWrapper = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "flex-end",
-  width: "200px",
-  height: "200px",
+  width: "250px",
+  height: "250px",
 });
 
 export const PlayerSection = styled("div")({
@@ -263,13 +263,13 @@ export const Shadow = styled("div")({
 });
 
 export const ShadowEnemy = styled("div")({
-  width: "70%",
+  width: "90%",
   height: "30px",
   backgroundColor: "rgba(0, 0, 0, 0.25)",
   borderRadius: "50%",
   position: "absolute",
-  bottom: "-5px",
-  left: "55%",
+  bottom: "15px",
+  left: "50%",
   transform: "translateX(-50%)",
   zIndex: 1,
   filter: "blur(4px)",
