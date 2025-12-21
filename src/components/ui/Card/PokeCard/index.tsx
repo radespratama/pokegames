@@ -4,7 +4,7 @@ import type { HTMLAttributes } from "react";
 
 import { POKEMON_IMAGE } from "@/configs/api";
 import Text from "@/components/ui/Text";
-import { usePokemonLevel } from "@/hooks/common/battle/usePokemonLevel";
+import { usePokemonExperience } from "@/hooks/common/battle/usePokemonExperience";
 
 import "react-lazy-load-image-component/src/effects/blur.css";
 
@@ -32,7 +32,7 @@ const PokeCard = ({
   selectedPokemon,
   setSelectedPokemon,
 }: PokeCardProps) => {
-  const { getExpProgress } = usePokemonLevel();
+  const { getExpProgress } = usePokemonExperience();
 
   const expData = nickname ? getExpProgress(nickname) : null;
 
@@ -85,7 +85,7 @@ const PokeCard = ({
                   style={{
                     width: `${expData?.percentage || 0}%`,
                     height: "100%",
-                    backgroundColor: "#4CAF50",
+                    backgroundColor: "#000",
                     transition: "width 0.3s ease",
                   }}
                 />

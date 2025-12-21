@@ -18,6 +18,14 @@ export interface IMyPokemon {
     special_defense: number;
     speed: number;
   };
+  base_stats?: {
+    hp: number;
+    attack: number;
+    defense: number;
+    special_attack: number;
+    special_defense: number;
+    speed: number;
+  };
   types: Array<string>;
   moves: Array<{
     name: string;

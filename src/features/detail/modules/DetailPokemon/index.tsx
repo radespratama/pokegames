@@ -115,6 +115,14 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
         level: 1,
         experience: 0,
       },
+      base_stats: {
+        hp: baseHp,
+        attack: baseAtk,
+        defense: baseDef,
+        special_attack: baseSpA,
+        special_defense: baseSpD,
+        speed: baseSpeed,
+      },
     };
 
     addPokemon(newPokemons);

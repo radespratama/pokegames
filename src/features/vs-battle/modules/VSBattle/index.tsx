@@ -1,16 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
 
 import * as T from "./index.style";
 import BattleIntro from "@/features/vs-battle/components/shared/BattleIntro";
 import { usePokemonStore } from "@/store/app/pokemonStore";
-import { useSpawnEnemy } from "@/hooks/common/battle/useSpawnEnemy";
+import {
+  LS_ENEMY_KEY,
+  useSpawnEnemy,
+} from "@/hooks/common/battle/useSpawnEnemy";
+import { useBattleMechanics } from "@/hooks/common/battle/useBattleMechanics";
+import { usePokemonExperience } from "@/hooks/common/battle/usePokemonExperience";
 import { Text } from "@/components/ui";
 
 interface IVersusBattleModuleProps {
   pokemonNicknameParam: string;
 }
+
+const LS_PLAYER_HP_KEY = "pokegames@battle-player-hp";
 
 const VersusBattleModule = ({
   pokemonNicknameParam,
@@ -22,16 +29,20 @@ const VersusBattleModule = ({
     .toUpperCase();
 
   const { pokemons } = usePokemonStore();
+
   const playerPokemon = pokemons.find(
     (p) => p.nickname.toUpperCase() === formattedNickname,
   );
 
-  const { enemy, isLoadingEnemy } = useSpawnEnemy({
+  const { enemy, isLoadingEnemy, updateEnemyState } = useSpawnEnemy({
     userPokemon: {
       level: playerPokemon?.battle_state.level || 1,
       experience: playerPokemon?.battle_state.experience || 0,
     },
   });
+
+  const { calculateDamage } = useBattleMechanics();
+  const { addExp, calculateExpGain } = usePokemonExperience();
 
   const maxPlayerHP = playerPokemon?.stats.hp || 1;
   const maxEnemyHP = enemy?.stats.hp || 1;
@@ -44,41 +55,139 @@ const VersusBattleModule = ({
   const [gameOver, setGameOver] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
 
+  const isBattleInitialized = useRef(false);
+
   useEffect(() => {
-    if (playerPokemon && enemy) {
-      setPlayerCurrentHP(playerPokemon.stats.hp);
-      setEnemyCurrentHP(enemy.stats.hp);
-      setBattleLog([`Wild ${enemy.name} appeared!`]);
+    if (!playerPokemon || !enemy) return;
+
+    if (!isBattleInitialized.current) {
+      const savedPlayerHP = localStorage.getItem(LS_PLAYER_HP_KEY);
+
+      if (savedPlayerHP !== null) {
+        const parsedHP = parseInt(savedPlayerHP);
+        setPlayerCurrentHP(Math.min(parsedHP, playerPokemon.stats.hp));
+      } else {
+        setPlayerCurrentHP(playerPokemon.stats.hp);
+      }
+
+      const savedEnemyHP =
+        (enemy as any).current_hp !== undefined
+          ? (enemy as any).current_hp
+          : enemy.stats.hp;
+      const isEnemyDefeated = (enemy as any).is_defeated;
+
+      setEnemyCurrentHP(savedEnemyHP);
+
+      if (isEnemyDefeated || savedEnemyHP <= 0) {
+        setBattleLog([`${enemy.name} is already defeated!`]);
+        setGameOver(true);
+        setShowIntro(false);
+
+        localStorage.removeItem(LS_PLAYER_HP_KEY);
+      } else {
+        setBattleLog([`Wild ${enemy.name} appeared!`]);
+      }
+
+      isBattleInitialized.current = true;
     }
   }, [playerPokemon, enemy]);
 
   const playerHPPercentage = (playerCurrentHP / maxPlayerHP) * 100;
   const enemyHPPercentage = (enemyCurrentHP / maxEnemyHP) * 100;
 
+  const clearPlayerHPStorage = () => {
+    localStorage.removeItem(LS_PLAYER_HP_KEY);
+  };
+
+  // --- LOGIC MENANG ---
   const handlePlayerWin = () => {
-    setBattleLog((prev) => [...prev, "Enemy Fainted! You Win!"]);
+    if (!enemy || !playerPokemon) return;
+
+    if (typeof updateEnemyState === "function") {
+      updateEnemyState({ current_hp: 0, is_defeated: true } as any);
+    }
+
+    clearPlayerHPStorage();
+
+    const expReward = calculateExpGain(
+      enemy.battle_state.level,
+      enemy.base_experience || 60,
+    );
+
+    const result = addExp(playerPokemon.nickname, expReward);
+
+    const winLogs = ["Enemy Fainted! You Win!", `Gained ${expReward} EXP.`];
+
+    if (result.leveled) {
+      winLogs.push(
+        `${playerPokemon.nickname} grew to Level ${result.newLevel}!`,
+      );
+      winLogs.push("Stats increased!");
+    }
+
+    setBattleLog((prev) => [...prev, ...winLogs]);
     setGameOver(true);
   };
 
+  // --- LOGIC KALAH ---
   const handlePlayerLose = () => {
-    setBattleLog((prev) => [
-      ...prev,
-      `${playerPokemon?.nickname} Fainted... You Lose!`,
-    ]);
+    if (!enemy || !playerPokemon) return;
+
+    clearPlayerHPStorage();
+
+    const baseExp = enemy.base_experience || 60;
+    const fullExp = calculateExpGain(enemy.battle_state.level, baseExp);
+    const partialExp = Math.floor(fullExp / 4);
+
+    const result = addExp(playerPokemon.nickname, partialExp);
+
+    const loseLogs = [
+      `${playerPokemon.nickname} Fainted... You Lose!`,
+      `You gained ${partialExp} EXP for the effort.`,
+    ];
+
+    if (result.leveled) {
+      loseLogs.push(
+        `${playerPokemon.nickname} grew to Level ${result.newLevel}!`,
+      );
+    }
+
+    setBattleLog((prev) => [...prev, ...loseLogs]);
     setGameOver(true);
+
+    if (typeof updateEnemyState === "function") {
+      updateEnemyState({
+        current_hp: enemy.stats.hp,
+        is_defeated: false,
+      });
+    }
   };
 
+  // --- ACTION ATTACK PLAYER ---
   const performPlayerAttack = (moveName: string, movePower: number) => {
-    if (!isPlayerTurn || gameOver) return;
+    if (!isPlayerTurn || gameOver || !playerPokemon || !enemy) return;
 
-    const damageDealt = Math.floor(movePower / 2);
+    const result = calculateDamage(playerPokemon, enemy, movePower);
+    const damageDealt = result.damage;
+
     const newEnemyHP = Math.max(0, enemyCurrentHP - damageDealt);
     setEnemyCurrentHP(newEnemyHP);
 
-    setBattleLog((prev) => [
-      ...prev,
-      `${playerPokemon?.nickname} used ${moveName}! Dealt ${damageDealt} damage.`,
-    ]);
+    if (typeof updateEnemyState === "function") {
+      updateEnemyState({ current_hp: newEnemyHP } as any);
+    }
+
+    const newLogs = [`${playerPokemon.nickname} used ${moveName}!`];
+
+    if (result.desc.length > 0) {
+      newLogs.push(...result.desc);
+    }
+
+    if (!result.isMiss) {
+      newLogs.push(`Dealt ${damageDealt} damage.`);
+    }
+
+    setBattleLog((prev) => [...prev, ...newLogs]);
 
     if (newEnemyHP <= 0) {
       handlePlayerWin();
@@ -89,22 +198,34 @@ const VersusBattleModule = ({
     setTimeout(performEnemyTurn, 1500);
   };
 
+  // --- ACTION ATTACK ENEMY ---
   const performEnemyTurn = () => {
-    if (gameOver || !enemy) return;
+    if (gameOver || !enemy || !playerPokemon) return;
 
     const randomMove =
       enemy.moves[Math.floor(Math.random() * enemy.moves.length)];
     const moveName = randomMove.name || "Tackle";
     const movePower = randomMove.power || 10;
 
-    const damageDealt = Math.floor(movePower / 2);
+    const result = calculateDamage(enemy, playerPokemon, movePower);
+    const damageDealt = result.damage;
+
     const newPlayerHP = Math.max(0, playerCurrentHP - damageDealt);
     setPlayerCurrentHP(newPlayerHP);
 
-    setBattleLog((prev) => [
-      ...prev,
-      `Enemy ${enemy.name} used ${moveName}! Dealt ${damageDealt} damage.`,
-    ]);
+    localStorage.setItem(LS_PLAYER_HP_KEY, newPlayerHP.toString());
+
+    const newLogs = [`Enemy ${enemy.name} used ${moveName}!`];
+
+    if (result.desc.length > 0) {
+      newLogs.push(...result.desc);
+    }
+
+    if (!result.isMiss) {
+      newLogs.push(`Dealt ${damageDealt} damage.`);
+    }
+
+    setBattleLog((prev) => [...prev, ...newLogs]);
 
     if (newPlayerHP <= 0) {
       handlePlayerLose();
@@ -115,11 +236,15 @@ const VersusBattleModule = ({
   };
 
   const resetGame = () => {
-    localStorage.removeItem("pokegames_current_enemy");
+    localStorage.removeItem(LS_ENEMY_KEY);
+    localStorage.removeItem(LS_PLAYER_HP_KEY);
     window.location.reload();
   };
 
   const goBackToMyPokemon = () => {
+    localStorage.removeItem(LS_PLAYER_HP_KEY);
+    localStorage.removeItem(LS_ENEMY_KEY);
+
     navigate({ to: "/my-pokemon" });
   };
 
@@ -132,11 +257,13 @@ const VersusBattleModule = ({
           alignItems: "center",
           flexDirection: "column",
         }}>
-        <Text variant="default" size="xl">
+        <Text variant="outlined" size="xl">
           Pokemon Not Found!
         </Text>
-        <T.StyledButton onClick={goBackToMyPokemon}>
-          Back to My Pokemon
+        <T.StyledButton onClick={goBackToMyPokemon} style={{ marginTop: 8 }}>
+          <Text variant="outlined" size="base" as="span">
+            Back to My Pokemon
+          </Text>
         </T.StyledButton>
       </T.Container>
     );
@@ -194,7 +321,7 @@ const VersusBattleModule = ({
                       alt="Enemy"
                       style={{ transform: "scaleX(1)" }}
                     />
-                    <T.Shadow />
+                    <T.ShadowEnemy />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -286,7 +413,7 @@ const VersusBattleModule = ({
                     <T.ResetButton
                       onClick={goBackToMyPokemon}
                       style={{ backgroundColor: "#ef4444" }}>
-                      <Text>Run Away (Back to Home)</Text>
+                      <Text variant="outlined">Run Away (Back to Home)</Text>
                     </T.ResetButton>
                   ) : (
                     <T.ResetButton onClick={resetGame}>
@@ -296,6 +423,14 @@ const VersusBattleModule = ({
                     </T.ResetButton>
                   )}
                 </>
+              )}
+
+              {!gameOver && (
+                <T.ResetButton
+                  onClick={goBackToMyPokemon}
+                  style={{ backgroundColor: "#ef4444", marginTop: 16 }}>
+                  <Text variant="outlined">Surrender (Back to My Pokemon)</Text>
+                </T.ResetButton>
               )}
             </T.BattleMenu>
           </T.InterfaceWrapper>

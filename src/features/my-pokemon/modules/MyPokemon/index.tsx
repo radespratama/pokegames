@@ -80,7 +80,8 @@ const MyPokemonModule = () => {
                         )
                   }>
                   <DeleteButton
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setSelectedPokemon(pokemon.nickname);
                       setDeleteConfirmation(true);
                     }}
@@ -101,17 +102,19 @@ const MyPokemonModule = () => {
 
       <Navbar ref={navRef}>
         <Button
+          type="button"
           variant="dark"
+          disabled={!selectedPokemon}
           size="lg"
           onClick={() =>
             navigate({
               to: "/vs-battle",
               search: {
-                pokemon: selectedPokemon, // dibuat menjadi lowercase dan ganti spasi dengan dash (-)
+                pokemon: selectedPokemon,
               },
             })
           }>
-          PRACTICE BATTLE
+          WILD BATTLE
         </Button>
       </Navbar>
     </>

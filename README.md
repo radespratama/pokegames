@@ -27,7 +27,7 @@ By using Pokegames you can:
 - [x] Releasing a pokemon
 - [x] Pokemon stats
 - [x] Battle with wild pokemon (Wild pokemon use random stat and turn base mechanism)
-- [ ] Leveling your current pokemon
+- [x] Leveling your current pokemon
 
 ## Technology 👨‍💻
 
