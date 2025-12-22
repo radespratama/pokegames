@@ -42,6 +42,7 @@ const PokeCard = ({
       className="pxl-border"
       style={{
         cursor: "pointer",
+        width: "100%",
       }}
       selectedPokemon={selectedPokemon}
       onClick={setSelectedPokemon}>
@@ -55,7 +56,7 @@ const PokeCard = ({
             loading="lazy"
           />
 
-          <Text variant="darker" size="lg">
+          <Text variant="outlined" size="lg" style={{ marginTop: "8px" }}>
             {nickname}
           </Text>
 
@@ -67,8 +68,10 @@ const PokeCard = ({
                   justifyContent: "space-between",
                   marginBottom: "4px",
                 }}>
-                <Text as="span">Lv. {level}</Text>
-                <Text as="span">
+                <Text as="span" variant="outlined" size="base">
+                  Lv. {level}
+                </Text>
+                <Text as="span" variant="outlined" size="base">
                   {expData?.current || exp || 0}/{expData?.needed || 100} EXP
                 </Text>
               </div>
@@ -104,7 +107,9 @@ const PokeCard = ({
         />
       )}
 
-      <Text>{name}</Text>
+      <Text variant="outlined" as="p" size="lg">
+        {name}
+      </Text>
 
       {children}
 

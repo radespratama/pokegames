@@ -10,6 +10,18 @@ export const Container = styled("section")({
   fontFamily: "'VT323', Courier, monospace",
 });
 
+export const HitEffectImage = styled("img")({
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%) scale(2.5)",
+  zIndex: 50,
+  pointerEvents: "none",
+  imageRendering: "pixelated",
+  width: "72px",
+  height: "72px",
+});
+
 export const BattleWrapper = styled("div")({
   width: "100%",
   height: "100%",
@@ -49,12 +61,16 @@ export const BattleLog = styled("div")({
   borderRadius: "0px",
 
   padding: "1rem",
-  maxHeight: "140px",
+  height: "140px",
   overflowY: "auto",
+
   display: "flex",
-  flexDirection: "column-reverse",
+  flexDirection: "column",
+  gap: "4px",
+
   color: colors["white-800"],
   imageRendering: "pixelated",
+  scrollBehavior: "smooth",
 
   "&::-webkit-scrollbar": { width: "8px", background: "#333" },
   "&::-webkit-scrollbar-thumb": {
@@ -74,7 +90,7 @@ export const LogTitle = styled("h4")({
 });
 
 export const LogEntry = styled("p")({
-  fontSize: "0.85rem",
+  fontSize: "1rem",
   margin: "4px 0",
   lineHeight: "1.4",
 });
@@ -235,8 +251,8 @@ export const PlayerSpriteWrapper = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "flex-end",
-  width: "250px",
-  height: "250px",
+  width: "270px",
+  height: "270px",
 });
 
 export const PokemonSprite = styled("img")({
@@ -250,12 +266,12 @@ export const PokemonSprite = styled("img")({
 });
 
 export const Shadow = styled("div")({
-  width: "70%",
-  height: "20px",
+  width: "90%",
+  height: "30px",
   backgroundColor: "rgba(0, 0, 0, 0.25)",
   borderRadius: "50%",
   position: "absolute",
-  bottom: "0px",
+  bottom: "10px",
   left: "45%",
   transform: "translateX(-50%)",
   zIndex: 1,
@@ -268,7 +284,7 @@ export const ShadowEnemy = styled("div")({
   backgroundColor: "rgba(0, 0, 0, 0.25)",
   borderRadius: "50%",
   position: "absolute",
-  bottom: "15px",
+  bottom: "10px",
   left: "50%",
   transform: "translateX(-50%)",
   zIndex: 1,
@@ -312,3 +328,31 @@ export const HPText = styled("p")({
   color: colors["gray-800"],
   fontFamily: "monospace",
 });
+
+export const DamageWrapper = styled("div")({
+  position: "absolute",
+  top: "0",
+  left: "0",
+  right: "0",
+  bottom: "0",
+  pointerEvents: "none",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 60,
+});
+
+export const DamageText = styled("span")<{ isCritical: boolean }>(
+  ({ isCritical }) => ({
+    fontFamily: "'VT323', monospace",
+    fontSize: isCritical ? "4rem" : "3rem",
+    fontWeight: "bold",
+    color: isCritical ? "#ef4444" : "#ffffff",
+    textShadow: isCritical
+      ? "3px 3px 0px #7f1d1d, -1px -1px 0 #000"
+      : "2px 2px 0px #000, -2px -2px 0 #000",
+    position: "absolute",
+    whiteSpace: "nowrap",
+    zIndex: 61,
+  }),
+);

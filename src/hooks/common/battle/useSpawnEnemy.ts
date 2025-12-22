@@ -36,7 +36,7 @@ const getDifficultyParams = (playerLevel: number) => {
   // Fair Fight. Tidak ada buff stat. Level -1 s/d +1.
   if (playerLevel < 10) {
     return {
-      statMultiplier: 1.0,
+      statMultiplier: 1.1,
       minLevelAdd: -1,
       maxLevelAdd: 1,
     };

@@ -1,6 +1,6 @@
 import { PixelatedText } from "./index.style";
 
-export interface ITextProps {
+export interface ITextProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
   variant?: "default" | "darker" | "outlined" | "error";
   size?: "base" | "lg" | "xl";

@@ -8,130 +8,130 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as VsBattleRouteImport } from "./routes/vs-battle";
-import { Route as MyPokemonRouteImport } from "./routes/my-pokemon";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as PokemonsIndexRouteImport } from "./routes/pokemons.index";
-import { Route as PokemonsPokemonNameRouteImport } from "./routes/pokemons.$pokemonName";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as VsBattleRouteImport } from './routes/vs-battle'
+import { Route as MyPokemonRouteImport } from './routes/my-pokemon'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as PokemonsIndexRouteImport } from './routes/pokemons.index'
+import { Route as PokemonsPokemonNameRouteImport } from './routes/pokemons.$pokemonName'
 
 const VsBattleRoute = VsBattleRouteImport.update({
-  id: "/vs-battle",
-  path: "/vs-battle",
+  id: '/vs-battle',
+  path: '/vs-battle',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MyPokemonRoute = MyPokemonRouteImport.update({
-  id: "/my-pokemon",
-  path: "/my-pokemon",
+  id: '/my-pokemon',
+  path: '/my-pokemon',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PokemonsIndexRoute = PokemonsIndexRouteImport.update({
-  id: "/pokemons/",
-  path: "/pokemons/",
+  id: '/pokemons/',
+  path: '/pokemons/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PokemonsPokemonNameRoute = PokemonsPokemonNameRouteImport.update({
-  id: "/pokemons/$pokemonName",
-  path: "/pokemons/$pokemonName",
+  id: '/pokemons/$pokemonName',
+  path: '/pokemons/$pokemonName',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/my-pokemon": typeof MyPokemonRoute;
-  "/vs-battle": typeof VsBattleRoute;
-  "/pokemons/$pokemonName": typeof PokemonsPokemonNameRoute;
-  "/pokemons": typeof PokemonsIndexRoute;
+  '/': typeof IndexRoute
+  '/my-pokemon': typeof MyPokemonRoute
+  '/vs-battle': typeof VsBattleRoute
+  '/pokemons/$pokemonName': typeof PokemonsPokemonNameRoute
+  '/pokemons': typeof PokemonsIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/my-pokemon": typeof MyPokemonRoute;
-  "/vs-battle": typeof VsBattleRoute;
-  "/pokemons/$pokemonName": typeof PokemonsPokemonNameRoute;
-  "/pokemons": typeof PokemonsIndexRoute;
+  '/': typeof IndexRoute
+  '/my-pokemon': typeof MyPokemonRoute
+  '/vs-battle': typeof VsBattleRoute
+  '/pokemons/$pokemonName': typeof PokemonsPokemonNameRoute
+  '/pokemons': typeof PokemonsIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/my-pokemon": typeof MyPokemonRoute;
-  "/vs-battle": typeof VsBattleRoute;
-  "/pokemons/$pokemonName": typeof PokemonsPokemonNameRoute;
-  "/pokemons/": typeof PokemonsIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/my-pokemon': typeof MyPokemonRoute
+  '/vs-battle': typeof VsBattleRoute
+  '/pokemons/$pokemonName': typeof PokemonsPokemonNameRoute
+  '/pokemons/': typeof PokemonsIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/my-pokemon"
-    | "/vs-battle"
-    | "/pokemons/$pokemonName"
-    | "/pokemons";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/my-pokemon'
+    | '/vs-battle'
+    | '/pokemons/$pokemonName'
+    | '/pokemons'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/my-pokemon"
-    | "/vs-battle"
-    | "/pokemons/$pokemonName"
-    | "/pokemons";
+    | '/'
+    | '/my-pokemon'
+    | '/vs-battle'
+    | '/pokemons/$pokemonName'
+    | '/pokemons'
   id:
-    | "__root__"
-    | "/"
-    | "/my-pokemon"
-    | "/vs-battle"
-    | "/pokemons/$pokemonName"
-    | "/pokemons/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/my-pokemon'
+    | '/vs-battle'
+    | '/pokemons/$pokemonName'
+    | '/pokemons/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  MyPokemonRoute: typeof MyPokemonRoute;
-  VsBattleRoute: typeof VsBattleRoute;
-  PokemonsPokemonNameRoute: typeof PokemonsPokemonNameRoute;
-  PokemonsIndexRoute: typeof PokemonsIndexRoute;
+  IndexRoute: typeof IndexRoute
+  MyPokemonRoute: typeof MyPokemonRoute
+  VsBattleRoute: typeof VsBattleRoute
+  PokemonsPokemonNameRoute: typeof PokemonsPokemonNameRoute
+  PokemonsIndexRoute: typeof PokemonsIndexRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/vs-battle": {
-      id: "/vs-battle";
-      path: "/vs-battle";
-      fullPath: "/vs-battle";
-      preLoaderRoute: typeof VsBattleRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/my-pokemon": {
-      id: "/my-pokemon";
-      path: "/my-pokemon";
-      fullPath: "/my-pokemon";
-      preLoaderRoute: typeof MyPokemonRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/pokemons/": {
-      id: "/pokemons/";
-      path: "/pokemons";
-      fullPath: "/pokemons";
-      preLoaderRoute: typeof PokemonsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/pokemons/$pokemonName": {
-      id: "/pokemons/$pokemonName";
-      path: "/pokemons/$pokemonName";
-      fullPath: "/pokemons/$pokemonName";
-      preLoaderRoute: typeof PokemonsPokemonNameRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/vs-battle': {
+      id: '/vs-battle'
+      path: '/vs-battle'
+      fullPath: '/vs-battle'
+      preLoaderRoute: typeof VsBattleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-pokemon': {
+      id: '/my-pokemon'
+      path: '/my-pokemon'
+      fullPath: '/my-pokemon'
+      preLoaderRoute: typeof MyPokemonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pokemons/': {
+      id: '/pokemons/'
+      path: '/pokemons'
+      fullPath: '/pokemons'
+      preLoaderRoute: typeof PokemonsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pokemons/$pokemonName': {
+      id: '/pokemons/$pokemonName'
+      path: '/pokemons/$pokemonName'
+      fullPath: '/pokemons/$pokemonName'
+      preLoaderRoute: typeof PokemonsPokemonNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -141,7 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   VsBattleRoute: VsBattleRoute,
   PokemonsPokemonNameRoute: PokemonsPokemonNameRoute,
   PokemonsIndexRoute: PokemonsIndexRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

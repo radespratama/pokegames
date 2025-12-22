@@ -364,21 +364,32 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
         <T.Content style={{ marginTop: "30px" }}>
           <T.AbilitiesWrapper>
             <div className="pxl-type">
-              <Text as="h3">Type</Text>
-              {!isLoading ? (
-                types.map((type, index) => <TypeCard key={index} type={type} />)
-              ) : (
-                <T.DescriptionLoadingWrapper>
-                  <Loading label="Loading types..." />
-                </T.DescriptionLoadingWrapper>
-              )}
+              <Text as="h3" size="lg" variant="outlined">
+                Type
+              </Text>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {!isLoading ? (
+                  types.map((type) => (
+                    <TypeCard key={type} hasIcon type={type} />
+                  ))
+                ) : (
+                  <T.DescriptionLoadingWrapper>
+                    <Loading label="Loading types..." />
+                  </T.DescriptionLoadingWrapper>
+                )}
+              </div>
             </div>
 
             <div className="pxl-abilities">
-              <Text as="h3">Abilities</Text>
+              <Text as="h3" size="lg" variant="outlined">
+                Abilities
+              </Text>
               {!isLoading ? (
-                abilities.map((ability, index) => (
-                  <TypeCard key={index} type={ability.ability.name} />
+                abilities.map((ability) => (
+                  <TypeCard
+                    key={ability.ability.name}
+                    type={ability.ability.name}
+                  />
                 ))
               ) : (
                 <T.DescriptionLoadingWrapper>
@@ -389,12 +400,14 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
           </T.AbilitiesWrapper>
 
           <div>
-            <Text as="h3">Moves</Text>
+            <Text as="h3" size="lg" variant="outlined">
+              Moves
+            </Text>
             {!isLoading ? (
               <T.Grid>
-                {moves.map((move, index) => (
+                {moves.map((move) => (
                   <div
-                    key={index}
+                    key={move}
                     className="pxl-border"
                     style={{ marginBottom: 16, marginRight: 16 }}>
                     <Text>{move}</Text>

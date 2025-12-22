@@ -1,6 +1,6 @@
 <div align="center">
   <img align="center" width="600" src="https://github.com/radespratama/pokegames/blob/main/public/static/pokegames-banner.avif?raw=true" />
-  <h3 align="center">Pokegames</h3>
+  <h3 align="center">Pokegames 2</h3>
   <p align="center">⚡ Pokemon Apps ヾ(≧▽≦*)o</p>
 </div>
 
@@ -28,6 +28,15 @@ By using Pokegames you can:
 - [x] Pokemon stats
 - [x] Battle with wild pokemon (Wild pokemon use random stat and turn base mechanism)
 - [x] Leveling your current pokemon
+
+UPCOMING FEATURES
+
+- [ ] App testing and adjustment battle mechanic (Damage, miss damage, add exp)
+- [ ] Adding simple animation punch effect after hit, showing animation damage (Basic damage and critical hit), death animation
+- [ ] Adding pokemon status information
+- [ ] Update layout my pokemon
+- [ ] Update battle fight (Solo match or team match 3vs3)
+- [ ] Multiplayer PvP, Online save account (COMING SOON)
 
 ## Technology 👨‍💻
 
