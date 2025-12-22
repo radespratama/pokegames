@@ -1,0 +1,62 @@
+{
+  "name": "pokegames",
+  "author": "Putu Rades Pratama",
+  "version": "1.1.0",
+  "type": "module",
+  "repository": {
+    "url": "https://github.com/radespratama/pokegames"
+  },
+  "scripts": {
+    "dev": "vite --port 3782",
+    "build": "vite build && tsc",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint",
+    "format": "prettier",
+    "check": "prettier --write . && eslint --fix",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@emotion/is-prop-valid": "^1.4.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@loadable/component": "^5.16.7",
+    "@tabler/icons-react": "^3.36.0",
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-router": "^1.141.8",
+    "@tanstack/router-plugin": "^1.141.9",
+    "axios": "^1.13.2",
+    "framer-motion": "^12.23.26",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-hot-toast": "^2.6.0",
+    "react-lazy-load-image-component": "^1.6.3",
+    "worker-timers": "^8.0.27",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@tanstack/devtools-vite": "^0.3.12",
+    "@tanstack/eslint-config": "^0.3.4",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-lazy-load-image-component": "^1.6.5",
+    "@typescript-eslint/parser": "^8.50.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "colorcrafts": "^1.0.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vitest": "^4.0.16",
+    "web-vitals": "^5.1.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint"
+    ],
+    "*.{json,md,css}": "prettier --write"
+  }
+}
