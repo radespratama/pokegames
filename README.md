@@ -16,6 +16,18 @@
 
 A pokemon minigame where you can explore and catch them all. Built with React JS and consumes public <a href="https://pokeapi.co">PokeAPI</a>.🍺
 
+### ⚔️ Battle Mechanics Info
+
+**Pokegames 2 introduces a unique Custom RPG Battle System.**
+While we respect the classic **Elemental Type Effectiveness** (e.g., Water is super effective against Fire), the core combat logic is **custom-designed** and does not strictly follow the official game mechanics (IVs, EVs, etc.).
+
+We implement fresh features such as:
+
+- **Builder-Spender Flow:** Use Basic Attacks to charge your Energy Bar.
+- **Ultimate Skills:** Unleash powerful elemental attacks once your Energy is full.
+- **Real-Time Cooldowns:** Strategic delays to prevent skill spamming.
+- **Squad Tactics:** (Upcoming) Manage a 3-man squad with a timeline-based turn system.
+
 ## Features💡
 
 By using Pokegames you can:
@@ -31,8 +43,8 @@ By using Pokegames you can:
 
 UPCOMING FEATURES
 
-- [ ] App testing and adjustment battle mechanic (Damage, miss damage, add exp)
-- [ ] Adding simple animation punch effect after hit, showing animation damage (Basic damage and critical hit), death animation
+- [x] App testing and adjustment battle mechanic (Damage, miss damage, add exp)
+- [x] Adding simple animation punch effect after hit, showing animation damage (Basic damage and critical hit), death animation
 - [ ] Adding pokemon status information
 - [ ] Update layout my pokemon
 - [ ] Update battle fight (Solo match or team match 3vs3)

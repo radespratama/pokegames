@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { useCallback } from "react";
 import type { IMyPokemon } from "@/services/api/pokemons";
+import { getTypeEffectiveness } from "@/utils";
 
 interface IAttackResult {
   damage: number;
   isCritical: boolean;
   isMiss: boolean;
+  effectiveness: number;
   desc: Array<string>;
 }
 
@@ -14,68 +17,65 @@ export const useBattleMechanics = () => {
       attacker: IMyPokemon,
       defender: IMyPokemon,
       movePower: number,
+      moveType: string = "normal",
     ): IAttackResult => {
-      // --- LOGIC MISS (AKURASI) ---
-      const attackerSpeed = attacker.stats.speed;
-      const defenderSpeed = defender.stats.speed;
+      const attackStat = attacker.stats.attack;
+      const defenseStat = defender.stats.defense;
 
-      const speedRatio = attackerSpeed / defenderSpeed;
+      const isBasicAttack = moveType === "basic";
 
-      // Rumus: Base 0.65 + (0.25 * Ratio)
-      let hitChance = 0.65 + 0.25 * speedRatio;
+      let effectiveness = 1;
+      let stab = 1;
 
-      hitChance = Math.min(Math.max(hitChance, 0.65), 1.0);
+      if (!isBasicAttack) {
+        const normalizedMoveType = moveType.toLowerCase();
+        const normalizedDefenderTypes = (defender.types || ["normal"]).map(
+          (t) => t.toLowerCase(),
+        );
 
-      // Random Roll
-      const randomHit = Math.random();
-      const isMiss = randomHit > hitChance;
+        effectiveness = getTypeEffectiveness(
+          normalizedMoveType,
+          normalizedDefenderTypes,
+        );
 
-      if (isMiss) {
-        return {
-          damage: 0,
-          isCritical: false,
-          isMiss: true,
-          desc: ["Attack missed!"],
-        };
+        const attackerType = (attacker.types[0] || "normal").toLowerCase();
+        stab = attackerType === normalizedMoveType ? 1.2 : 1.0;
       }
 
-      // --- LOGIC DAMAGE ---
-      const level = attacker.battle_state.level;
-      const isSpecial = attacker.stats.special_attack > attacker.stats.attack;
+      const randomVariance = (Math.floor(Math.random() * 21) + 90) / 100;
 
-      const A = isSpecial
-        ? attacker.stats.special_attack
-        : attacker.stats.attack;
-      const D = isSpecial
-        ? defender.stats.special_defense
-        : defender.stats.defense;
+      const isCritical = Math.random() < 0.15;
+      const critMultiplier = isCritical ? 1.5 : 1.0;
 
-      // Randomness (Variance 0.85 - 1.00)
-      const randomFactor = (Math.floor(Math.random() * 16) + 85) / 100;
+      const rawDamage = attackStat * (movePower / 85);
 
-      // Critical Hit (20%)
-      const CRITICAL_RATE = 0.2;
-      const isCritical = Math.random() < CRITICAL_RATE;
-      const criticalFactor = isCritical ? 1.5 : 1;
+      const defenseMultiplier = 100 / (100 + defenseStat);
 
-      // Base Damage Formula
-      const levelFactor = (2 * level) / 5 + 2;
-      const baseDamage = (levelFactor * movePower * (A / D)) / 50 + 2;
+      let totalDamage = rawDamage * defenseMultiplier;
 
-      // Final Calculation
-      const totalDamage = Math.floor(
-        baseDamage * criticalFactor * randomFactor,
-      );
+      totalDamage =
+        totalDamage * effectiveness * stab * critMultiplier * randomVariance;
 
-      const finalDamage = movePower > 0 ? Math.max(1, totalDamage) : 0;
+      const finalDamage = Math.max(1, Math.floor(totalDamage));
 
       const desc: Array<string> = [];
-      if (isCritical) desc.push("A critical hit!");
+      if (isCritical) desc.push("Critical hit!");
+
+      if (!isBasicAttack) {
+        if (effectiveness > 0 && effectiveness < 1) {
+          desc.push("It's not very effective...");
+        } else if (effectiveness >= 2) {
+          desc.push("It's super effective!");
+        } else if (effectiveness === 0) {
+          desc.push("It had no effect...");
+        }
+      }
 
       return {
         damage: finalDamage,
         isCritical,
         isMiss: false,
+        effectiveness,
         desc,
       };
     },

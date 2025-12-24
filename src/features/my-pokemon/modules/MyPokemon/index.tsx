@@ -23,6 +23,8 @@ const MyPokemonModule = () => {
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
   const [selectedPokemon, setSelectedPokemon] = useState<string>("");
 
+  const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
+
   function releasePokemon(nickname: string) {
     removePokemon(nickname);
     setDeleteConfirmation(false);
@@ -53,6 +55,69 @@ const MyPokemonModule = () => {
             </Button>
           </div>
         </T.DeleteConfirmationModal>
+      </Modal>
+
+      <Modal open={showInfoModal} overlay="dark">
+        <T.InfoModal>
+          <div
+            className="pxl-border"
+            style={{ textAlign: "left", width: "100%" }}>
+            <Text
+              variant="darker"
+              size="lg"
+              style={{
+                borderBottom: "2px dashed #000",
+                paddingBottom: 8,
+                display: "block",
+              }}>
+              TRAINER MANUAL v.1.0
+            </Text>
+
+            <ul
+              style={{
+                paddingLeft: 20,
+                marginTop: 16,
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+              }}>
+              <li>
+                <Text size="base">
+                  <strong>Battle Ready:</strong> Captured Pokemon receive a
+                  genetic boost. <strong>+30 HP</strong> &{" "}
+                  <strong>+2% Stats</strong> instantly.
+                </Text>
+              </li>
+              <li>
+                <Text size="base">
+                  <strong>Growth Rate:</strong> Stats increase by approx{" "}
+                  <strong>2%</strong> + Bonus HP every Level Up.
+                </Text>
+              </li>
+              <li>
+                <Text size="base">
+                  <strong>Combat Tactics:</strong> Use{" "}
+                  <strong>Basic Attack</strong> to charge Gauge. Use{" "}
+                  <strong>Ultimate</strong> for elemental damage (2x).
+                </Text>
+              </li>
+              <li>
+                <Text size="base">
+                  <strong>Danger Zone:</strong> Wild Pokemon limiters are
+                  removed at <strong>Level 12</strong>. Expect{" "}
+                  <strong>Real Stats</strong> & difficulty spikes!
+                </Text>
+              </li>
+            </ul>
+          </div>
+
+          <Button
+            variant="dark"
+            onClick={() => setShowInfoModal(false)}
+            style={{ width: "100%" }}>
+            UNDERSTOOD
+          </Button>
+        </T.InfoModal>
       </Modal>
 
       <T.PokedexFrame>
@@ -115,28 +180,56 @@ const MyPokemonModule = () => {
           </T.ScreenContainer>
 
           <T.ControlPanel>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "4px",
-              }}>
-              <T.RoundButton
-                onClick={() => navigate({ to: "/pokemons" })}
-                aria-label="Back to Home">
-                BACK
-              </T.RoundButton>
-
-              <span
+            {/* GROUP ROUND BUTTONS */}
+            <div style={{ display: "flex", gap: "16px" }}>
+              <div
                 style={{
-                  fontSize: "10px",
-                  color: "#555",
-                  fontWeight: "bold",
-                  fontFamily: "monospace",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "4px",
                 }}>
-                EXIT
-              </span>
+                <T.RoundButton
+                  onClick={() => navigate({ to: "/pokemons" })}
+                  aria-label="Back to Home">
+                  ◀
+                </T.RoundButton>
+
+                <span
+                  style={{
+                    fontSize: "10px",
+                    color: "#555",
+                    fontWeight: "bold",
+                    fontFamily: "monospace",
+                  }}>
+                  BACK
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "4px",
+                }}>
+                <T.RoundButton
+                  style={{ backgroundColor: "#3b82f6" }}
+                  onClick={() => setShowInfoModal(true)}
+                  aria-label="Help Info">
+                  ?
+                </T.RoundButton>
+
+                <span
+                  style={{
+                    fontSize: "10px",
+                    color: "#555",
+                    fontWeight: "bold",
+                    fontFamily: "monospace",
+                  }}>
+                  HELP
+                </span>
+              </div>
             </div>
 
             <div style={{ flex: 1, padding: "0 16px", paddingRight: "24px" }}>

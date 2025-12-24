@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef } from "react";
-
 import { Link } from "@tanstack/react-router";
 import * as T from "./index.style";
 import { usePokemons } from "@/hooks/queries/pokemon";
@@ -27,25 +26,18 @@ const ExplorePokemonsModule = () => {
     );
 
     const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
-    }
-
+    if (currentTarget) observer.observe(currentTarget);
     return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
+      if (currentTarget) observer.unobserve(currentTarget);
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const pokeSummary = useMemo(() => {
     const summary: Record<string, number> = {};
-
     pokemons.forEach((p) => {
       const upperName = p.name.toUpperCase();
       summary[upperName] = (summary[upperName] || 0) + 1;
     });
-
     return summary;
   }, [pokemons]);
 
@@ -63,36 +55,61 @@ const ExplorePokemonsModule = () => {
   return (
     <>
       <T.Container style={{ marginBottom: navRef.current?.clientHeight || 0 }}>
-        <Text as="h1" variant="darker" size="lg">
-          Challenge &amp; catch them all
-        </Text>
+        {/* Header Pixelated */}
+        <T.Header>
+          <Text variant="outlined" size="lg">
+            Pokémon Market
+          </Text>
+          <Text as="p" variant="darker">
+            Explore and collect your favorite companions.
+          </Text>
+        </T.Header>
 
         {isLoading ? (
-          <Loading label="Please wait..." />
+          <T.LoadingWrapper>
+            <Loading label="LOADING CARTRIDGE..." />
+          </T.LoadingWrapper>
         ) : (
           <>
             <T.Grid>
-              {allPokemons.map((pokemon) => (
-                <Link
-                  key={`${pokemon?.name}-${getPokemonId(pokemon?.url ?? "")}`}
-                  to={`/pokemons/$pokemonName`}
-                  params={{
-                    pokemonName: pokemon?.name ?? "",
-                  }}
-                  style={{ display: "flex" }}>
-                  <PokeCard
-                    pokemonId={getPokemonId(pokemon?.url ?? "")}
-                    name={pokemon?.name}
-                    captured={pokemon?.captured}
-                  />
-                </Link>
-              ))}
+              {allPokemons.map((pokemon) => {
+                return (
+                  <Link
+                    key={`${pokemon?.name}-${getPokemonId(pokemon?.url ?? "")}`}
+                    to={`/pokemons/$pokemonName`}
+                    params={{ pokemonName: pokemon?.name ?? "" }}
+                    style={{ textDecoration: "none", color: "inherit" }}>
+                    <T.PixelCard>
+                      <T.PixelBadge count={pokemon?.captured ?? 0}>
+                        {(pokemon?.captured ?? 0) > 0
+                          ? `OWNED x${pokemon?.captured}`
+                          : "NEW"}
+                      </T.PixelBadge>
+
+                      <div style={{ padding: "24px 16px 16px" }}>
+                        <PokeCard
+                          pokemonId={getPokemonId(pokemon?.url ?? "")}
+                          name={pokemon?.name}
+                        />
+                      </div>
+
+                      <T.CardFooter className="footer-action">
+                        INFO &gt;
+                      </T.CardFooter>
+                    </T.PixelCard>
+                  </Link>
+                );
+              })}
             </T.Grid>
 
             {hasNextPage && (
               <>
                 <div ref={observerTarget} style={{ height: "20px" }} />
-                {isFetchingNextPage && <Loading label="Loading more..." />}
+                {isFetchingNextPage && (
+                  <T.LoadingWrapper>
+                    <Loading label="LOADING DATA..." />
+                  </T.LoadingWrapper>
+                )}
               </>
             )}
           </>

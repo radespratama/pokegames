@@ -3,7 +3,7 @@ import { units } from "@/utils";
 
 export const GradientBakcdrop = styled("div")({
   position: "fixed",
-  zIndex: 1,
+  zIndex: 10,
   left: 0,
   right: 0,
   bottom: 0,

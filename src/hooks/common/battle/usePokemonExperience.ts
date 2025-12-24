@@ -36,8 +36,11 @@ export const usePokemonExperience = () => {
       let newStats = { ...pokemon.stats };
 
       if (leveled && pokemon.base_stats) {
+        const scaledHP = scaleStat(pokemon.base_stats.hp, currentLevel);
+        const bonusHP = currentLevel * 5 + 30;
+
         newStats = {
-          hp: scaleStat(pokemon.base_stats.hp, currentLevel),
+          hp: scaledHP + bonusHP,
           attack: scaleStat(pokemon.base_stats.attack, currentLevel),
           defense: scaleStat(pokemon.base_stats.defense, currentLevel),
           special_attack: scaleStat(
@@ -52,7 +55,8 @@ export const usePokemonExperience = () => {
         };
       } else if (leveled) {
         const ratio =
-          (1 + currentLevel * 0.05) / (1 + (currentLevel - 1) * 0.05);
+          (1 + currentLevel * 0.02) / (1 + (currentLevel - 1) * 0.02);
+
         newStats = {
           hp: Math.floor(pokemon.stats.hp * ratio),
           attack: Math.floor(pokemon.stats.attack * ratio),

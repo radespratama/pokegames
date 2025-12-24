@@ -1,29 +1,47 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { randomNumber } from "@/utils";
 
-type DamageEvent = {
+export interface IDamage {
   id: number;
   value: number;
-  isCritical: boolean;
   target: "player" | "enemy";
-};
+  isCritical: boolean;
+  effectiveness: number;
+}
 
 export const useDamageSystem = () => {
-  const [damages, setDamages] = useState<Array<DamageEvent>>([]);
+  const [damages, setDamages] = useState<Array<IDamage>>([]);
+  const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
 
-  const showDamage = (
-    target: "player" | "enemy",
-    value: number,
-    isCritical: boolean = false,
-  ) => {
-    const id = Date.now() + Math.random();
-    const newDamage: DamageEvent = { id, value, isCritical, target };
+  const showDamage = useCallback(
+    (
+      target: "player" | "enemy",
+      value: number,
+      isCritical: boolean,
+      effectiveness: number = 1,
+    ) => {
+      const id = randomNumber();
+      setDamages((prev) => [
+        ...prev,
+        { id, value, target, isCritical, effectiveness },
+      ]);
 
-    setDamages((prev) => [...prev, newDamage]);
+      const timeoutId = setTimeout(() => {
+        setDamages((prev) => prev.filter((d) => d.id !== id));
+        timeoutsRef.current.delete(timeoutId);
+      }, 1000);
 
-    setTimeout(() => {
-      setDamages((prev) => prev.filter((d) => d.id !== id));
-    }, 1000);
-  };
+      timeoutsRef.current.add(timeoutId);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
+    };
+  }, []);
 
   return { damages, showDamage };
 };

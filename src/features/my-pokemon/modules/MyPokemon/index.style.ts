@@ -12,10 +12,13 @@ const POKE_COLORS = {
 
 const PokedexFrame = styled("div")({
   backgroundColor: POKE_COLORS.red,
-  minHeight: "100vh",
-  padding: "24px",
+  height: "100dvh",
+  width: "100vw",
+  padding: "16px",
   position: "relative",
   border: "4px solid #000",
+  boxSizing: "border-box",
+  overflow: "hidden",
 
   backgroundImage: `
     radial-gradient(${POKE_COLORS.redShadow} 15%, transparent 16%),
@@ -28,12 +31,15 @@ const PokedexFrame = styled("div")({
 
   display: "flex",
   flexDirection: "column",
-  gap: "24px",
+  gap: "12px",
 
   "@media (min-width: 1024px)": {
-    padding: "48px",
+    padding: "32px",
     maxWidth: "70rem",
     margin: "0 auto",
+    height: "100vh",
+    maxHeight: "100vh",
+    borderRadius: "24px",
   },
 });
 
@@ -41,14 +47,15 @@ const PokedexHeaderDeco = styled("div")({
   display: "flex",
   alignItems: "flex-start",
   gap: "16px",
-  paddingBottom: "16px",
+  paddingBottom: "12px",
   borderBottom: `4px solid ${POKE_COLORS.redShadow}`,
-  marginBottom: "8px",
+  marginBottom: "4px",
+  flexShrink: 0,
 });
 
 const BigBlueLight = styled("div")({
-  width: "60px",
-  height: "60px",
+  width: "50px",
+  height: "50px",
   backgroundColor: "#3B4CCA",
   border: "4px solid #fff",
   borderRadius: "50%",
@@ -57,10 +64,10 @@ const BigBlueLight = styled("div")({
   "&::after": {
     content: '""',
     position: "absolute",
-    top: "12px",
-    left: "12px",
-    width: "16px",
-    height: "16px",
+    top: "10px",
+    left: "10px",
+    width: "12px",
+    height: "12px",
     backgroundColor: "#a1afff",
     borderRadius: "50%",
   },
@@ -83,50 +90,17 @@ const SmallLight = styled("div")<{ color: string }>(({ color }) => ({
 
 const ScreenBezel = styled("div")({
   backgroundColor: POKE_COLORS.screenBezel,
-  padding: "24px 32px 48px 32px",
+  padding: "16px 24px 24px 24px",
   border: "4px solid #000",
   boxShadow: `inset -4px -4px ${POKE_COLORS.screenBezelShadow}, inset 4px 4px #fff`,
   display: "flex",
   flexDirection: "column",
+  flex: 1,
+  minHeight: 0,
+
   gap: "12px",
   position: "relative",
-});
-
-const ScreenGrid = styled("div")({
-  backgroundColor: POKE_COLORS.screenBg,
-  padding: "16px",
-  border: "4px solid #444",
-  boxShadow: "inset 4px 4px 10px #000",
-  borderRadius: "4px",
-  position: "relative",
-  overflow: "hidden",
-
-  "&::after": {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    background:
-      "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))",
-    backgroundSize: "100% 4px, 6px 100%",
-    pointerEvents: "none",
-    zIndex: 10,
-  },
-
-  maxHeight: "55vh",
-  overflowY: "auto",
-
-  "&::-webkit-scrollbar": {
-    width: "16px",
-    backgroundColor: "#000",
-  },
-  "&::-webkit-scrollbar-thumb": {
-    backgroundColor: POKE_COLORS.red,
-    border: "2px solid #fff",
-    boxShadow: "inset -2px -2px #8B0000",
-  },
+  borderRadius: "0 0 0 32px",
 });
 
 const ScreenContainer = styled("div")({
@@ -136,8 +110,10 @@ const ScreenContainer = styled("div")({
   borderRadius: "4px",
   position: "relative",
   overflow: "hidden",
-  height: "55vh",
-  minHeight: "300px",
+  flex: 1,
+  minHeight: 0,
+  display: "flex",
+  flexDirection: "column",
 
   "&::after": {
     content: '""',
@@ -156,7 +132,7 @@ const ScreenContainer = styled("div")({
 
 const ScreenContent = styled("div")({
   width: "100%",
-  height: "100%",
+  flex: 1,
   overflowY: "auto",
   padding: "16px",
 
@@ -180,25 +156,27 @@ const ScreenHeader = styled("header")({
   justifyContent: "space-between",
   marginBottom: "4px",
   padding: "0 8px",
+  flexShrink: 0,
 });
 
 const ControlPanel = styled("div")({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "flex-end",
-  marginTop: "16px",
-  padding: "0 8px",
+  marginTop: "auto",
+  padding: "4px 8px 0 8px",
+  flexShrink: 0,
 });
 
 const RoundButton = styled("button")({
-  width: "48px",
-  height: "48px",
+  width: "42px",
+  height: "42px",
   borderRadius: "50%",
   backgroundColor: "#333",
   border: "2px solid #000",
   boxShadow: "inset -2px -2px #000, 2px 2px #555",
   color: "#fff",
-  fontSize: "14px",
+  fontSize: "12px",
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
@@ -214,7 +192,7 @@ const SpeakerVents = styled("div")({
   flexDirection: "column",
   gap: "6px",
   div: {
-    width: "60px",
+    width: "48px",
     height: "6px",
     backgroundColor: "#555",
     borderRadius: "4px",
@@ -241,7 +219,8 @@ const WrapperCardList = styled("div")({
 });
 
 const EmptyState = styled("div")({
-  height: "300px",
+  height: "100%",
+  minHeight: "200px",
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -249,6 +228,11 @@ const EmptyState = styled("div")({
   gap: units.spacing.base,
   color: "#fff",
   zIndex: 5,
+});
+
+const ScreenGrid = styled("div")({
+  flex: 1,
+  overflow: "hidden",
 });
 
 const DeleteConfirmationModal = styled("div")({
@@ -263,6 +247,26 @@ const DeleteConfirmationModal = styled("div")({
     display: "flex",
     gap: 16,
     marginTop: 16,
+  },
+});
+
+const InfoModal = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: 24,
+  padding: "16px",
+  maxWidth: "400px",
+
+  ul: {
+    listStyleType: "square",
+    color: "#000",
+  },
+
+  strong: {
+    fontWeight: "800",
+    textDecoration: "underline",
   },
 });
 
@@ -281,6 +285,7 @@ export {
   Grid,
   EmptyState,
   DeleteConfirmationModal,
+  InfoModal,
   WrapperCardList,
   ScreenContent,
   ScreenContainer,

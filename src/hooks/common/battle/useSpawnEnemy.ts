@@ -30,45 +30,26 @@ interface IExtendedEnemy extends IMyPokemon {
   is_defeated?: boolean;
 }
 
-// --- DIFFICULTY ---
+// --- DIFFICULTY ADJUSTMENT (Sesuai Request) ---
 const getDifficultyParams = (playerLevel: number) => {
-  // Early Game (Level 1 - 9)
-  // Fair Fight. Tidak ada buff stat. Level -1 s/d +1.
-  if (playerLevel < 10) {
-    return {
-      statMultiplier: 1.1,
-      minLevelAdd: -1,
-      maxLevelAdd: 1,
-    };
+  // Level 1 - 11: FAIR FIGHT (No Stat Buff)
+  // Tantangan hanya dari level musuh yang bisa +1 dari player
+  if (playerLevel < 12) {
+    return { statMultiplier: 1.0, minLevelAdd: -1, maxLevelAdd: 1 };
   }
 
-  // Mid Game (Level 10 - 19)
-  // Sedikit Elite. Stat +5%. Level setara s/d +2.
+  // Level 12 - 19: START BUFF (+5%)
   if (playerLevel < 20) {
-    return {
-      statMultiplier: 1.05,
-      minLevelAdd: 0,
-      maxLevelAdd: 2,
-    };
+    return { statMultiplier: 1.05, minLevelAdd: 0, maxLevelAdd: 2 };
   }
 
-  // Late Game (Level 20 - 39)
-  // Menantang. Stat +10%. Level +1 s/d +3.
+  // Level 20 - 39: HARD (+8%)
   if (playerLevel < 40) {
-    return {
-      statMultiplier: 1.1,
-      minLevelAdd: 1,
-      maxLevelAdd: 3,
-    };
+    return { statMultiplier: 1.08, minLevelAdd: 1, maxLevelAdd: 3 };
   }
 
-  // End Game / Boss (Level 40++)
-  // Boss. Stat +20%. Level +2 s/d +4.
-  return {
-    statMultiplier: 1.2,
-    minLevelAdd: 2,
-    maxLevelAdd: 4,
-  };
+  // Level 40+: BOSS (+15%)
+  return { statMultiplier: 1.15, minLevelAdd: 2, maxLevelAdd: 4 };
 };
 
 export const useSpawnEnemy = ({
@@ -88,18 +69,15 @@ export const useSpawnEnemy = ({
   };
 
   const [enemy, setEnemy] = useState<IExtendedEnemy | null>(getSavedEnemy);
-
   const [enemyId] = useState(() =>
     enemy ? enemy.name.toLowerCase() : randomNumber(),
   );
 
   const shouldFetch = !enemy;
-
   const difficulty = getDifficultyParams(userPokemon.level);
 
   const [enemyLevel] = useState(() => {
     if (enemy) return enemy.battle_state.level;
-
     const min = Math.max(1, userPokemon.level + difficulty.minLevelAdd);
     const max = userPokemon.level + difficulty.maxLevelAdd;
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -114,44 +92,60 @@ export const useSpawnEnemy = ({
     if (!shouldFetch) return;
     if (!enemyData || isLoadingEnemyData) return;
 
-    const baseHp = getBaseStat(enemyData, "hp");
-    const baseAttack = getBaseStat(enemyData, "attack");
-    const baseDefense = getBaseStat(enemyData, "defense");
-    const baseSpAttack = getBaseStat(enemyData, "special-attack");
-    const baseSpDefense = getBaseStat(enemyData, "special-defense");
-    const baseSpeed = getBaseStat(enemyData, "speed");
+    let rawHp = getBaseStat(enemyData, "hp");
+    let rawAtk = getBaseStat(enemyData, "attack");
+    let rawDef = getBaseStat(enemyData, "defense");
+    let rawSpA = getBaseStat(enemyData, "special-attack");
+    let rawSpD = getBaseStat(enemyData, "special-defense");
+    let rawSpd = getBaseStat(enemyData, "speed");
 
-    const applyDifficultyBoost = (val: number, level: number) => {
-      const normalStat = scaleStat(val, level);
-      return Math.floor(normalStat * difficulty.statMultiplier);
+    if (userPokemon.level < 12) {
+      const MAX_ALLOWED_BST = 320;
+      const currentBST = rawHp + rawAtk + rawDef + rawSpA + rawSpD + rawSpd;
+
+      if (currentBST > MAX_ALLOWED_BST) {
+        const ratio = MAX_ALLOWED_BST / currentBST;
+        rawHp = Math.floor(rawHp * ratio);
+        rawAtk = Math.floor(rawAtk * ratio);
+        rawDef = Math.floor(rawDef * ratio);
+        rawSpA = Math.floor(rawSpA * ratio);
+        rawSpD = Math.floor(rawSpD * ratio);
+        rawSpd = Math.floor(rawSpd * ratio);
+      }
+    }
+
+    const applyStats = (base: number, isHp: boolean = false) => {
+      let val = scaleStat(base, enemyLevel);
+
+      if (isHp) {
+        val += enemyLevel * 5 + 30;
+      }
+
+      return Math.floor(val * difficulty.statMultiplier);
     };
 
     const scaledStats = {
-      hp: applyDifficultyBoost(baseHp, enemyLevel),
-      attack: applyDifficultyBoost(
-        getBaseStat(enemyData, "attack"),
-        enemyLevel,
-      ),
-      defense: applyDifficultyBoost(
-        getBaseStat(enemyData, "defense"),
-        enemyLevel,
-      ),
-      special_attack: applyDifficultyBoost(
-        getBaseStat(enemyData, "special-attack"),
-        enemyLevel,
-      ),
-      special_defense: applyDifficultyBoost(
-        getBaseStat(enemyData, "special-defense"),
-        enemyLevel,
-      ),
-      speed: applyDifficultyBoost(getBaseStat(enemyData, "speed"), enemyLevel),
+      hp: applyStats(rawHp, true),
+      attack: applyStats(rawAtk),
+      defense: applyStats(rawDef),
+      special_attack: applyStats(rawSpA),
+      special_defense: applyStats(rawSpD),
+      speed: applyStats(rawSpd),
     };
 
-    const typesBuild = enemyData.types.map((t: any) => t.type.name || "");
-    const pickedMoves = pickRandomMoves(enemyData.moves, 4).map((m: any) => ({
-      name: m.move?.name || "unknown",
-      power: powerFromMoveName(m.move?.name),
-    }));
+    const typesBuild = enemyData.types.map((t) => t.type.name || "normal");
+
+    const pickedMoves = pickRandomMoves(enemyData.moves, 4).map(
+      (m: any, index: number) => {
+        const assignedType = typesBuild[index % typesBuild.length] || "normal";
+
+        return {
+          name: m.move?.name || "unknown",
+          power: powerFromMoveName(m.move?.name),
+          type: assignedType,
+        };
+      },
+    );
 
     const spritedFront =
       enemyData.sprites.versions?.["generation-v"]?.["black-white"]?.animated
@@ -168,24 +162,29 @@ export const useSpawnEnemy = ({
       base_experience: enemyData.base_experience || 0,
       battle_state: { level: enemyLevel, experience: 0 },
       base_stats: {
-        hp: baseHp,
-        attack: baseAttack,
-        defense: baseDefense,
-        special_attack: baseSpAttack,
-        special_defense: baseSpDefense,
-        speed: baseSpeed,
+        hp: rawHp,
+        attack: rawAtk,
+        defense: rawDef,
+        special_attack: rawSpA,
+        special_defense: rawSpD,
+        speed: rawSpd,
       },
       stats: scaledStats,
       types: typesBuild,
       moves: pickedMoves,
-
       current_hp: scaledStats.hp,
       is_defeated: false,
     };
 
     setEnemy(newEnemy);
     localStorage.setItem(LS_ENEMY_KEY, JSON.stringify(newEnemy));
-  }, [enemyData, isLoadingEnemyData, shouldFetch, enemyLevel]);
+  }, [
+    enemyData,
+    isLoadingEnemyData,
+    shouldFetch,
+    enemyLevel,
+    userPokemon.level,
+  ]);
 
   const updateEnemyState = useCallback((updates: Partial<IExtendedEnemy>) => {
     setEnemy((prev) => {
