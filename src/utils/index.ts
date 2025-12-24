@@ -1,4 +1,5 @@
-import type { IMyPokemon, IPokeSummary } from "@/services/api/pokemons";
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+import { TYPE_CHART } from "./constant";
 
 export * from "./colors";
 export * from "./units";
@@ -11,56 +12,27 @@ export const getPokemonId = (url: string) => {
   return "";
 };
 
-export const generatePokeSummary = (
-  pokemons?: Array<IMyPokemon>,
-): Array<IPokeSummary> => {
-  const results: Array<{ name: string; captured: number }> = [];
+export const randomNumber = (min: number = 1, max: number = 999): number => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
-  pokemons?.forEach((pokemon, idx) => {
-    let pokemonExists = false;
+export const getTypeEffectiveness = (
+  moveType: string,
+  defenderTypes: Array<string>,
+): number => {
+  let multiplier = 1;
+  const attacker = moveType.toLowerCase();
 
-    if (idx === 0) {
-      results.push({ name: pokemon.name, captured: 1 });
-    } else {
-      for (const result of results) {
-        if (result.name === pokemon.name) {
-          pokemonExists = true;
-        }
-      }
+  defenderTypes.forEach((defType) => {
+    const defender = defType.toLowerCase();
 
-      if (pokemonExists) {
-        const pokemonIdx = results.findIndex((el) => el.name === pokemon.name);
-        results[pokemonIdx].captured++;
-      } else {
-        results.push({ name: pokemon.name, captured: 1 });
-      }
+    const attackerChart = TYPE_CHART[attacker];
+    const mod = attackerChart[defender];
+
+    if (mod !== undefined) {
+      multiplier *= mod;
     }
   });
 
-  return results;
-};
-
-export const loadMyPokemonFromLocalStorage = (): Array<IMyPokemon> => {
-  try {
-    const rawPokemons = localStorage.getItem("pokegames@myPokemon");
-    if (!rawPokemons) return [];
-
-    const parsed = JSON.parse(rawPokemons);
-
-    if (parsed?.state?.pokemons && Array.isArray(parsed.state.pokemons)) {
-      return parsed.state.pokemons;
-    }
-
-    if (Array.isArray(parsed)) {
-      return parsed;
-    }
-
-    return [];
-  } catch {
-    return [];
-  }
-};
-
-export const randomNumber = (min: number = 1, max: number = 999): number => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return multiplier;
 };

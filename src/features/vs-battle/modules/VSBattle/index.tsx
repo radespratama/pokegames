@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate } from "@tanstack/react-router";
-
 import * as T from "./index.style";
 import BattleIntro from "@/features/vs-battle/components/shared/BattleIntro";
 import { usePokemonStore } from "@/store/app/pokemonStore";
@@ -9,9 +7,10 @@ import {
   LS_ENEMY_KEY,
   useSpawnEnemy,
 } from "@/hooks/common/battle/useSpawnEnemy";
-import { useBattleMechanics } from "@/hooks/common/battle/useBattleMechanics";
-import { usePokemonExperience } from "@/hooks/common/battle/usePokemonExperience";
+import { useBattleController } from "@/hooks/common/battle/useBattleController";
 import { Text } from "@/components/ui";
+import Gloves from "@/components/ui/Icon/Gloves";
+import { POKEMON_TYPE_ICONS } from "@/utils/constant";
 
 interface IVersusBattleModuleProps {
   pokemonNicknameParam: string;
@@ -22,13 +21,11 @@ const LS_PLAYER_HP_KEY = "pokegames@battle-player-hp";
 const VersusBattleModule = ({
   pokemonNicknameParam,
 }: IVersusBattleModuleProps) => {
-  const navigate = useNavigate();
-
   const formattedNickname = pokemonNicknameParam
     .replace(/-/g, " ")
     .toUpperCase();
-
   const { pokemons } = usePokemonStore();
+  const battleLogRef = useRef<HTMLDivElement>(null);
 
   const playerPokemon = pokemons.find(
     (p) => p.nickname.toUpperCase() === formattedNickname,
@@ -41,253 +38,50 @@ const VersusBattleModule = ({
     },
   });
 
-  const { calculateDamage } = useBattleMechanics();
-  const { addExp, calculateExpGain } = usePokemonExperience();
-
-  const maxPlayerHP = playerPokemon?.stats.hp || 1;
-  const maxEnemyHP = enemy?.stats.hp || 1;
-
-  const [playerCurrentHP, setPlayerCurrentHP] = useState(0);
-  const [enemyCurrentHP, setEnemyCurrentHP] = useState(0);
-
-  const [battleLog, setBattleLog] = useState<Array<string>>([]);
-  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-  const [gameOver, setGameOver] = useState(false);
-  const [showIntro, setShowIntro] = useState(true);
-
-  const isBattleInitialized = useRef(false);
+  const { state, actions } = useBattleController({
+    playerPokemon,
+    enemy,
+    updateEnemyState,
+    key: { LS_PLAYER_HP_KEY, LS_ENEMY_KEY },
+  });
 
   useEffect(() => {
-    if (!playerPokemon || !enemy) return;
+    const img = new Image();
+    img.src = "/static/hit-effects.gif";
+  }, []);
 
-    if (!isBattleInitialized.current) {
-      const savedPlayerHP = localStorage.getItem(LS_PLAYER_HP_KEY);
-
-      if (savedPlayerHP !== null) {
-        const parsedHP = parseInt(savedPlayerHP);
-        setPlayerCurrentHP(Math.min(parsedHP, playerPokemon.stats.hp));
-      } else {
-        setPlayerCurrentHP(playerPokemon.stats.hp);
-      }
-
-      const savedEnemyHP =
-        (enemy as any).current_hp !== undefined
-          ? (enemy as any).current_hp
-          : enemy.stats.hp;
-      const isEnemyDefeated = (enemy as any).is_defeated;
-
-      setEnemyCurrentHP(savedEnemyHP);
-
-      if (isEnemyDefeated || savedEnemyHP <= 0) {
-        setBattleLog([`${enemy.name} is already defeated!`]);
-        setGameOver(true);
-        setShowIntro(false);
-
-        localStorage.removeItem(LS_PLAYER_HP_KEY);
-      } else {
-        setBattleLog([`Wild ${enemy.name} appeared!`]);
-      }
-
-      isBattleInitialized.current = true;
+  useEffect(() => {
+    if (battleLogRef.current) {
+      battleLogRef.current.scrollTop = battleLogRef.current.scrollHeight;
     }
-  }, [playerPokemon, enemy]);
+  }, [state.battleLog]);
 
-  const playerHPPercentage = (playerCurrentHP / maxPlayerHP) * 100;
-  const enemyHPPercentage = (enemyCurrentHP / maxEnemyHP) * 100;
-
-  const clearPlayerHPStorage = () => {
-    localStorage.removeItem(LS_PLAYER_HP_KEY);
-  };
-
-  // --- LOGIC MENANG ---
-  const handlePlayerWin = () => {
-    if (!enemy || !playerPokemon) return;
-
-    if (typeof updateEnemyState === "function") {
-      updateEnemyState({ current_hp: 0, is_defeated: true } as any);
-    }
-
-    clearPlayerHPStorage();
-
-    const expReward = calculateExpGain(
-      enemy.battle_state.level,
-      enemy.base_experience || 60,
-    );
-
-    const result = addExp(playerPokemon.nickname, expReward);
-
-    const winLogs = ["Enemy Fainted! You Win!", `Gained ${expReward} EXP.`];
-
-    if (result.leveled) {
-      winLogs.push(
-        `${playerPokemon.nickname} grew to Level ${result.newLevel}!`,
-      );
-      winLogs.push("Stats increased!");
-    }
-
-    setBattleLog((prev) => [...prev, ...winLogs]);
-    setGameOver(true);
-  };
-
-  // --- LOGIC KALAH ---
-  const handlePlayerLose = () => {
-    if (!enemy || !playerPokemon) return;
-
-    clearPlayerHPStorage();
-
-    const baseExp = enemy.base_experience || 60;
-    const fullExp = calculateExpGain(enemy.battle_state.level, baseExp);
-    const partialExp = Math.floor(fullExp / 4);
-
-    const result = addExp(playerPokemon.nickname, partialExp);
-
-    const loseLogs = [
-      `${playerPokemon.nickname} Fainted... You Lose!`,
-      `You gained ${partialExp} EXP for the effort.`,
-    ];
-
-    if (result.leveled) {
-      loseLogs.push(
-        `${playerPokemon.nickname} grew to Level ${result.newLevel}!`,
-      );
-    }
-
-    setBattleLog((prev) => [...prev, ...loseLogs]);
-    setGameOver(true);
-
-    if (typeof updateEnemyState === "function") {
-      updateEnemyState({
-        current_hp: enemy.stats.hp,
-        is_defeated: false,
-      });
-    }
-  };
-
-  // --- ACTION ATTACK PLAYER ---
-  const performPlayerAttack = (moveName: string, movePower: number) => {
-    if (!isPlayerTurn || gameOver || !playerPokemon || !enemy) return;
-
-    const result = calculateDamage(playerPokemon, enemy, movePower);
-    const damageDealt = result.damage;
-
-    const newEnemyHP = Math.max(0, enemyCurrentHP - damageDealt);
-    setEnemyCurrentHP(newEnemyHP);
-
-    if (typeof updateEnemyState === "function") {
-      updateEnemyState({ current_hp: newEnemyHP } as any);
-    }
-
-    const newLogs = [`${playerPokemon.nickname} used ${moveName}!`];
-
-    if (result.desc.length > 0) {
-      newLogs.push(...result.desc);
-    }
-
-    if (!result.isMiss) {
-      newLogs.push(`Dealt ${damageDealt} damage.`);
-    }
-
-    setBattleLog((prev) => [...prev, ...newLogs]);
-
-    if (newEnemyHP <= 0) {
-      handlePlayerWin();
-      return;
-    }
-
-    setIsPlayerTurn(false);
-    setTimeout(performEnemyTurn, 1500);
-  };
-
-  // --- ACTION ATTACK ENEMY ---
-  const performEnemyTurn = () => {
-    if (gameOver || !enemy || !playerPokemon) return;
-
-    const randomMove =
-      enemy.moves[Math.floor(Math.random() * enemy.moves.length)];
-    const moveName = randomMove.name || "Tackle";
-    const movePower = randomMove.power || 10;
-
-    const result = calculateDamage(enemy, playerPokemon, movePower);
-    const damageDealt = result.damage;
-
-    const newPlayerHP = Math.max(0, playerCurrentHP - damageDealt);
-    setPlayerCurrentHP(newPlayerHP);
-
-    localStorage.setItem(LS_PLAYER_HP_KEY, newPlayerHP.toString());
-
-    const newLogs = [`Enemy ${enemy.name} used ${moveName}!`];
-
-    if (result.desc.length > 0) {
-      newLogs.push(...result.desc);
-    }
-
-    if (!result.isMiss) {
-      newLogs.push(`Dealt ${damageDealt} damage.`);
-    }
-
-    setBattleLog((prev) => [...prev, ...newLogs]);
-
-    if (newPlayerHP <= 0) {
-      handlePlayerLose();
-      return;
-    }
-
-    setIsPlayerTurn(true);
-  };
-
-  const resetGame = () => {
-    localStorage.removeItem(LS_ENEMY_KEY);
-    localStorage.removeItem(LS_PLAYER_HP_KEY);
-    window.location.reload();
-  };
-
-  const goBackToMyPokemon = () => {
-    localStorage.removeItem(LS_PLAYER_HP_KEY);
-    localStorage.removeItem(LS_ENEMY_KEY);
-
-    navigate({ to: "/my-pokemon" });
-  };
-
-  if (!playerPokemon) {
-    return (
-      <T.Container
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}>
-        <Text variant="outlined" size="xl">
-          Pokemon Not Found!
-        </Text>
-        <T.StyledButton onClick={goBackToMyPokemon} style={{ marginTop: 8 }}>
-          <Text variant="outlined" size="base" as="span">
-            Back to My Pokemon
-          </Text>
-        </T.StyledButton>
-      </T.Container>
-    );
-  }
-
+  if (!playerPokemon) return <T.Container />;
   if (isLoadingEnemy && !enemy) return <T.Container />;
 
+  const maxPlayerHP = playerPokemon.stats.hp;
+  const maxEnemyHP = enemy?.stats.hp || 1;
+  const playerHPPercentage = (state.playerCurrentHP / maxPlayerHP) * 100;
+  const enemyHPPercentage = (state.enemyCurrentHP / maxEnemyHP) * 100;
   const playerDisplaySprite = playerPokemon.sprite_back || playerPokemon.sprite;
+
+  const isInputLocked = !state.isPlayerTurn || state.isProcessingTurn;
 
   return (
     <T.Container>
       <AnimatePresence>
-        {showIntro && (
+        {state.showIntro && (
           <BattleIntro
             player={playerPokemon}
             enemy={enemy}
-            onComplete={() => setShowIntro(false)}
+            onComplete={() => actions.setShowIntro(false)}
           />
         )}
       </AnimatePresence>
 
       <T.BattleWrapper>
         <T.BattleField>
-          {/* ENEMY SECTION */}
+          {/* --- ENEMY SECTION --- */}
           <T.EnemySection>
             <T.EnemyInfo>
               <T.InfoBox>
@@ -296,19 +90,64 @@ const VersusBattleModule = ({
                   <T.HPBar width={enemyHPPercentage} color="#ef4444" />
                 </T.HPBarContainer>
                 <T.HPText>
-                  {enemyCurrentHP}/{maxEnemyHP} HP
+                  {state.enemyCurrentHP}/{maxEnemyHP} HP
                 </T.HPText>
                 <T.HPText>Lvl. {enemy?.battle_state.level}</T.HPText>
               </T.InfoBox>
             </T.EnemyInfo>
 
             <T.EnemySpriteWrapper>
+              {state.activeHitTarget === "enemy" && (
+                <T.HitEffectImage
+                  key={`hit-enemy-${state.hitKey}`}
+                  src="/static/hit-effects.gif"
+                  alt="hit"
+                />
+              )}
+
+              {/* --- ENEMY DAMAGE TEXT (UPDATED) --- */}
               <AnimatePresence>
-                {enemyCurrentHP > 0 && (
+                {state.damages
+                  .filter((d) => d.target === "enemy")
+                  .map((damage) => (
+                    <T.DamageWrapper key={damage.id}>
+                      <motion.div
+                        initial={{
+                          opacity: 0,
+                          y: 0,
+                          scale: damage.isCritical ? 0.5 : 0.8,
+                        }}
+                        animate={{
+                          opacity: [0, 1, 1],
+                          y: -60,
+                          scale: damage.isCritical ? [1, 1.5, 1.2] : 1,
+                          x: damage.isCritical ? [0, -5, 5, -5, 5, 0] : 0,
+                        }}
+                        exit={{ opacity: 0, y: -80 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}>
+                        {/* PASSING EFFECTIVENESS KE STYLED COMPONENT */}
+                        <T.DamageText
+                          isCritical={damage.isCritical}
+                          effectiveness={damage.effectiveness}>
+                          {damage.value === 0 ? "Miss" : damage.value}
+                          {damage.isCritical && "!"}
+
+                          {damage.effectiveness >= 2 && !damage.isCritical && (
+                            <span style={{ fontSize: "0.5em", marginLeft: 4 }}>
+                              {`(${damage.effectiveness}x)`}
+                            </span>
+                          )}
+                        </T.DamageText>
+                      </motion.div>
+                    </T.DamageWrapper>
+                  ))}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {state.enemyCurrentHP > 0 && (
                   <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.5 }}
                     style={{
                       width: "100%",
                       height: "100%",
@@ -328,15 +167,54 @@ const VersusBattleModule = ({
             </T.EnemySpriteWrapper>
           </T.EnemySection>
 
-          {/* PLAYER SECTION */}
+          {/* --- PLAYER SECTION --- */}
           <T.PlayerSection>
             <T.PlayerSpriteWrapper>
+              {state.activeHitTarget === "player" && (
+                <T.HitEffectImage
+                  key={`hit-player-${state.hitKey}`}
+                  src="/static/hit-effects.gif"
+                  alt="hit"
+                />
+              )}
+
+              {/* --- PLAYER DAMAGE TEXT (UPDATED) --- */}
               <AnimatePresence>
-                {playerCurrentHP > 0 && (
+                {state.damages
+                  .filter((d) => d.target === "player")
+                  .map((damage) => (
+                    <T.DamageWrapper key={damage.id}>
+                      <motion.div
+                        initial={{
+                          opacity: 0,
+                          y: 0,
+                          scale: damage.isCritical ? 0.5 : 0.8,
+                        }}
+                        animate={{
+                          opacity: [0, 1, 1],
+                          y: -60,
+                          scale: damage.isCritical ? [1, 1.5, 1.2] : 1,
+                          x: damage.isCritical ? [0, -5, 5, -5, 5, 0] : 0,
+                        }}
+                        exit={{ opacity: 0, y: -80 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}>
+                        {/* PASSING EFFECTIVENESS */}
+                        <T.DamageText
+                          isCritical={damage.isCritical}
+                          effectiveness={damage.effectiveness}>
+                          {damage.value === 0 ? "Miss" : damage.value}
+                          {damage.isCritical && "!"}
+                        </T.DamageText>
+                      </motion.div>
+                    </T.DamageWrapper>
+                  ))}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {state.playerCurrentHP > 0 && (
                   <motion.div
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0, y: 50 }}
-                    transition={{ duration: 0.5 }}
                     style={{
                       width: "100%",
                       height: "100%",
@@ -362,61 +240,187 @@ const VersusBattleModule = ({
                   <T.HPBar width={playerHPPercentage} color="#10b981" />
                 </T.HPBarContainer>
                 <T.HPText>
-                  {playerCurrentHP}/{maxPlayerHP} HP
+                  {state.playerCurrentHP}/{maxPlayerHP} HP
                 </T.HPText>
                 <T.HPText>Lvl. {playerPokemon.battle_state.level}</T.HPText>
               </T.PlayerInfoBox>
             </T.PlayerInfo>
           </T.PlayerSection>
 
+          {/* --- INTERFACE --- */}
           <T.InterfaceWrapper>
-            <T.BattleLog>
+            <T.BattleLog ref={battleLogRef}>
               <T.LogTitle>Battle Log</T.LogTitle>
-              {battleLog.map((log, idx) => (
-                <T.LogEntry key={idx}>&gt; {log}</T.LogEntry>
+              {state.battleLog.map((log, idx) => (
+                <T.LogEntry
+                  key={idx}
+                  style={{
+                    color: log.includes(">>>") ? "#fbbf24" : "inherit",
+                    fontWeight: log.includes(">>>") ? "bold" : "normal",
+                    textShadow: log.includes(">>>") ? "1px 1px 0 #000" : "none",
+                  }}>
+                  &gt; {log}
+                </T.LogEntry>
               ))}
             </T.BattleLog>
 
             <T.BattleMenu>
               <T.MenuTitle>
-                {gameOver
+                {state.gameOver
                   ? "Game Over"
-                  : isPlayerTurn
+                  : state.isPlayerTurn
                     ? `What will ${playerPokemon.nickname} do?`
                     : `${enemy?.name} is attacking...`}
               </T.MenuTitle>
 
-              {!gameOver ? (
+              {!state.gameOver ? (
                 <T.AttackGrid>
-                  {playerPokemon.moves.map((move, idx) => (
-                    <T.StyledButton
-                      key={idx}
-                      onClick={() =>
-                        performPlayerAttack(move.name, move.power || 10)
-                      }
-                      disabled={!isPlayerTurn}>
-                      {move.name}
-                    </T.StyledButton>
-                  ))}
+                  {/* --- ULTIMATE GAUGE BAR --- */}
+                  <div
+                    style={{
+                      gridColumn: "span 2",
+                      marginBottom: "0.25rem",
+                      marginTop: "-0.25rem",
+                    }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontSize: "0.75rem",
+                        marginBottom: "0.1rem",
+                        fontWeight: "bold",
+                        color: "#374151",
+                      }}>
+                      <span>Ultimate Charge</span>
+                      <span>{state.ultimateGauge}%</span>
+                    </div>
+
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "0.6rem",
+                        backgroundColor: "#d1d5db",
+                        borderRadius: "999px",
+                        overflow: "hidden",
+                        border: "1px solid #9ca3af",
+                      }}>
+                      <div
+                        style={{
+                          width: `${state.ultimateGauge}%`,
+                          height: "100%",
+                          backgroundColor:
+                            state.ultimateGauge >= 100 ? "#fbbf24" : "#3b82f6",
+                          transition: "width 0.3s ease-out",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* --- ULTIMATE MOVES --- */}
+                  {playerPokemon.moves.map((move, idx) => {
+                    const isUltimateReady =
+                      !isInputLocked && state.ultimateGauge >= 100;
+
+                    return (
+                      <T.StyledButton
+                        key={idx}
+                        type="button"
+                        style={{
+                          fontSize: "1rem",
+                          gap: "0.5rem",
+                          opacity: isUltimateReady ? 1 : 0.6,
+                          filter: isUltimateReady ? "none" : "grayscale(100%)",
+                          cursor: isUltimateReady ? "pointer" : "not-allowed",
+                        }}
+                        onClick={() =>
+                          actions.useUltimate(
+                            move.name,
+                            move.power || 50,
+                            move.type || "normal",
+                          )
+                        }
+                        pokemonType={move.type || "normal"}
+                        disabled={!isUltimateReady}>
+                        <img
+                          alt={move.type || "normal"}
+                          src={POKEMON_TYPE_ICONS[move.type || "normal"]}
+                          width={24}
+                          height={24}
+                          loading="lazy"
+                        />
+                        <Text as="span" variant="outlined">
+                          {move.name}
+                        </Text>
+                      </T.StyledButton>
+                    );
+                  })}
+
+                  {/* --- BASIC ATTACK (CHARGER) --- */}
+                  <T.BasicAttackButton
+                    type="button"
+                    style={{ gridColumn: "span 2 / span 2" }}
+                    disabled={isInputLocked}
+                    onClick={actions.basicAttack}>
+                    <Text
+                      variant="outlined"
+                      size="lg"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                      }}>
+                      <span
+                        style={{
+                          position: "relative",
+                          width: "1.75rem",
+                          height: "1.5rem",
+                          flexShrink: 0,
+                        }}>
+                        <Gloves
+                          style={{
+                            width: "1.5rem",
+                            height: "1.5rem",
+                            position: "absolute",
+                            left: 0,
+                            top: 0,
+                            zIndex: 2,
+                          }}
+                        />
+                        <Gloves
+                          style={{
+                            width: "1.5rem",
+                            height: "1.5rem",
+                            position: "absolute",
+                            left: "0.15rem",
+                            top: 0,
+                          }}
+                          color="#000"
+                        />
+                      </span>
+                      <span>Basic Attack (Charge)</span>
+                    </Text>
+                  </T.BasicAttackButton>
 
                   {playerPokemon.moves.length === 0 && (
                     <T.StyledButton
-                      onClick={() => performPlayerAttack("Struggle", 10)}
-                      disabled={!isPlayerTurn}>
+                      type="button"
+                      onClick={actions.useStruggle}
+                      disabled={isInputLocked}>
                       Struggle
                     </T.StyledButton>
                   )}
                 </T.AttackGrid>
               ) : (
                 <>
-                  {playerCurrentHP <= 0 ? (
+                  {state.playerCurrentHP <= 0 ? (
                     <T.ResetButton
-                      onClick={goBackToMyPokemon}
+                      type="button"
+                      onClick={actions.runAway}
                       style={{ backgroundColor: "#ef4444" }}>
                       <Text variant="outlined">Run Away (Back to Home)</Text>
                     </T.ResetButton>
                   ) : (
-                    <T.ResetButton onClick={resetGame}>
+                    <T.ResetButton type="button" onClick={actions.findNew}>
                       <Text as="span" variant="outlined">
                         Find New Opponent
                       </Text>
@@ -424,15 +428,17 @@ const VersusBattleModule = ({
                   )}
                 </>
               )}
+            </T.BattleMenu>
 
-              {!gameOver && (
+            <div style={{ paddingTop: "0.5rem", borderTop: "1px solid #ccc" }}>
+              {!state.gameOver && (
                 <T.ResetButton
-                  onClick={goBackToMyPokemon}
+                  onClick={actions.surrender}
                   style={{ backgroundColor: "#ef4444", marginTop: 16 }}>
                   <Text variant="outlined">Surrender (Back to My Pokemon)</Text>
                 </T.ResetButton>
               )}
-            </T.BattleMenu>
+            </div>
           </T.InterfaceWrapper>
         </T.BattleField>
       </T.BattleWrapper>

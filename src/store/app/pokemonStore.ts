@@ -10,7 +10,7 @@ interface IPokemonStore {
   getPokemonByNickname: (nickname: string) => IMyPokemon | undefined;
 }
 
-export const POKEMON_STORE_KEY = "pokegames@pokemonStore";
+export const POKEMON_STORE_KEY = "pokegames@pokemon-store";
 
 export const usePokemonStore = create<IPokemonStore>()(
   persist(

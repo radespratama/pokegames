@@ -30,6 +30,7 @@ export interface IMyPokemon {
   moves: Array<{
     name: string;
     power: number;
+    type?: string | null;
   }>;
 }
 

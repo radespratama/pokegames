@@ -6,7 +6,7 @@ function generateEnemyLevel(userLevel: number) {
 }
 
 function scaleStat(base: number, level: number) {
-  return Math.floor(base * (1 + level * 0.05));
+  return Math.floor(base * (1 + level * 0.02)); // Up 2% per level
 }
 
 function pickRandomMoves(allMoves: IPokemonDetailResponse["moves"], count = 6) {
@@ -22,12 +22,11 @@ function pickRandomMoves(allMoves: IPokemonDetailResponse["moves"], count = 6) {
 
 function powerFromMoveName(name: string) {
   let hash = 0;
-
   for (let i = 0; i < name.length; i++) {
     hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
   }
 
-  return 40 + (hash % 61);
+  return 30 + (hash % 36);
 }
 
 function getBaseStat(enemyData: IPokemonDetailResponse, statName: string) {

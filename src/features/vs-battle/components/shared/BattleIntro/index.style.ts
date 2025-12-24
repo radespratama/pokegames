@@ -72,6 +72,7 @@ export const VsSide = styled(motion.div)<{
   justifyContent: "center",
   alignItems: "center",
   backgroundColor: color,
+  position: "relative",
   clipPath:
     align === "left"
       ? "polygon(0 0, 100% 0, 85% 100%, 0% 100%)"

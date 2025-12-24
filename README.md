@@ -14,7 +14,27 @@
 ![Contributors](https://img.shields.io/github/contributors/radespratama/pokegames?style=for-the-badge)
 ![Stars](https://img.shields.io/github/stars/radespratama/pokegames?style=for-the-badge)
 
-A pokemon minigame where you can explore and catch them all. Built with React JS and consumes public <a href="https://pokeapi.co">PokeAPI</a>.🍺
+A Pokemon minigame where you can explore, catch, and battle them all. Built with React JS and consumes public <a href="https://pokeapi.co">PokeAPI</a>.🍺
+
+> **⚠️ DISCLAIMER: Fan-Made Educational Project**
+>
+> This project is created solely for **educational and non-commercial purposes** to demonstrate modern web development skills (React, State Management, Game Logic).
+>
+> All Pokémon content, including names, images, and related media, are intellectual property of **Nintendo, Game Freak, and Creatures Inc.** This project is not affiliated with, endorsed, sponsored, or specifically approved by Nintendo. No copyright infringement intended.
+
+<hr />
+
+### ⚔️ Battle Mechanics Info (v2.0)
+
+**Pokegames introduces a unique Custom RPG Battle System.**
+While we respect the classic **Elemental Type Effectiveness** (e.g., Water is super effective against Fire), the core combat logic is **custom-designed** to fit a web-based mini-RPG experience.
+
+We implemented fresh mechanics such as:
+
+- **Resource Management (Gauge System):** No PP usage. Instead, use **Basic Attacks** to charge your Ultimate Gauge.
+- **Ultimate Skills:** Unleash powerful elemental attacks once your Gauge is full (100%).
+- **Adaptive Difficulty:** Wild Pokemon use a "Stat Clamping" system in the early game to ensure a fair fight, but unleash their full potential after Level 12.
+- **Custom Scaling:** Stats grow by ~2% compound + Flat HP bonus per level, preventing "One-Shot" scenarios while maintaining progression satisfaction.
 
 ## Features💡
 
@@ -22,12 +42,19 @@ By using Pokegames you can:
 
 - [x] Get all list pokemon.
 - [x] Catch a pokemon and bring it to inventory.
-- [x] Animation pokeball when catch the pokemon.
-- [x] Give nickname to a pokemon
-- [x] Releasing a pokemon
-- [x] Pokemon stats
-- [x] Battle with wild pokemon (Wild pokemon use random stat and turn base mechanism)
-- [x] Leveling your current pokemon
+- [x] Animation pokeball when catching the pokemon.
+- [x] Give nickname to a pokemon.
+- [x] Release a pokemon.
+- [x] **Battle System:** Turn-based combat with Wild Pokemon.
+- [x] **Leveling System:** Gain EXP and Level Up to increase stats.
+- [x] **Damage System:** Critical hits, Miss chance, and Super Effective multipliers.
+
+**UPCOMING FEATURES (Roadmap)**
+
+- [ ] Pokemon Status Information (Detail View Update).
+- [ ] **Multiplayer PvP:** Real-time online battles with other players.
+- [ ] Online Account & Cloud Save.
+- [ ] Squad Tactics (3vs3 Team Match).
 
 ## Technology 👨‍💻
 

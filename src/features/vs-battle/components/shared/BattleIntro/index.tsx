@@ -9,6 +9,7 @@ import {
   VsSide,
 } from "./index.style";
 import type { IMyPokemon } from "@/services/api/pokemons";
+import { TypeCard } from "@/components/ui";
 
 interface IBattleIntroProps {
   player: IMyPokemon | undefined;
@@ -20,7 +21,7 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
-    }, 4000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -43,6 +44,16 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
           initial={{ x: "-100%" }}
           animate={{ x: "0%" }}
           transition={{ type: "spring", stiffness: 50, damping: 15 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {player?.types.map((type) => (
+              <TypeCard
+                key={type}
+                hasIcon
+                config={{ size: 16, fontSize: "base" }}
+                type={type}
+              />
+            ))}
+          </div>
           <VsName>{player?.nickname || "PLAYER"}</VsName>
           <VsImage
             src={player?.sprite}
@@ -60,6 +71,16 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
           initial={{ x: "100%" }}
           animate={{ x: "0%" }}
           transition={{ type: "spring", stiffness: 50, damping: 15 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {enemy?.types.map((type) => (
+              <TypeCard
+                key={type}
+                hasIcon
+                config={{ size: 16, fontSize: "base" }}
+                type={type}
+              />
+            ))}
+          </div>
           <VsName>{enemy?.name || "ENEMY"}</VsName>
           <VsImage src={enemy?.sprite} alt="Enemy" />
         </VsSide>

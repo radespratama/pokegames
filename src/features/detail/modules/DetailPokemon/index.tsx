@@ -82,25 +82,39 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
     const baseSpD = getBaseStat(pokemonDetail, "special-defense");
     const baseSpeed = getBaseStat(pokemonDetail, "speed");
 
+    const LEVEL_1 = 1;
+    const BONUS_HP_FLAT = LEVEL_1 * 5 + 30;
+
     const scaledStats = {
-      hp: scaleStat(baseHp, 1),
-      attack: scaleStat(baseAtk, 1),
-      defense: scaleStat(baseDef, 1),
-      special_attack: scaleStat(baseSpA, 1),
-      special_defense: scaleStat(baseSpD, 1),
-      speed: scaleStat(baseSpeed, 1),
+      hp: scaleStat(baseHp, LEVEL_1) + BONUS_HP_FLAT,
+      attack: scaleStat(baseAtk, LEVEL_1),
+      defense: scaleStat(baseDef, LEVEL_1),
+      special_attack: scaleStat(baseSpA, LEVEL_1),
+      special_defense: scaleStat(baseSpD, LEVEL_1),
+      speed: scaleStat(baseSpeed, LEVEL_1),
     };
 
     const typesBuild = pokemonDetail.types.map((t) => t.type.name || "");
-
-    const pickedMoves = pickRandomMoves(pokemonDetail.moves, 6).map((m) => {
-      const moveName = m.move?.name || "unknown-move";
-
+    const movePool = pickRandomMoves(pokemonDetail.moves, 10).map((m) => {
+      const moveName = m.move?.name || "struggle";
       return {
         name: moveName,
         power: powerFromMoveName(moveName),
       };
     });
+
+    movePool.sort((a, b) => b.power - a.power);
+
+    const numberOfUltimates = typesBuild.length > 0 ? typesBuild.length : 1;
+
+    const selectedUltimates = movePool
+      .slice(0, numberOfUltimates)
+      .map((move, index) => {
+        return {
+          ...move,
+          type: typesBuild[index] || "normal",
+        };
+      });
 
     const newPokemons = {
       name: pokemonName.toUpperCase(),
@@ -110,9 +124,9 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
       base_experience: baseExperience,
       stats: scaledStats,
       types: typesBuild,
-      moves: pickedMoves,
+      moves: selectedUltimates,
       battle_state: {
-        level: 1,
+        level: LEVEL_1,
         experience: 0,
       },
       base_stats: {
@@ -126,7 +140,6 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
     };
 
     addPokemon(newPokemons);
-
     setIsSaved(true);
   }
 
@@ -364,21 +377,32 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
         <T.Content style={{ marginTop: "30px" }}>
           <T.AbilitiesWrapper>
             <div className="pxl-type">
-              <Text as="h3">Type</Text>
-              {!isLoading ? (
-                types.map((type, index) => <TypeCard key={index} type={type} />)
-              ) : (
-                <T.DescriptionLoadingWrapper>
-                  <Loading label="Loading types..." />
-                </T.DescriptionLoadingWrapper>
-              )}
+              <Text as="h3" size="lg" variant="outlined">
+                Type
+              </Text>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {!isLoading ? (
+                  types.map((type) => (
+                    <TypeCard key={type} hasIcon type={type} />
+                  ))
+                ) : (
+                  <T.DescriptionLoadingWrapper>
+                    <Loading label="Loading types..." />
+                  </T.DescriptionLoadingWrapper>
+                )}
+              </div>
             </div>
 
             <div className="pxl-abilities">
-              <Text as="h3">Abilities</Text>
+              <Text as="h3" size="lg" variant="outlined">
+                Abilities
+              </Text>
               {!isLoading ? (
-                abilities.map((ability, index) => (
-                  <TypeCard key={index} type={ability.ability.name} />
+                abilities.map((ability) => (
+                  <TypeCard
+                    key={ability.ability.name}
+                    type={ability.ability.name}
+                  />
                 ))
               ) : (
                 <T.DescriptionLoadingWrapper>
@@ -389,12 +413,14 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
           </T.AbilitiesWrapper>
 
           <div>
-            <Text as="h3">Moves</Text>
+            <Text as="h3" size="lg" variant="outlined">
+              Moves
+            </Text>
             {!isLoading ? (
               <T.Grid>
-                {moves.map((move, index) => (
+                {moves.map((move) => (
                   <div
-                    key={index}
+                    key={move}
                     className="pxl-border"
                     style={{ marginBottom: 16, marginRight: 16 }}>
                     <Text>{move}</Text>
