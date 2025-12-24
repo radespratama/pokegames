@@ -24,7 +24,7 @@ A Pokemon minigame where you can explore, catch, and battle them all. Built with
 
 <hr />
 
-### ⚔️ Battle Mechanics Info (v2.0)
+### ⚔️ Battle Mechanics Info (v1.0)
 
 **Pokegames introduces a unique Custom RPG Battle System.**
 While we respect the classic **Elemental Type Effectiveness** (e.g., Water is super effective against Fire), the core combat logic is **custom-designed** to fit a web-based mini-RPG experience.
