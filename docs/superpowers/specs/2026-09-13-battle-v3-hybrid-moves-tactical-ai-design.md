@@ -163,7 +163,7 @@ Ultimate mengikuti accuracy move PokeAPI. Basic selalu accuracy 100. Nilai accur
 
 Priority ditentukan sebelum speed:
 
-1. Switch: priority 6.
+1. Switch: internal priority 100, intentionally above PokeAPI move priority.
 2. Ultimate/Skill: `move.priority`.
 3. Basic: priority 0.
 4. Priority sama: speed aktif lebih tinggi.
@@ -182,7 +182,7 @@ export function chooseEnemyAction(
 ): BattleAction;
 ```
 
-AI tidak memanggil `calculateDamage` karena fungsi itu mengonsumsi RNG. `estimateDamage` merupakan fungsi murni dengan variance 1.0 dan expected critical multiplier.
+AI tidak memanggil `calculateDamage` karena fungsi itu mengonsumsi RNG. `estimateDamage` merupakan fungsi murni dengan variance 1.0, expected critical multiplier, dan hit probability `accuracy / 100`.
 
 ### 6.1 Kandidat attack
 
