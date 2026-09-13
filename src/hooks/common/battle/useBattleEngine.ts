@@ -23,10 +23,9 @@ export const BATTLE_SESSION_KEY = "pokegames@battle-session";
 
 export interface BattleSession {
   mode: "1v1" | "3v3";
-  team: Array<string>; // nicknames, order = pick order
+  team: Array<string>;
   seed: number;
   state: BattleState | null;
-  /** UI reward ledger is persisted with engine state so a reload keeps the summary complete. */
   expGained?: Array<ExpGrant>;
   levelUps?: Array<{ nickname: string; level: number }>;
 }

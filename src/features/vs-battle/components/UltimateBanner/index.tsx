@@ -30,12 +30,20 @@ const UltimateBanner = ({ cast }: Props) => (
         </motion.div>
 
         <motion.div
-          style={{ position: "relative", textAlign: "center" }}
+          style={{ position: "absolute", inset: 0 }}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           exit={{ scaleX: 0, opacity: 0 }}
           transition={{ duration: 0.18, ease: "easeOut" }}>
-          <S.Band style={{ top: 0, bottom: 0, height: "auto" }} />
+          <S.Band />
+        </motion.div>
+
+        <motion.div
+          style={{ position: "relative", textAlign: "center" }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}>
           <S.Content>
             <S.Word>
               {LETTERS.map((ch, i) => (

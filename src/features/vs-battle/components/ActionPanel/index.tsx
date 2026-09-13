@@ -1,11 +1,12 @@
 import * as S from "./index.style";
+import MoveMeta from "./MoveMeta";
+import TypeIcon from "./TypeIcon";
 import type {
   BattleAction,
   Combatant,
 } from "@/features/vs-battle/engine/types";
 import type { IBattleMove } from "@/services/api/pokemons";
 import Gloves from "@/components/ui/Icon/Gloves";
-import { POKEMON_TYPE_ICONS } from "@/utils/constant";
 import { RULES, overchargeMul } from "@/features/vs-battle/engine/rules";
 import { availableActions } from "@/features/vs-battle/engine/reducer";
 
@@ -15,16 +16,6 @@ interface Props {
   onAct: (a: BattleAction) => void;
   onSwitch?: () => void;
 }
-
-const TypeIcon = ({ type }: { type: string }) => (
-  <img
-    src={POKEMON_TYPE_ICONS[type]}
-    alt={type}
-    width={18}
-    height={18}
-    style={{ marginRight: 6 }}
-  />
-);
 
 const basicMove: IBattleMove = {
   name: "Basic",
@@ -37,15 +28,6 @@ const basicMove: IBattleMove = {
 
 const moveLabel = (move: IBattleMove) =>
   `${move.name}, ${move.damageClass}, power ${move.power}, accuracy ${move.accuracy}`;
-
-const MoveMeta = ({ move }: { move: IBattleMove }) => (
-  <S.MoveMeta>
-    <S.ClassBadge damageClass={move.damageClass}>
-      {move.damageClass === "physical" ? "PHY" : "SP"}
-    </S.ClassBadge>
-    <span>ACC {move.accuracy}</span>
-  </S.MoveMeta>
-);
 
 const ActionPanel = ({ combatant, disabled, onAct, onSwitch }: Props) => {
   const avail = availableActions(combatant);

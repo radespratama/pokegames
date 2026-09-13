@@ -26,9 +26,7 @@ export const Streaks = styled("div")<{ side: "player" | "enemy" }>(
 
 export const Band = styled("div")({
   position: "absolute",
-  left: 0,
-  right: 0,
-  height: "132px",
+  inset: 0,
   background:
     "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.88) 18%, rgba(0,0,0,0.88) 82%, rgba(0,0,0,0) 100%)",
   borderTop: "4px solid #fbbf24",
@@ -38,7 +36,6 @@ export const Band = styled("div")({
 
 export const Content = styled("div")({
   position: "relative",
-  zIndex: 1,
   padding: "18px 40px",
 });
 
@@ -46,7 +43,7 @@ export const Word = styled("h2")({
   position: "relative",
   margin: 0,
   fontFamily: "'VT323', monospace",
-  fontSize: "clamp(3rem, 11vw, 7rem)",
+  fontSize: "clamp(3rem, 8vw, 6rem)",
   lineHeight: 0.9,
   letterSpacing: "10px",
   textTransform: "uppercase",

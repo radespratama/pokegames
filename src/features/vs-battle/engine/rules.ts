@@ -5,7 +5,6 @@ export const RULES = {
   GAUGE_SKILL_HIT: 10,
   GAUGE_ON_HIT_TAKEN: 10,
   GAUGE_CHAIN_BONUS: 50,
-  /** Multiplier for chain step 0 (Basic), 1 (Skill 1), 2 (Skill 2). */
   CHAIN_MUL: [1.0, 1.2, 1.5],
   CRIT_MUL: 1.5,
   STAB_MUL: 1.2,
@@ -29,7 +28,6 @@ export const RULES = {
 
 export const CHAIN_ORDER = ["basic", "skill1", "skill2"] as const;
 
-/** x2.0 at 100 gauge, linear up to x3.0 at 150. Below threshold: x1. */
 export const overchargeMul = (gauge: number): number =>
   gauge < RULES.ULT_THRESHOLD
     ? 1

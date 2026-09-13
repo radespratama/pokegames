@@ -260,6 +260,7 @@ const receivers = (t: Team) =>
     participated: c.participated,
   }));
 
+/** After an attack: exp, win/lose, auto/forced switch. Returns state and whether the round must stop. */
 function afterHit(
   s: BattleState,
   victimSide: Side,
@@ -290,12 +291,15 @@ function afterHit(
       base_experience: activeOf(s.enemy).base_experience,
       level: activeOf(s.enemy).battle_state.level,
     });
+
     let next = push(s, { type: "exp", grants });
     next = appendLog({ ...next, phase: "over", winner: "enemy" }, [
       "You lost the battle...",
     ]);
+
     return { s: next, stop: true };
   }
+
   return {
     s: appendLog({ ...s, phase: "forced-switch" }, [
       "Choose your next Pokemon!",

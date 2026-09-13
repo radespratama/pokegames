@@ -3,6 +3,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import ModeToggle from "../../components/ModeToggle";
 import { loadMode, maxPick, saveMode, toSlug, togglePick } from "../../pick";
+import PokedexDecorations from "./PokedexDecorations";
+import RoundControl from "./RoundControl";
 import * as T from "./index.style";
 import type { BattleMode } from "../../pick";
 import type { IMyPokemon } from "@/services/api/pokemons";
@@ -14,57 +16,6 @@ import {
   loadBattleMovePool,
 } from "@/features/vs-battle/data/movePool";
 import { loadCachedMove } from "@/features/vs-battle/data/cachedMove";
-
-const PokedexDecorations = () => (
-  <T.PokedexHeaderDeco>
-    <T.BigBlueLight />
-    <T.SmallLightsContainer>
-      <T.SmallLight color="#990000" />
-      <T.SmallLight color="#D4AF37" />
-      <T.SmallLight color="#32CD32" />
-    </T.SmallLightsContainer>
-  </T.PokedexHeaderDeco>
-);
-
-/** One round button + label under it; the three control-panel buttons were copy-paste before. */
-const RoundControl = ({
-  label,
-  onClick,
-  disabled,
-  bg,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  bg?: string;
-  children: React.ReactNode;
-}) => (
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: "4px",
-    }}>
-    <T.RoundButton
-      style={bg ? { backgroundColor: bg } : undefined}
-      onClick={onClick}
-      disabled={disabled}
-      aria-label={label}>
-      {children}
-    </T.RoundButton>
-    <span
-      style={{
-        fontSize: "10px",
-        color: "#555",
-        fontWeight: "bold",
-        fontFamily: "monospace",
-      }}>
-      {label}
-    </span>
-  </div>
-);
 
 const MyPokemonModule = () => {
   const navigate = useNavigate();

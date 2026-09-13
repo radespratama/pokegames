@@ -5,7 +5,6 @@ import { getTypeEffectiveness } from "@/utils";
 
 export interface DamageInput {
   power: number;
-  /** null = Basic Attack: no type chart, no STAB. */
   type: string | null;
   damageClass: MoveDamageClass;
   accuracy: number;

@@ -94,6 +94,7 @@ yarn || npm install
 
 VITE_POKEMON_API= <API URL HERE>
 VITE_POKEMON_IMAGE=https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/
+VITE_POKEMON_TYPE_ICON=https://raw.githubusercontent.com/duiker101/pokemon-type-svg-icons/master/icons
 ```
 
 #### Starting server

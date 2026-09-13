@@ -15,7 +15,6 @@ export interface Combatant extends IMyPokemon {
   chainStep: 0 | 1 | 2;
   cooldowns: { skill1: number; skill2: number };
   fainted: boolean;
-  /** Has been on the field at least once (for lose EXP). */
   participated: boolean;
 }
 
@@ -36,7 +35,6 @@ export type BattleEvent =
       effectiveness: number;
       isMiss: boolean;
       hpAfter: number;
-      /** Set only when the hit came from an ultimate; drives the ULTIMATE overlay. */
       ultimate?: string;
     }
   | { type: "log"; lines: Array<string> }
@@ -51,6 +49,5 @@ export interface BattleState {
   phase: Phase;
   winner: Side | null;
   log: Array<string>;
-  /** Animation queue produced by the last transition. Consumed by the hook. */
   events: Array<BattleEvent>;
 }
