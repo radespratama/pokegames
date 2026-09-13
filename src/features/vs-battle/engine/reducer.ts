@@ -1,7 +1,7 @@
 import { chooseEnemyAction } from "./ai";
+import { damageInputForAction } from "./action";
 import { calculateDamage } from "./damage";
 import { CHAIN_ORDER, RULES, overchargeMul } from "./rules";
-import type { DamageInput } from "./damage";
 import type {
   BattleAction,
   BattleEvent,
@@ -13,8 +13,6 @@ import type {
 } from "./types";
 import type { IMyPokemon } from "@/services/api/pokemons";
 import { koExpGrants, loseExpGrants } from "@/utils/leveling";
-
-// ---------- helpers ----------
 
 export const toCombatant = (p: IMyPokemon): Combatant => ({
   ...p,
@@ -59,8 +57,6 @@ export const appendLog = (s: BattleState, lines: Array<string>) =>
 
 const label = (c: Combatant, side: Side) =>
   side === "player" ? c.nickname : c.name;
-
-// ---------- lifecycle ----------
 
 export function createBattle(
   mode: BattleState["mode"],
@@ -107,8 +103,6 @@ export function forcedSwitch(s: BattleState, to: number): BattleState {
   return switchTo(next, "player", to);
 }
 
-// ---------- actions ----------
-
 function switchTo(s: BattleState, side: Side, to: number): BattleState {
   const t = side === "player" ? s.player : s.enemy;
   const team = t.team.map((c, i) =>
@@ -147,7 +141,6 @@ function isValid(s: BattleState, side: Side, action: BattleAction): boolean {
   }
 }
 
-/** One combatant performs one attack action against the other side's active. */
 function attack(
   s: BattleState,
   side: Side,
@@ -160,46 +153,29 @@ function attack(
   const defender = activeOf(defTeam);
   const lines: Array<string> = [];
 
-  // --- chain bookkeeping ---
   const expected = CHAIN_ORDER[attacker.chainStep];
   const inChain = action.kind !== "ultimate" && action.kind === expected;
   const chainMul = inChain ? RULES.CHAIN_MUL[attacker.chainStep] : 1;
   if (attacker.chainStep > 0 && !inChain) lines.push("Combo broken!");
 
-  // --- resolve move ---
   let moveName = "Basic Attack";
-  let input: DamageInput;
+  const input = { ...damageInputForAction(attacker, action), chainMul };
   let gaugeOnHit: number = RULES.GAUGE_BASIC_HIT;
   let gaugeAfter = attacker.gauge;
   let cooldowns = { ...attacker.cooldowns };
 
-  if (action.kind === "basic") {
-    input = { ...RULES.BASIC, type: null, chainMul };
-  } else if (action.kind === "ultimate") {
+  if (action.kind === "ultimate") {
     const move = attacker.moves[action.index];
     moveName = move.name;
-    input = {
-      power: move.power,
-      type: move.type || attacker.types[0] || "normal",
-      ...RULES.ULTIMATE,
-      overchargeMul: overchargeMul(attacker.gauge),
-    };
     gaugeOnHit = 0;
     gaugeAfter = 0;
     lines.push(
       `>>> ULTIMATE SKILL: ${moveName.toUpperCase()} (x${overchargeMul(attacker.gauge).toFixed(1)})! <<<`,
     );
-  } else {
+  } else if (action.kind !== "basic") {
     const skill = attacker.skills[action.kind === "skill1" ? 0 : 1];
     const rule = action.kind === "skill1" ? RULES.SKILL1 : RULES.SKILL2;
     moveName = skill.name;
-    input = {
-      power: skill.power,
-      type: skill.type,
-      missChance: rule.missChance,
-      critChance: rule.critChance,
-      chainMul,
-    };
     gaugeOnHit = RULES.GAUGE_SKILL_HIT;
     cooldowns = { ...cooldowns, [action.kind]: rule.cooldown };
   }
@@ -211,7 +187,6 @@ function attack(
   lines.push(...r.desc);
   if (!r.isMiss) lines.push(`Dealt ${r.damage} damage.`);
 
-  // --- chain step after the move ---
   let chainStep: Combatant["chainStep"] = 0;
   if (!r.isMiss && action.kind !== "ultimate") {
     if (action.kind === "basic") chainStep = 1;
@@ -329,8 +304,6 @@ function afterHit(
   };
 }
 
-// ---------- round ----------
-
 export function resolveRound(
   state: BattleState,
   playerAction: BattleAction,
@@ -360,7 +333,7 @@ export function resolveRound(
 
   for (const [side, action] of order) {
     const actor = activeOf(side === "player" ? s.player : s.enemy);
-    if (actor.fainted) continue; // cancelled
+    if (actor.fainted) continue;
 
     if (action.kind === "switch") {
       s = switchTo(s, side, action.to);

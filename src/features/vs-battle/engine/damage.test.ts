@@ -1,105 +1,176 @@
-import { describe, expect, it } from "vitest";
-import { calculateDamage } from "./damage";
-import type { IMyPokemon } from "@/services/api/pokemons";
+import { describe, expect, it, vi } from "vitest";
+import { calculateDamage, estimateDamage } from "./damage";
+import { pokemonFixture, sequenceRng } from "./testFixtures";
+import type { DamageInput } from "./damage";
 
-const seq =
-  (...values: Array<number>) =>
-  () =>
-    values.shift() ?? 0.5;
-
-const mk = (over: Partial<IMyPokemon> = {}): IMyPokemon => ({
-  name: "A",
-  nickname: "A",
-  battle_state: { level: 1, experience: 0 },
-  stats: {
-    hp: 100,
-    attack: 50,
-    defense: 50,
-    special_attack: 1,
-    special_defense: 1,
-    speed: 10,
-  },
-  types: ["normal"],
-  moves: [],
-  skills: [
-    { name: "S1", power: 45, type: "normal", cooldown: 2 },
-    { name: "S2", power: 65, type: "normal", cooldown: 3 },
-  ],
-  ...over,
-});
-
-const basic = { power: 20, type: null, missChance: 0, critChance: 0.12 };
+const physical: DamageInput = {
+  power: 60,
+  type: "psychic",
+  damageClass: "physical",
+  accuracy: 100,
+  critChance: 0,
+};
 
 describe("calculateDamage", () => {
-  it("basic: attack 50 vs defense 50, power 20, no crit, variance 1.0 → 7", () => {
-    const r = calculateDamage(mk(), mk(), basic, seq(0.5, 0.99, 0.5));
-    expect(r).toMatchObject({
-      damage: 7,
-      isCritical: false,
-      isMiss: false,
-      effectiveness: 1,
+  it("uses special attack and special defense for a special move", () => {
+    const attacker = pokemonFixture({ attack: 20, special_attack: 120 });
+    const defender = pokemonFixture({ defense: 120, special_defense: 20 });
+    const result = calculateDamage(
+      attacker,
+      defender,
+      { ...physical, damageClass: "special" },
+      sequenceRng([0.5]),
+    );
+    expect(result.damage).toBe(70);
+  });
+
+  it("uses attack and defense for a physical move", () => {
+    expect(
+      calculateDamage(
+        pokemonFixture({ attack: 20, special_attack: 120 }),
+        pokemonFixture({ defense: 120, special_defense: 20 }),
+        physical,
+        sequenceRng([0.5]),
+      ).damage,
+    ).toBe(6);
+  });
+
+  it.each([
+    { accuracy: 80, roll: 0.9, isMiss: true },
+    { accuracy: 80, roll: 0.8, isMiss: true },
+    { accuracy: 80, roll: 0.799, isMiss: false },
+    { accuracy: 100, roll: 0.999, isMiss: false },
+    { accuracy: 0, roll: 0, isMiss: true },
+  ])(
+    "accuracy $accuracy with roll $roll: miss=$isMiss",
+    ({ accuracy, roll, isMiss }) => {
+      const result = calculateDamage(
+        pokemonFixture(),
+        pokemonFixture(),
+        { ...physical, accuracy },
+        sequenceRng([roll, 0.5, 0.5]),
+      );
+      expect(result.isMiss).toBe(isMiss);
+      expect(result.damage).toBe(isMiss ? 0 : 29);
+    },
+  );
+
+  it("uses injected rolls in accuracy, critical, variance order", () => {
+    expect(
+      calculateDamage(
+        pokemonFixture(),
+        pokemonFixture(),
+        { ...physical, accuracy: 80, critChance: 0.2 },
+        sequenceRng([0.7, 0.1, 0]),
+      ),
+    ).toMatchObject({ damage: 39, isCritical: true, isMiss: false });
+  });
+
+  it("applies STAB, effectiveness, chain and overcharge multipliers", () => {
+    const attacker = pokemonFixture({ special_attack: 85 });
+    attacker.types = ["fire"];
+    const defender = pokemonFixture({ special_defense: 100 });
+    defender.types = ["grass"];
+    expect(
+      calculateDamage(
+        attacker,
+        defender,
+        {
+          ...physical,
+          power: 50,
+          type: "fire",
+          damageClass: "special",
+          chainMul: 1.5,
+          overchargeMul: 2,
+        },
+        sequenceRng([0.5]),
+      ),
+    ).toMatchObject({ damage: 180, effectiveness: 2 });
+  });
+
+  it("keeps type immunity at zero damage and nonimmune weak hits at one", () => {
+    const defender = pokemonFixture();
+    defender.types = ["ghost"];
+    expect(
+      calculateDamage(
+        pokemonFixture(),
+        defender,
+        { ...physical, type: "normal" },
+        sequenceRng([0.5]),
+      ).damage,
+    ).toBe(0);
+    expect(
+      calculateDamage(
+        pokemonFixture({ attack: 1 }),
+        defender,
+        { ...physical, power: 1 },
+        sequenceRng([0.5]),
+      ).damage,
+    ).toBe(1);
+  });
+
+  it("makes an untyped basic attack ignore STAB and immunity", () => {
+    const defender = pokemonFixture();
+    defender.types = ["ghost"];
+    expect(
+      calculateDamage(
+        pokemonFixture(),
+        defender,
+        { ...physical, power: 20, type: null },
+        sequenceRng([0.5]),
+      ),
+    ).toMatchObject({ damage: 9, effectiveness: 1 });
+  });
+});
+
+describe("estimateDamage", () => {
+  it("weights special damage by accuracy and expected critical multiplier without RNG", () => {
+    const attacker = pokemonFixture({ attack: 1, special_attack: 85 });
+    attacker.types = ["fire"];
+    const defender = pokemonFixture({ defense: 1, special_defense: 100 });
+    defender.types = ["grass"];
+    const random = vi.spyOn(Math, "random").mockImplementation(() => {
+      throw new Error("Estimate must not consume RNG");
     });
+    try {
+      const input: DamageInput = {
+        ...physical,
+        power: 50,
+        type: "fire",
+        damageClass: "special",
+        accuracy: 80,
+        critChance: 0.2,
+        chainMul: 1.5,
+        overchargeMul: 2,
+      };
+      expect(estimateDamage(attacker, defender, input)).toBe(158);
+      expect(estimateDamage(attacker, defender, input)).toBe(158);
+    } finally {
+      random.mockRestore();
+    }
   });
 
-  it("crit multiplies by 1.5", () => {
-    const r = calculateDamage(mk(), mk(), basic, seq(0.5, 0.0, 0.5));
-    expect(r.damage).toBe(11);
-    expect(r.desc).toContain("Critical hit!");
+  it("estimates physical damage using physical stats", () => {
+    expect(
+      estimateDamage(
+        pokemonFixture({ attack: 20, special_attack: 120 }),
+        pokemonFixture({ defense: 120, special_defense: 20 }),
+        physical,
+      ),
+    ).toBe(6);
   });
 
-  it("miss returns 0 damage and no other rolls", () => {
-    const r = calculateDamage(
-      mk(),
-      mk(),
-      { ...basic, missChance: 0.1 },
-      seq(0.05),
-    );
-    expect(r).toMatchObject({ damage: 0, isMiss: true });
-  });
-
-  it("typed move uses chart and STAB on any attacker type", () => {
-    const atk = mk({ types: ["water", "fire"] });
-    const def = mk({ types: ["grass"] });
-    const r = calculateDamage(
-      atk,
-      def,
-      { ...basic, type: "fire" },
-      seq(0.5, 0.99, 0.5),
-    );
-    // 7.84 * 2 (fire vs grass) * 1.2 (stab) = 18.8 → 18
-    expect(r.damage).toBe(18);
-    expect(r.effectiveness).toBe(2);
-    expect(r.desc).toContain("It's super effective!");
-  });
-
-  it("immune → 0 damage", () => {
-    const r = calculateDamage(
-      mk(),
-      mk({ types: ["ground"] }),
-      { ...basic, type: "electric" },
-      seq(0.5, 0.99, 0.5),
-    );
-    expect(r.damage).toBe(0);
-    expect(r.desc).toContain("It had no effect...");
-  });
-
-  it("chain and overcharge multipliers stack", () => {
-    const r = calculateDamage(
-      mk(),
-      mk(),
-      { ...basic, chainMul: 1.5, overchargeMul: 2 },
-      seq(0.5, 0.99, 0.5),
-    );
-    expect(r.damage).toBe(23); // 7.84 * 3 = 23.5
-  });
-
-  it("minimum 1 damage when not immune", () => {
-    const r = calculateDamage(
-      mk({ stats: { ...mk().stats, attack: 1 } }),
-      mk({ stats: { ...mk().stats, defense: 999 } }),
-      basic,
-      seq(0.5, 0.99, 0.5),
-    );
-    expect(r.damage).toBe(1);
+  it("returns zero for immunity and zero accuracy", () => {
+    const defender = pokemonFixture();
+    defender.types = ["ghost"];
+    expect(
+      estimateDamage(pokemonFixture(), defender, {
+        ...physical,
+        type: "normal",
+      }),
+    ).toBe(0);
+    expect(
+      estimateDamage(pokemonFixture(), defender, { ...physical, accuracy: 0 }),
+    ).toBe(0);
   });
 });

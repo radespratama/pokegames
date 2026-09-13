@@ -1,4 +1,3 @@
-/** Every tunable number of the battle engine. See spec section 3. */
 export const RULES = {
   GAUGE_MAX: 150,
   ULT_THRESHOLD: 100,
@@ -12,10 +11,10 @@ export const RULES = {
   STAB_MUL: 1.2,
   VARIANCE_MIN: 0.9,
   VARIANCE_MAX: 1.1,
-  BASIC: { power: 20, missChance: 0, critChance: 0.12 },
-  SKILL1: { cooldown: 2, missChance: 0.1, critChance: 0.12 },
-  SKILL2: { cooldown: 3, missChance: 0.05, critChance: 0.22 },
-  ULTIMATE: { missChance: 0, critChance: 0.12 },
+  BASIC: { power: 20, critChance: 0.12 },
+  SKILL1: { cooldown: 2, critChance: 0.12 },
+  SKILL2: { cooldown: 3, critChance: 0.22 },
+  ULTIMATE: { critChance: 0.12 },
   AI: { ULT_AT_THRESHOLD: 0.6, USE_SKILL2: 0.5, USE_SKILL1: 0.5 },
 } as const;
 
