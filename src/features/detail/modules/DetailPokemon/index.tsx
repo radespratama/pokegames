@@ -71,14 +71,17 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
   >([]);
 
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [savedNickname, setSavedNickname] = useState<string>("");
   const [nicknameModal, setNicknameModal] = useState<boolean>(false);
   const [nicknameIsValid, setNicknameIsValid] = useState<boolean>(true);
 
   async function onNicknameSave(e: FormEvent) {
     e.preventDefault();
 
+    const nickname = nicknameRef.current;
+
     const isUnique = !pokemons.some(
-      (collection) => collection.nickname === nicknameRef.current,
+      (collection) => collection.nickname === nickname,
     );
 
     if (!isUnique) {
@@ -117,7 +120,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
 
     const newPokemons = {
       name: pokemonName.toUpperCase(),
-      nickname: nicknameRef.current,
+      nickname,
       sprite,
       sprite_back: backSprite,
       base_experience: baseExperience,
@@ -133,8 +136,10 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
       base_stats,
     };
 
-    addPokemon(newPokemons);
-    setIsSaved(true);
+    if (addPokemon(newPokemons)) {
+      setSavedNickname(nickname);
+      setIsSaved(true);
+    } else setNicknameIsValid(false);
   }
 
   function setValuePokemon(result: IPokemonDetailResponse) {
@@ -306,9 +311,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
           ) : (
             <T.AnotherWrapper>
               <div className="pxl-border" style={{ textAlign: "left" }}>
-                <Text>
-                  Whoosh! {nicknameRef.current} is now in your Pokemon list
-                </Text>
+                <Text>Whoosh! {savedNickname} is now in your Pokemon list</Text>
               </div>
 
               <Link to="/my-pokemon">
