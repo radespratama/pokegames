@@ -6,7 +6,7 @@ type Stats = IMyPokemon["stats"];
 export const LEVEL_CAP = 100;
 export const EXP_BENCH_SHARE = 0.5;
 export const EXP_LOSE_SHARE = 0.25;
-const HP_BONUS = (level: number) => level * 5 + 30;
+export const HP_BONUS = (level: number) => level * 5 + 30;
 
 export interface ExpGrant {
   nickname: string;

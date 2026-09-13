@@ -3,11 +3,11 @@ import styled from "@emotion/styled";
 
 import type { PokeCardProps } from ".";
 import { colors } from "@/utils";
+import { toSlug } from "@/utils/pokemon-utils";
 
 const getStyle = ({ nickname, ...props }: PokeCardProps) => {
   const isSelected =
-    props.selectedPokemon &&
-    props.selectedPokemon === nickname?.toLowerCase().replace(" ", "-");
+    props.selectedPokemon && props.selectedPokemon === toSlug(nickname ?? "");
 
   return `
     .capture-qty,

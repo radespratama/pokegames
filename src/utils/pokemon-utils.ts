@@ -30,6 +30,21 @@ function powerFromMoveName(name: string) {
   return 30 + (hash % 36);
 }
 
+/** Pick `count` random moves and hash each into a 30..65 power. */
+function buildMovePool(
+  allMoves: IPokemonDetailResponse["moves"],
+  count = 6,
+): Array<{ name: string; power: number }> {
+  return pickRandomMoves(allMoves, count).map((m) => {
+    const name = m.move?.name || "struggle";
+    return { name, power: powerFromMoveName(name) };
+  });
+}
+
+/** Nickname → URL slug: lower-case, first space becomes a dash. The one definition. */
+export const toSlug = (nickname: string) =>
+  nickname.toLowerCase().replace(" ", "-");
+
 function getBaseStat(enemyData: IPokemonDetailResponse, statName: string) {
   return enemyData.stats.find((s) => s.stat.name === statName)?.base_stat ?? 0;
 }
@@ -109,6 +124,7 @@ function buildSkills(
 
 export {
   baseStatTotal,
+  buildMovePool,
   buildSkills,
   catchChance,
   shakeChance,

@@ -7,12 +7,12 @@ import type {
 import type { Rng } from "@/features/vs-battle/engine/types";
 import { getDetailPokemon } from "@/services/api/pokemons";
 import {
+  buildMovePool,
   buildSkills,
   getBaseStat,
-  pickRandomMoves,
-  powerFromMoveName,
   scaleStat,
 } from "@/utils/pokemon-utils";
+import { HP_BONUS } from "@/utils/leveling";
 
 /** Highest PokeAPI id with full sprite coverage. */
 const MAX_POKEMON_ID = 649;
@@ -66,15 +66,12 @@ export function buildEnemy(
   };
   const scale = (base: number, isHp = false) =>
     Math.floor(
-      (scaleStat(base, level) + (isHp ? level * 5 + 30 : 0)) *
+      (scaleStat(base, level) + (isHp ? HP_BONUS(level) : 0)) *
         difficulty.statMultiplier,
     );
 
   const types = detail.types.map((t) => t.type.name || "normal");
-  const pool = pickRandomMoves(detail.moves, 6).map((m) => {
-    const name = m.move?.name || "struggle";
-    return { name, power: powerFromMoveName(name) };
-  });
+  const pool = buildMovePool(detail.moves, 6);
   const ultimates = pool
     .slice(0, Math.max(1, types.length))
     .map((m, i) => ({ ...m, type: types[i] || types[0] || "normal" }));

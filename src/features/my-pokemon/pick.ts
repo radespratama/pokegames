@@ -4,9 +4,7 @@ export const BATTLE_MODE_KEY = "pokegames@battle-mode";
 
 export const maxPick = (mode: BattleMode) => (mode === "3v3" ? 3 : 1);
 
-/** Same slug rule PokeCard uses for its selected check. ponytail: only the first space is replaced, as before. */
-export const toSlug = (nickname: string) =>
-  nickname.toLowerCase().replace(" ", "-");
+export { toSlug } from "@/utils/pokemon-utils";
 
 export function togglePick(
   picked: Array<string>,

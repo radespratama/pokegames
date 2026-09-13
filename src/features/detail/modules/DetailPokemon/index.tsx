@@ -19,14 +19,13 @@ import {
 } from "@/components/ui";
 
 import "react-lazy-load-image-component/src/effects/blur.css";
+import { statsAtLevel } from "@/utils/leveling";
 import {
   baseStatTotal,
+  buildMovePool,
   buildSkills,
   catchChance,
   getBaseStat,
-  pickRandomMoves,
-  powerFromMoveName,
-  scaleStat,
 } from "@/utils/pokemon-utils";
 
 /** Highest base stat in the games (Blissey HP) - the meter's full scale. */
@@ -90,33 +89,20 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
 
     if (!pokemonDetail) return;
 
-    const baseHp = getBaseStat(pokemonDetail, "hp");
-    const baseAtk = getBaseStat(pokemonDetail, "attack");
-    const baseDef = getBaseStat(pokemonDetail, "defense");
-    const baseSpA = getBaseStat(pokemonDetail, "special-attack");
-    const baseSpD = getBaseStat(pokemonDetail, "special-defense");
-    const baseSpeed = getBaseStat(pokemonDetail, "speed");
-
-    const LEVEL_1 = 1;
-    const BONUS_HP_FLAT = LEVEL_1 * 5 + 30;
-
-    const scaledStats = {
-      hp: scaleStat(baseHp, LEVEL_1) + BONUS_HP_FLAT,
-      attack: scaleStat(baseAtk, LEVEL_1),
-      defense: scaleStat(baseDef, LEVEL_1),
-      special_attack: scaleStat(baseSpA, LEVEL_1),
-      special_defense: scaleStat(baseSpD, LEVEL_1),
-      speed: scaleStat(baseSpeed, LEVEL_1),
+    const base_stats = {
+      hp: getBaseStat(pokemonDetail, "hp"),
+      attack: getBaseStat(pokemonDetail, "attack"),
+      defense: getBaseStat(pokemonDetail, "defense"),
+      special_attack: getBaseStat(pokemonDetail, "special-attack"),
+      special_defense: getBaseStat(pokemonDetail, "special-defense"),
+      speed: getBaseStat(pokemonDetail, "speed"),
     };
 
+    const LEVEL_1 = 1;
+    const scaledStats = statsAtLevel(base_stats, LEVEL_1);
+
     const typesBuild = pokemonDetail.types.map((t) => t.type.name || "");
-    const movePool = pickRandomMoves(pokemonDetail.moves, 10).map((m) => {
-      const moveName = m.move?.name || "struggle";
-      return {
-        name: moveName,
-        power: powerFromMoveName(moveName),
-      };
-    });
+    const movePool = buildMovePool(pokemonDetail.moves, 10);
 
     movePool.sort((a, b) => b.power - a.power);
 
@@ -148,14 +134,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
         level: LEVEL_1,
         experience: 0,
       },
-      base_stats: {
-        hp: baseHp,
-        attack: baseAtk,
-        defense: baseDef,
-        special_attack: baseSpA,
-        special_defense: baseSpD,
-        speed: baseSpeed,
-      },
+      base_stats,
     };
 
     addPokemon(newPokemons);

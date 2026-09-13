@@ -11,9 +11,8 @@ import { Button, DeleteButton, Modal, PokeCard, Text } from "@/components/ui";
 import { getDetailPokemon } from "@/services/api/pokemons";
 import {
   PLACEHOLDER_SKILL_NAMES,
+  buildMovePool,
   buildSkills,
-  pickRandomMoves,
-  powerFromMoveName,
 } from "@/utils/pokemon-utils";
 
 const PokedexDecorations = () => (
@@ -113,10 +112,7 @@ const MyPokemonModule = () => {
         getDetailPokemon(p.name.toLowerCase())
           .then((detail) => {
             if (!detail) return;
-            const pool = pickRandomMoves(detail.moves, 2).map((m) => {
-              const name = m.move?.name || "struggle";
-              return { name, power: powerFromMoveName(name) };
-            });
+            const pool = buildMovePool(detail.moves, 2);
             updatePokemon(p.nickname, { skills: buildSkills(pool, p.types) });
           })
           .catch(() => undefined);

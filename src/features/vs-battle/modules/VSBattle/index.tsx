@@ -14,16 +14,13 @@ import { usePokemonStore } from "@/store/app/pokemonStore";
 import { useSpawnEnemies } from "@/hooks/common/battle/useSpawnEnemies";
 import { useBattleEngine } from "@/hooks/common/battle/useBattleEngine";
 import { aliveBench } from "@/features/vs-battle/engine/reducer";
+import { toSlug } from "@/utils/pokemon-utils";
 
 interface Props {
   mode: "1v1" | "3v3";
   team: Array<string>;
   seed: number;
 }
-
-/** Slug used by MyPokemon: lower-case, first space → "-". Kept as-is. */
-const matchesSlug = (nickname: string, slug: string) =>
-  nickname.toUpperCase() === slug.replace(/-/g, " ").toUpperCase();
 
 const DamageFloaters = ({
   damages,
@@ -74,7 +71,7 @@ const VersusBattleModule = ({ mode, team, seed }: Props) => {
   const playerTeam = useMemo(
     () =>
       team
-        .map((slug) => pokemons.find((p) => matchesSlug(p.nickname, slug)))
+        .map((slug) => pokemons.find((p) => toSlug(p.nickname) === slug))
         .filter((p) => p !== undefined),
     [pokemons, team],
   );
