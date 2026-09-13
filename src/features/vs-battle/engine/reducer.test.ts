@@ -55,7 +55,7 @@ describe("resolveRound damage inputs", () => {
     const next = resolveRound(
       state,
       { kind: "skill1" },
-      sequenceRng([0.8, 0.5]),
+      sequenceRng([0, 0.8, 0.5]),
     );
 
     expect(next.events).toContainEqual(
@@ -124,7 +124,7 @@ describe("resolveRound damage inputs", () => {
     const next = resolveRound(
       state,
       { kind: "ultimate", index: 0 },
-      sequenceRng([0.9, 0.5]),
+      sequenceRng([0, 0.9, 0.5]),
     );
     expect(next.events).toContainEqual(
       expect.objectContaining({

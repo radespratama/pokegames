@@ -313,7 +313,7 @@ export function resolveRound(
   if (!isValid(state, "player", playerAction)) return state;
 
   let s: BattleState = { ...state, events: [], phase: "resolving" };
-  const enemyAction = chooseEnemyAction(activeOf(s.enemy), rng);
+  const enemyAction = chooseEnemyAction(s, rng);
 
   const playerFirst = playerActsFirst(s, playerAction, enemyAction, rng);
 

@@ -16,7 +16,15 @@ export const RULES = {
   SKILL1: { cooldown: 2, critChance: 0.12 },
   SKILL2: { cooldown: 3, critChance: 0.22 },
   ULTIMATE: { critChance: 0.12 },
-  AI: { ULT_AT_THRESHOLD: 0.6, USE_SKILL2: 0.5, USE_SKILL1: 0.5 },
+  AI: {
+    KO_BONUS: 1000,
+    CHAIN_CONTINUE_BONUS: 18,
+    OVERCHARGE_READY_BONUS: 12,
+    SWITCH_MARGIN: 35,
+    LOW_HP_RATIO: 0.35,
+    BAD_EFFECTIVENESS: 0.5,
+    JITTER: 4,
+  },
 } as const;
 
 export const CHAIN_ORDER = ["basic", "skill1", "skill2"] as const;
