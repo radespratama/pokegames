@@ -107,10 +107,6 @@ function toV2BattleMove(
   };
 }
 
-/**
- * Skill 1 uses types[0], Skill 2 uses types[1] (or types[0]).
- * Pool entries beyond two are ignored; missing entries become placeholders.
- */
 type LegacyMove = { name: string; power: number; type?: string | null };
 
 function buildSkills(
