@@ -1,4 +1,8 @@
-import type { IPokemonDetailResponse, ISkill } from "@/services/api/pokemons";
+import type {
+  IBattleMove,
+  IPokemonDetailResponse,
+  ISkill,
+} from "@/services/api/pokemons";
 import { RULES } from "@/features/vs-battle/engine/rules";
 
 function generateEnemyLevel(userLevel: number) {
@@ -89,6 +93,20 @@ const SKILL_RANGES: [[number, number], [number, number]] = [
 const fitPower = (power: number, [lo, hi]: [number, number]) =>
   Math.round(lo + ((power - 30) / 35) * (hi - lo));
 
+function toV2BattleMove(
+  move: { name: string; power: number; type?: string | null },
+  fallbackType = "normal",
+): IBattleMove {
+  return {
+    name: move.name,
+    power: move.power,
+    type: move.type || fallbackType,
+    damageClass: "physical",
+    accuracy: 100,
+    priority: 0,
+  };
+}
+
 /**
  * Skill 1 uses types[0], Skill 2 uses types[1] (or types[0]).
  * Pool entries beyond two are ignored; missing entries become placeholders.
@@ -103,18 +121,18 @@ function buildSkills(
   const fallbackPower = [45, 65];
 
   const slot = (i: 0 | 1, type: string): ISkill => {
-    const m: { name: string; power: number } | undefined = pool[i];
-    return m // eslint-disable-line @typescript-eslint/no-unnecessary-condition -- indexed access may be out of range at runtime
+    const m = pool.at(i);
+    return m
       ? {
-          name: m.name,
+          ...toV2BattleMove(m, type),
           power: fitPower(m.power, SKILL_RANGES[i]),
-          type,
           cooldown: cds[i],
         }
       : {
-          name: PLACEHOLDER_SKILL_NAMES[i],
-          power: fallbackPower[i],
-          type,
+          ...toV2BattleMove(
+            { name: PLACEHOLDER_SKILL_NAMES[i], power: fallbackPower[i] },
+            type,
+          ),
           cooldown: cds[i],
         };
   };
@@ -126,6 +144,7 @@ export {
   baseStatTotal,
   buildMovePool,
   buildSkills,
+  toV2BattleMove,
   catchChance,
   shakeChance,
   generateEnemyLevel,

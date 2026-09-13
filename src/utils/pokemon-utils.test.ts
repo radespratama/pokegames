@@ -14,12 +14,18 @@ describe("buildSkills", () => {
       name: "tackle",
       power: 40,
       type: "fire",
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
       cooldown: 2,
     });
     expect(s2).toEqual({
       name: "ember",
       power: 70,
       type: "flying",
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
       cooldown: 3,
     });
   });
@@ -30,7 +36,17 @@ describe("buildSkills", () => {
       name: "Quick Strike",
       power: 45,
       type: "water",
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
     });
-    expect(s2).toMatchObject({ name: "Power Blast", power: 65, type: "water" });
+    expect(s2).toMatchObject({
+      name: "Power Blast",
+      power: 65,
+      type: "water",
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
+    });
   });
 });

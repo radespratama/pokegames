@@ -32,6 +32,17 @@ describe("buildEnemy", () => {
     expect(e.battle_state.level).toBe(5);
     expect(e.skills).toHaveLength(2);
     expect(e.moves.length).toBeGreaterThan(0);
+    expect(e.moveDataVersion).toBe(2);
+    expect(e.moves[0]).toMatchObject({
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
+    });
+    expect(e.skills[0]).toMatchObject({
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
+    });
     expect(e.types).toEqual(["psychic"]);
     expect(e.stats.hp).toBe(Math.floor(e.base_stats!.hp * 1.1) + 55);
   });

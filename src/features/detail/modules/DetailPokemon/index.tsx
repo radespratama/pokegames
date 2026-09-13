@@ -26,6 +26,7 @@ import {
   buildSkills,
   catchChance,
   getBaseStat,
+  toV2BattleMove,
 } from "@/utils/pokemon-utils";
 
 /** Highest base stat in the games (Blissey HP) - the meter's full scale. */
@@ -111,10 +112,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
     const selectedUltimates = movePool
       .slice(0, numberOfUltimates)
       .map((move, index) => {
-        return {
-          ...move,
-          type: typesBuild[index] || "normal",
-        };
+        return toV2BattleMove(move, typesBuild[index] || "normal");
       });
 
     const skillPool = movePool.slice(numberOfUltimates, numberOfUltimates + 2);
@@ -126,6 +124,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
       sprite,
       sprite_back: backSprite,
       base_experience: baseExperience,
+      moveDataVersion: 2 as const,
       stats: scaledStats,
       types: typesBuild,
       moves: selectedUltimates,

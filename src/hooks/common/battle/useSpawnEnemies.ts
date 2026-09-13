@@ -11,6 +11,7 @@ import {
   buildSkills,
   getBaseStat,
   scaleStat,
+  toV2BattleMove,
 } from "@/utils/pokemon-utils";
 import { HP_BONUS } from "@/utils/leveling";
 
@@ -74,7 +75,7 @@ export function buildEnemy(
   const pool = buildMovePool(detail.moves, 6);
   const ultimates = pool
     .slice(0, Math.max(1, types.length))
-    .map((m, i) => ({ ...m, type: types[i] || types[0] || "normal" }));
+    .map((m, i) => toV2BattleMove(m, types[i] || types[0] || "normal"));
 
   const animated =
     detail.sprites.versions?.["generation-v"]?.["black-white"]?.animated;
@@ -85,6 +86,7 @@ export function buildEnemy(
     sprite: animated?.front_default || detail.sprites.front_default || "",
     sprite_back: animated?.back_default || detail.sprites.back_default || "",
     base_experience: detail.base_experience || 0,
+    moveDataVersion: 2,
     battle_state: { level, experience: 0 },
     base_stats,
     stats: {
