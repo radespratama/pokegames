@@ -1,5 +1,5 @@
 import { chooseEnemyAction } from "./ai";
-import { damageInputForAction } from "./action";
+import { actionPriority, damageInputForAction } from "./action";
 import { calculateDamage } from "./damage";
 import { CHAIN_ORDER, RULES, overchargeMul } from "./rules";
 import type {
@@ -315,11 +315,7 @@ export function resolveRound(
   let s: BattleState = { ...state, events: [], phase: "resolving" };
   const enemyAction = chooseEnemyAction(activeOf(s.enemy), rng);
 
-  const playerFirst =
-    playerAction.kind === "switch" ||
-    activeOf(s.player).stats.speed > activeOf(s.enemy).stats.speed ||
-    (activeOf(s.player).stats.speed === activeOf(s.enemy).stats.speed &&
-      rng() < 0.5);
+  const playerFirst = playerActsFirst(s, playerAction, enemyAction, rng);
 
   const order: Array<[Side, BattleAction]> = playerFirst
     ? [
@@ -348,4 +344,21 @@ export function resolveRound(
 
   if (s.phase === "resolving") s = { ...s, phase: "select" };
   return s;
+}
+
+export function playerActsFirst(
+  state: BattleState,
+  playerAction: BattleAction,
+  enemyAction: BattleAction,
+  rng: Rng,
+): boolean {
+  const player = activeOf(state.player);
+  const enemy = activeOf(state.enemy);
+  const playerPriority = actionPriority(player, playerAction);
+  const enemyPriority = actionPriority(enemy, enemyAction);
+  if (playerPriority !== enemyPriority) return playerPriority > enemyPriority;
+  if (player.stats.speed !== enemy.stats.speed) {
+    return player.stats.speed > enemy.stats.speed;
+  }
+  return rng() < 0.5;
 }

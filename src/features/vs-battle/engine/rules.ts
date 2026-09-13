@@ -11,6 +11,7 @@ export const RULES = {
   STAB_MUL: 1.2,
   VARIANCE_MIN: 0.9,
   VARIANCE_MAX: 1.1,
+  SWITCH_PRIORITY: 100,
   BASIC: { power: 20, critChance: 0.12 },
   SKILL1: { cooldown: 2, critChance: 0.12 },
   SKILL2: { cooldown: 3, critChance: 0.22 },

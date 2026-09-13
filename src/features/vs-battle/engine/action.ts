@@ -38,3 +38,15 @@ export function damageInputForAction(
     critChance: rule.critChance,
   };
 }
+
+export function actionPriority(
+  combatant: Combatant,
+  action: BattleAction,
+): number {
+  if (action.kind === "switch") return RULES.SWITCH_PRIORITY;
+  if (action.kind === "basic") return 0;
+  if (action.kind === "ultimate") {
+    return combatant.moves[action.index]?.priority ?? 0;
+  }
+  return combatant.skills[action.kind === "skill1" ? 0 : 1].priority;
+}

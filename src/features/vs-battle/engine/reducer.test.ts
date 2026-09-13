@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { forcedSwitch, resolveRound } from "./reducer";
+import { forcedSwitch, playerActsFirst, resolveRound } from "./reducer";
 import {
   battleStateFixture,
   combatantFixture,
@@ -226,5 +226,27 @@ describe("battle bookkeeping", () => {
       type: "exp",
       grants: [{ nickname: "TEST", amount: 32 }],
     });
+  });
+});
+
+describe("playerActsFirst", () => {
+  it("processes an enemy switch before a faster player attack", () => {
+    const state = battleStateFixture({ playerSpeed: 200, enemySpeed: 10 });
+    expect(
+      playerActsFirst(
+        state,
+        { kind: "basic" },
+        { kind: "switch", to: 1 },
+        () => 0,
+      ),
+    ).toBe(false);
+  });
+
+  it("uses move priority before speed", () => {
+    const state = battleStateFixture({ playerSpeed: 10, enemySpeed: 200 });
+    state.player.team[0].skills[0].priority = 1;
+    expect(
+      playerActsFirst(state, { kind: "skill1" }, { kind: "basic" }, () => 0.9),
+    ).toBe(true);
   });
 });
