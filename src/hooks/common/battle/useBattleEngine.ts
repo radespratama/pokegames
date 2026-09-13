@@ -26,6 +26,9 @@ export interface BattleSession {
   team: Array<string>; // nicknames, order = pick order
   seed: number;
   state: BattleState | null;
+  /** UI reward ledger is persisted with engine state so a reload keeps the summary complete. */
+  expGained?: Array<ExpGrant>;
+  levelUps?: Array<{ nickname: string; level: number }>;
 }
 
 export function loadSession(): BattleSession | null {
@@ -45,6 +48,8 @@ const saveSession = (s: BattleSession) =>
 /** Delays between queued events, ms. */
 const STEP_MS = { hit: 700, switch: 600, faint: 700, log: 0, exp: 0 } as const;
 const HIT_EFFECT_MS = 600;
+/** Extra dwell so the ULTIMATE banner is readable before the next event. */
+const ULT_BANNER_MS = 1100;
 
 interface Opts {
   mode: "1v1" | "3v3";
@@ -76,11 +81,18 @@ export function useBattleEngine({
     enemy: 0,
   });
   const [hitKey, setHitKey] = useState(0);
+  const [ultimateCast, setUltimateCast] = useState<{
+    name: string;
+    side: Side;
+    key: number;
+  } | null>(null);
   const [busy, setBusy] = useState(false);
   const [levelUps, setLevelUps] = useState<
     Array<{ nickname: string; level: number }>
   >([]);
   const [expGained, setExpGained] = useState<Array<ExpGrant>>([]);
+  const expGainedRef = useRef<Array<ExpGrant>>([]);
+  const levelUpsRef = useRef<Array<{ nickname: string; level: number }>>([]);
   const timers = useRef<Array<number>>([]);
 
   // --- init: restore or create ---
@@ -102,7 +114,20 @@ export function useBattleEngine({
       enemy: initial.enemy.team.map((c) => c.currentHp),
     });
     setActive({ player: initial.player.active, enemy: initial.enemy.active });
-    saveSession({ mode, team, seed, state: initial });
+    const restoredExp = sameBattle ? (saved.expGained ?? []) : [];
+    const restoredLevels = sameBattle ? (saved.levelUps ?? []) : [];
+    expGainedRef.current = restoredExp;
+    levelUpsRef.current = restoredLevels;
+    setExpGained(restoredExp);
+    setLevelUps(restoredLevels);
+    saveSession({
+      mode,
+      team,
+      seed,
+      state: initial,
+      expGained: restoredExp,
+      levelUps: restoredLevels,
+    });
   }, [state, enemyTeam]);
 
   useEffect(() => () => timers.current.forEach((t) => clearTimeout(t)), []);
@@ -120,34 +145,68 @@ export function useBattleEngine({
       next.events.forEach((ev: BattleEvent) => {
         later(delay, () => {
           if (ev.type === "hit") {
-            setActiveHitTarget(ev.target);
-            setHitKey((k) => k + 1);
-            showDamage(ev.target, ev.damage, ev.isCritical, ev.effectiveness);
-            setHp((prev) => ({
-              ...prev,
-              [ev.target]: prev[ev.target].map((v, i) =>
-                i === ev.index ? ev.hpAfter : v,
-              ),
-            }));
-            later(HIT_EFFECT_MS, () => setActiveHitTarget(null));
+            const playImpact = () => {
+              setActiveHitTarget(ev.target);
+              setHitKey((k) => k + 1);
+              showDamage(ev.target, ev.damage, ev.isCritical, ev.effectiveness);
+              setHp((prev) => ({
+                ...prev,
+                [ev.target]: prev[ev.target].map((v, i) =>
+                  i === ev.index ? ev.hpAfter : v,
+                ),
+              }));
+              later(HIT_EFFECT_MS, () => setActiveHitTarget(null));
+            };
+
+            if (ev.ultimate) {
+              const name = ev.ultimate;
+              const caster: Side = ev.target === "player" ? "enemy" : "player";
+              setUltimateCast((u) => ({
+                name,
+                side: caster,
+                key: (u?.key ?? 0) + 1,
+              }));
+              later(ULT_BANNER_MS, () => {
+                setUltimateCast(null);
+                playImpact();
+              });
+            } else {
+              playImpact();
+            }
           }
           if (ev.type === "switch")
             setActive((prev) => ({ ...prev, [ev.side]: ev.to }));
           if (ev.type === "exp") {
-            setExpGained((prev) => [...prev, ...ev.grants]);
+            const nextExp = [...expGainedRef.current, ...ev.grants];
+            expGainedRef.current = nextExp;
+            setExpGained(nextExp);
             const ups = ev.grants.flatMap((g) =>
               grantExp(g).map((level) => ({ nickname: g.nickname, level })),
             );
-            if (ups.length) setLevelUps((prev) => [...prev, ...ups]);
+            if (ups.length) {
+              const nextLevels = [...levelUpsRef.current, ...ups];
+              levelUpsRef.current = nextLevels;
+              setLevelUps(nextLevels);
+            }
           }
         });
-        delay += STEP_MS[ev.type];
+        delay +=
+          STEP_MS[ev.type] +
+          (ev.type === "hit" && ev.ultimate ? ULT_BANNER_MS : 0);
       });
       later(delay, () => {
         setState(next);
         setBusy(false);
         if (next.phase === "over") clearSession();
-        else saveSession({ mode, team, seed, state: { ...next, events: [] } });
+        else
+          saveSession({
+            mode,
+            team,
+            seed,
+            state: { ...next, events: [] },
+            expGained: expGainedRef.current,
+            levelUps: levelUpsRef.current,
+          });
       });
     },
     [grantExp, showDamage],
@@ -205,8 +264,19 @@ export function useBattleEngine({
       levelUps,
       expGained,
       active,
+      ultimateCast,
     }),
-    [hp, activeHitTarget, hitKey, damages, busy, levelUps, expGained, active],
+    [
+      hp,
+      activeHitTarget,
+      hitKey,
+      damages,
+      busy,
+      levelUps,
+      expGained,
+      active,
+      ultimateCast,
+    ],
   );
 
   return {

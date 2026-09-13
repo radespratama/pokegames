@@ -7,6 +7,7 @@ import BattleIntro from "@/features/vs-battle/components/shared/BattleIntro";
 import ActionPanel from "@/features/vs-battle/components/ActionPanel";
 import GaugeBar from "@/features/vs-battle/components/GaugeBar";
 import ChainIndicator from "@/features/vs-battle/components/ChainIndicator";
+import UltimateBanner from "@/features/vs-battle/components/UltimateBanner";
 import Bench from "@/features/vs-battle/components/Bench";
 import SwitchModal from "@/features/vs-battle/components/SwitchModal";
 import ResultPanel from "@/features/vs-battle/components/ResultPanel";
@@ -75,6 +76,7 @@ const VersusBattleModule = ({ mode, team, seed }: Props) => {
         .filter((p) => p !== undefined),
     [pokemons, team],
   );
+
   const refLevel = Math.max(1, ...playerTeam.map((p) => p.battle_state.level));
   const { enemies, isLoading } = useSpawnEnemies({
     count: mode === "3v3" ? 3 : 1,
@@ -136,6 +138,7 @@ const VersusBattleModule = ({ mode, team, seed }: Props) => {
       </AnimatePresence>
 
       <T.BattleWrapper>
+        <UltimateBanner cast={view.ultimateCast} />
         <T.BattleField>
           {mode === "3v3" && (
             <>
@@ -286,13 +289,15 @@ const VersusBattleModule = ({ mode, team, seed }: Props) => {
                 />
               ) : (
                 <>
-                  <GaugeBar gauge={me.gauge} />
-                  <ChainIndicator
-                    step={me.chainStep}
-                    finished={
-                      state.log.at(-1)?.includes("COMBO FINISHER") ?? false
-                    }
-                  />
+                  <T.MeterStack>
+                    <GaugeBar gauge={me.gauge} />
+                    <ChainIndicator
+                      step={me.chainStep}
+                      finished={
+                        state.log.at(-1)?.includes("COMBO FINISHER") ?? false
+                      }
+                    />
+                  </T.MeterStack>
                   <ActionPanel
                     combatant={me}
                     disabled={locked}

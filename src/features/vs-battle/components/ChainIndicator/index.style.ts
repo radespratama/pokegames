@@ -5,7 +5,6 @@ export const Row = styled("div")({
   display: "flex",
   gap: "6px",
   justifyContent: "center",
-  marginBottom: "6px",
 });
 
 export const Pip = styled("span")<{
@@ -13,10 +12,13 @@ export const Pip = styled("span")<{
   next: boolean;
   broken: boolean;
 }>(({ lit, next, broken }) => ({
-  fontFamily: "monospace",
-  fontSize: "0.65rem",
-  fontWeight: "bold",
-  padding: "2px 8px",
+  flex: 1,
+  textAlign: "center",
+  fontFamily: "'VT323', monospace",
+  fontSize: "0.95rem",
+  lineHeight: 1.3,
+  letterSpacing: "1px",
+  padding: "3px 8px",
   border: `2px solid ${colors["gray-800"]}`,
   color: lit ? colors["white-800"] : colors["gray-600"],
   backgroundColor: broken

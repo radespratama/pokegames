@@ -1,3 +1,5 @@
+import { LazyLoadImage } from "react-lazy-load-image-component";
+
 import { PixelatedTypeCard } from "./index.style";
 import { POKEMON_TYPE_ICONS } from "@/utils/constant";
 import Text from "@/components/ui/Text";
@@ -24,12 +26,11 @@ const TypeCard = ({ type, hasIcon = false, config }: TypeCardProps) => {
         }),
       }}>
       {hasIcon && (
-        <img
+        <LazyLoadImage
           alt={type}
           src={POKEMON_TYPE_ICONS[type]}
           width={config?.size || 24}
           height={config?.size || 24}
-          loading="lazy"
         />
       )}
       <Text

@@ -36,6 +36,8 @@ export type BattleEvent =
       effectiveness: number;
       isMiss: boolean;
       hpAfter: number;
+      /** Set only when the hit came from an ultimate; drives the ULTIMATE overlay. */
+      ultimate?: string;
     }
   | { type: "log"; lines: Array<string> }
   | { type: "faint"; side: Side; index: number }

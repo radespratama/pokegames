@@ -65,6 +65,7 @@ export const globalStyle = css`
       left: -4px;
       content: "";
       box-shadow: inset -4px -4px ${colors["gray-700"]};
+      pointer-events: none;
     }
   }
 `;

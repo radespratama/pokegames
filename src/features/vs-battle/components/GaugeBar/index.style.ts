@@ -6,9 +6,9 @@ const MARK = (RULES.ULT_THRESHOLD / RULES.GAUGE_MAX) * 100;
 
 export const Wrap = styled("div")<{ compact: boolean }>(({ compact }) => ({
   width: compact ? "180px" : "100%",
-  fontFamily: "monospace",
-  fontSize: compact ? "0.65rem" : "0.75rem",
-  fontWeight: "bold",
+  fontFamily: "'VT323', monospace",
+  fontSize: compact ? "0.8rem" : "1.05rem",
+  letterSpacing: "1px",
   color: colors["gray-800"],
 }));
 
@@ -21,9 +21,9 @@ export const Labels = styled("div")({
 export const Track = styled("div")<{ compact: boolean }>(({ compact }) => ({
   position: "relative",
   width: "100%",
-  height: compact ? "6px" : "12px",
+  height: compact ? "6px" : "14px",
   backgroundColor: colors["gray-300"],
-  border: `2px solid ${colors["gray-800"]}`,
+  border: `${compact ? 2 : 3}px solid ${colors["gray-800"]}`,
   overflow: "hidden",
   "&::after": {
     content: '""',

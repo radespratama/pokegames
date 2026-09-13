@@ -102,13 +102,27 @@ export const BattleMenu = styled("div")({
   borderRadius: "0px",
   border: `4px solid ${colors["gray-800"]}`,
   boxShadow: `6px 6px 0px ${colors["gray-800"]}`,
-  padding: "1.5rem",
+  padding: "1.25rem",
   imageRendering: "pixelated",
+
+  display: "flex",
+  flexDirection: "column",
+  gap: "14px",
+});
+
+/** Gauge + chain read as one meter block, separated from the action grid. */
+export const MeterStack = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  gap: "10px",
+  padding: "10px 12px",
+  backgroundColor: colors["gray-200"],
+  border: `3px solid ${colors["gray-400"]}`,
 });
 
 export const MenuTitle = styled("h3")({
   fontWeight: "800",
-  marginBottom: "1rem",
+  margin: 0,
   fontSize: "1.1rem",
   textAlign: "center",
   color: colors["gray-800"],
@@ -302,13 +316,27 @@ export const EnemyGaugeSlot = styled("div")({ marginTop: "4px" });
 
 export const RunAwayButton = styled("button")({
   alignSelf: "flex-end",
-  padding: "6px 12px",
-  fontFamily: "monospace",
-  fontWeight: "bold",
+  marginTop: "2px",
+  padding: "8px 18px",
+  fontFamily: "'VT323', monospace",
+  fontSize: "1.15rem",
+  lineHeight: 1,
+  letterSpacing: "2px",
   textTransform: "uppercase",
   color: colors["white-800"],
+  textShadow: "2px 2px 0 #000",
   backgroundColor: colors["red-600"],
-  border: `2px solid ${colors["gray-800"]}`,
+  border: `3px solid ${colors["gray-800"]}`,
+  boxShadow: `0 4px 0 ${colors["gray-800"]}`,
   cursor: "pointer",
-  "&:disabled": { opacity: 0.5, cursor: "not-allowed" },
+  transition: "transform 0.08s steps(2), box-shadow 0.08s steps(2)",
+  "&:hover:not(:disabled)": {
+    transform: "translateY(-2px)",
+    boxShadow: `0 6px 0 ${colors["gray-800"]}`,
+  },
+  "&:active:not(:disabled)": {
+    transform: "translateY(4px)",
+    boxShadow: "none",
+  },
+  "&:disabled": { opacity: 0.5, cursor: "not-allowed", boxShadow: "none" },
 });

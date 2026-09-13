@@ -239,6 +239,7 @@ function attack(
     effectiveness: r.effectiveness,
     isMiss: r.isMiss,
     hpAfter,
+    ultimate: action.kind === "ultimate" ? moveName : undefined,
   });
   if (hpAfter === 0) {
     next = push(next, {
@@ -259,7 +260,6 @@ const receivers = (t: Team) =>
     participated: c.participated,
   }));
 
-/** After an attack: exp, win/lose, auto/forced switch. Returns state and whether the round must stop. */
 function afterHit(
   s: BattleState,
   victimSide: Side,

@@ -26,5 +26,12 @@ function VersusBattle() {
   const { mode, team, seed } = useSearch({ from: "/vs-battle" });
   // Stable array identity: useBattleEngine keys its session on `team`.
   const nicknames = useMemo(() => team.split(",").filter(Boolean), [team]);
-  return <VersusBattleModule mode={mode} team={nicknames} seed={seed} />;
+  return (
+    <VersusBattleModule
+      key={`${mode}:${team}:${seed}`}
+      mode={mode}
+      team={nicknames}
+      seed={seed}
+    />
+  );
 }

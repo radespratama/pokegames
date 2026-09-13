@@ -13,7 +13,6 @@ export interface IBattleMove {
 }
 
 export interface ISkill extends IBattleMove {
-  /** Own turns to wait after use, including the turn it was used. */
   cooldown: number;
 }
 
@@ -154,10 +153,6 @@ export const getDetailPokemon = async (
   return result.data;
 };
 
-/**
- * PokeAPI has no bulk "pokemon with types" endpoint. 18 type endpoints cover
- * every species, so one fan-out builds the whole index instead of 1300 detail calls.
- */
 export const getPokemonTypeIndex = async (): Promise<
   Record<string, Array<string>>
 > => {
@@ -174,6 +169,7 @@ export const getPokemonTypeIndex = async (): Promise<
   );
 
   const index: Record<string, Array<string>> = {};
+
   pages.forEach(({ type, pokemon }) => {
     pokemon.forEach((entry) => {
       (index[entry.pokemon.name] ??= []).push(type);
