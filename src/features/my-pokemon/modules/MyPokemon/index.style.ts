@@ -12,10 +12,12 @@ const POKE_COLORS = {
 
 const PokedexFrame = styled("div")({
   backgroundColor: POKE_COLORS.red,
-  height: "100dvh",
-  width: "100vw",
+  height: "calc(100dvh - 32px)",
+  width: "calc(100% - 16px)",
+  margin: "16px 8px",
   padding: "16px",
   position: "relative",
+  borderRadius: "12px",
   border: "4px solid #000",
   boxSizing: "border-box",
   overflow: "hidden",
@@ -35,10 +37,10 @@ const PokedexFrame = styled("div")({
 
   "@media (min-width: 1024px)": {
     padding: "32px",
+    width: "calc(100% - 64px)",
     maxWidth: "70rem",
-    margin: "0 auto",
-    height: "100vh",
-    maxHeight: "100vh",
+    height: "calc(100dvh - 64px)",
+    margin: "32px auto",
     borderRadius: "24px",
   },
 });
@@ -130,42 +132,53 @@ const ScreenContainer = styled("div")({
   },
 });
 
+/** The one scroller in the device: the list moves, the chassis never does. */
 const ScreenContent = styled("div")({
   width: "100%",
   flex: 1,
+  minHeight: 0,
   overflowY: "auto",
+  overscrollBehavior: "contain",
   padding: "16px",
+  display: "flex",
+  flexDirection: "column",
 
   position: "relative",
   zIndex: 1,
 
-  "&::-webkit-scrollbar": {
-    width: "16px",
-    backgroundColor: "#000",
-  },
+  scrollbarWidth: "thin",
+  scrollbarColor: `${POKE_COLORS.screenOn} transparent`,
+  "&::-webkit-scrollbar": { width: "8px" },
+  "&::-webkit-scrollbar-track": { background: "rgba(0, 0, 0, 0.4)" },
   "&::-webkit-scrollbar-thumb": {
-    backgroundColor: POKE_COLORS.red,
-    border: "2px solid #fff",
-    boxShadow: "inset -2px -2px #8B0000",
+    background: POKE_COLORS.screenOn,
+    border: "2px solid #232323",
+  },
+
+  "@media (min-width: 640px)": {
+    padding: "24px",
   },
 });
 
+/** Fixed parts of the chassis; only ScreenContent between them scrolls. */
 const ScreenHeader = styled("header")({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  marginBottom: "4px",
-  padding: "0 8px",
+  padding: "8px",
   flexShrink: 0,
+  borderBottom: `4px solid ${POKE_COLORS.screenBezelShadow}`,
 });
 
 const ControlPanel = styled("div")({
   display: "flex",
+  flexWrap: "wrap",
   justifyContent: "space-between",
   alignItems: "flex-end",
-  marginTop: "auto",
-  padding: "4px 8px 0 8px",
+  gap: "12px",
+  padding: "12px 8px",
   flexShrink: 0,
+  borderTop: `4px solid ${POKE_COLORS.screenBezelShadow}`,
 });
 
 const RoundButton = styled("button")({
@@ -216,11 +229,46 @@ const Grid = styled("div")({
 const WrapperCardList = styled("div")({
   position: "relative",
   zIndex: 5,
+  "&.shake": {
+    animation: "card-shake 0.3s steps(4) 1",
+  },
+  "@keyframes card-shake": {
+    "0%,100%": { transform: "translateX(0)" },
+    "25%": { transform: "translateX(-4px)" },
+    "75%": { transform: "translateX(4px)" },
+  },
+});
+
+/** Lead = red, 2nd = gold, 3rd = green (spec: distinct colour per pick order). */
+const BADGE_COLORS = ["#DC0A2D", "#D4AF37", "#32CD32"];
+
+const PickBadge = styled("span")<{ order: number }>(({ order }) => ({
+  position: "absolute",
+  top: 4,
+  left: 8,
+  width: 24,
+  height: 24,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontFamily: "monospace",
+  fontWeight: "bold",
+  color: "#fff",
+  backgroundColor: BADGE_COLORS[order] ?? BADGE_COLORS[0],
+  border: "2px solid #000",
+  zIndex: 6,
+}));
+
+const BattleControls = styled("div")({
+  flex: 1,
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  padding: "0 16px",
 });
 
 const EmptyState = styled("div")({
-  height: "100%",
-  minHeight: "200px",
+  flex: 1,
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -228,11 +276,6 @@ const EmptyState = styled("div")({
   gap: units.spacing.base,
   color: "#fff",
   zIndex: 5,
-});
-
-const ScreenGrid = styled("div")({
-  flex: 1,
-  overflow: "hidden",
 });
 
 const DeleteConfirmationModal = styled("div")({
@@ -278,7 +321,6 @@ export {
   SmallLight,
   ScreenBezel,
   ScreenHeader,
-  ScreenGrid,
   ControlPanel,
   RoundButton,
   SpeakerVents,
@@ -287,6 +329,8 @@ export {
   DeleteConfirmationModal,
   InfoModal,
   WrapperCardList,
+  PickBadge,
+  BattleControls,
   ScreenContent,
   ScreenContainer,
 };
