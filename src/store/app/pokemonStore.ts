@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { migrateStore } from "./migrate";
 import type { IMyPokemon } from "@/services/api/pokemons";
 
 interface IPokemonStore {
@@ -51,6 +52,8 @@ export const usePokemonStore = create<IPokemonStore>()(
     }),
     {
       name: POKEMON_STORE_KEY,
+      version: 2,
+      migrate: migrateStore,
     },
   ),
 );

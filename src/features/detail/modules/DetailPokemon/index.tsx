@@ -20,11 +20,17 @@ import {
 
 import "react-lazy-load-image-component/src/effects/blur.css";
 import {
+  baseStatTotal,
+  buildSkills,
+  catchChance,
   getBaseStat,
   pickRandomMoves,
   powerFromMoveName,
   scaleStat,
 } from "@/utils/pokemon-utils";
+
+/** Highest base stat in the games (Blissey HP) - the meter's full scale. */
+const MAX_BASE_STAT = 255;
 
 interface DetailPokemonProps {
   pokemonName: string;
@@ -39,9 +45,18 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
   });
   const { pokemons, addPokemon } = usePokemonStore();
 
-  const { isCatching, isCaught, isEndPhase, throwPokeball } = useCatchPokemon(
-    () => setNicknameModal(true),
-  );
+  const chance = pokemonDetail
+    ? catchChance(baseStatTotal(pokemonDetail.stats))
+    : 0.5;
+
+  const {
+    isCatching,
+    isCaught,
+    isEndPhase,
+    shake,
+    totalShakes,
+    throwPokeball,
+  } = useCatchPokemon(() => setNicknameModal(true), chance);
 
   const [sprite, setSprite] = useState<string>("");
   const [backSprite, setBackSprite] = useState<string>("");
@@ -116,6 +131,9 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
         };
       });
 
+    const skillPool = movePool.slice(numberOfUltimates, numberOfUltimates + 2);
+    const skills = buildSkills(skillPool, typesBuild);
+
     const newPokemons = {
       name: pokemonName.toUpperCase(),
       nickname: nicknameRef.current,
@@ -125,6 +143,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
       stats: scaledStats,
       types: typesBuild,
       moves: selectedUltimates,
+      skills,
       battle_state: {
         level: LEVEL_1,
         experience: 0,
@@ -200,8 +219,13 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
               height={128}
             />
             <Text variant="outlined" size="xl">
-              Catching...
+              Shake {shake} of {totalShakes}...
             </Text>
+            <T.ShakeTrack aria-hidden="true">
+              {Array.from({ length: totalShakes }, (_, index) => (
+                <T.ShakePip key={index} on={index < shake} />
+              ))}
+            </T.ShakeTrack>
           </div>
         </T.CatchingModal>
       </Modal>
@@ -235,7 +259,15 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
 
           <Modal open={isCaught} overlay="light">
             <T.PostCatchModal>
-              <T.ImageContainer>
+              <T.RevealStage type={types[0]}>
+                <T.SparkleField aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </T.SparkleField>
                 <T.PokemonAvatar
                   src={sprite}
                   alt={pokemonName}
@@ -245,13 +277,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
                   loading="lazy"
                   className="pokemon-dt"
                 />
-              </T.ImageContainer>
-              <LazyLoadImage
-                src="/static/pokeball.png"
-                alt="pokeball"
-                width={128}
-                height={128}
-              />
+              </T.RevealStage>
               <Text variant="outlined" size="xl">
                 Gotcha! {pokemonName.toUpperCase()} was caught!
               </Text>
@@ -330,87 +356,96 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
           width={512}
           height={512}
         />
-        <T.PokeName>
-          <div />
-          <div />
-          <div />
-          <Text as="h1" variant="outlined" size="xl">
-            {pokemonName}
-          </Text>
-        </T.PokeName>
 
-        <T.PokemonContainer>
-          <div className="pxl-border card-pxl">
-            <Text as="h4" variant="outlined" size="lg">
-              Pokemon Stats:
+        <T.CharacterCard className="pxl-border" type={types[0]}>
+          <T.CardHeader type={types[0]}>
+            <Text as="h1" variant="outlined" size="xl">
+              {pokemonName}
             </Text>
-            <T.PokemonStatsWrapper>
-              {stats.map((stat, index) => (
-                <Text as="h4" key={index} variant="outlined" size="base">
-                  {stat.stat.name} : {stat.base_stat || 0}
-                </Text>
-              ))}
-            </T.PokemonStatsWrapper>
-          </div>
+            <T.DexNo>
+              No. {String(pokemonDetail?.id ?? 0).padStart(3, "0")}
+            </T.DexNo>
+          </T.CardHeader>
 
-          <div
-            className="img-pokemon"
-            style={{ display: "flex", justifyContent: "center" }}>
+          <T.CardBody>
+            <T.SpritePanel type={types[0]}>
+              {!isLoading ? (
+                <T.PokemonAvatar
+                  src={sprite}
+                  alt={pokemonName}
+                  width={256}
+                  height={256}
+                  effect="blur"
+                  loading="lazy"
+                  className="pokemon-dt"
+                />
+              ) : (
+                <T.ImageLoadingWrapper>
+                  <Loading />
+                </T.ImageLoadingWrapper>
+              )}
+            </T.SpritePanel>
+
+            <T.StatBlock>
+              <Text as="h4" variant="darker" size="lg">
+                Base stats
+              </Text>
+              {stats.map((stat) => (
+                <T.StatRow key={stat.stat.name}>
+                  <span>{stat.stat.name}</span>
+                  <T.StatBar
+                    type={types[0]}
+                    pct={Math.min(
+                      100,
+                      Math.round(((stat.base_stat || 0) / MAX_BASE_STAT) * 100),
+                    )}
+                    role="meter"
+                    aria-label={stat.stat.name}
+                    aria-valuenow={stat.base_stat || 0}
+                    aria-valuemin={0}
+                    aria-valuemax={MAX_BASE_STAT}
+                  />
+                  <b>{stat.base_stat || 0}</b>
+                </T.StatRow>
+              ))}
+              <T.BaseExp>Base exp {baseExperience}</T.BaseExp>
+              {!isLoading && (
+                <T.CatchRate type={types[0]}>
+                  Catch rate {Math.round(chance * 100)}%
+                </T.CatchRate>
+              )}
+            </T.StatBlock>
+          </T.CardBody>
+
+          <T.TypeStrip>
             {!isLoading ? (
-              <T.PokemonAvatar
-                src={sprite}
-                alt={pokemonName}
-                width={256}
-                height={256}
-                effect="blur"
-                loading="lazy"
-                className="pokemon-dt"
-              />
+              types.map((type) => <TypeCard key={type} hasIcon type={type} />)
             ) : (
-              <T.ImageLoadingWrapper>
-                <Loading />
-              </T.ImageLoadingWrapper>
+              <T.DescriptionLoadingWrapper>
+                <Loading label="Loading types..." />
+              </T.DescriptionLoadingWrapper>
+            )}
+          </T.TypeStrip>
+        </T.CharacterCard>
+
+        <T.Content>
+          <div>
+            <Text as="h3" size="lg" variant="outlined">
+              Abilities
+            </Text>
+            {!isLoading ? (
+              abilities.map((ability) => (
+                <TypeCard
+                  key={ability.ability.name}
+                  type={ability.ability.name}
+                />
+              ))
+            ) : (
+              <T.DescriptionLoadingWrapper>
+                <Loading label="Loading abilities..." />
+              </T.DescriptionLoadingWrapper>
             )}
           </div>
-        </T.PokemonContainer>
-
-        <T.Content style={{ marginTop: "30px" }}>
-          <T.AbilitiesWrapper>
-            <div className="pxl-type">
-              <Text as="h3" size="lg" variant="outlined">
-                Type
-              </Text>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {!isLoading ? (
-                  types.map((type) => (
-                    <TypeCard key={type} hasIcon type={type} />
-                  ))
-                ) : (
-                  <T.DescriptionLoadingWrapper>
-                    <Loading label="Loading types..." />
-                  </T.DescriptionLoadingWrapper>
-                )}
-              </div>
-            </div>
-
-            <div className="pxl-abilities">
-              <Text as="h3" size="lg" variant="outlined">
-                Abilities
-              </Text>
-              {!isLoading ? (
-                abilities.map((ability) => (
-                  <TypeCard
-                    key={ability.ability.name}
-                    type={ability.ability.name}
-                  />
-                ))
-              ) : (
-                <T.DescriptionLoadingWrapper>
-                  <Loading label="Loading abilities..." />
-                </T.DescriptionLoadingWrapper>
-              )}
-            </div>
-          </T.AbilitiesWrapper>
 
           <div>
             <Text as="h3" size="lg" variant="outlined">
