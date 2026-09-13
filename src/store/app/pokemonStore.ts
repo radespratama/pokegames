@@ -52,7 +52,7 @@ export const usePokemonStore = create<IPokemonStore>()(
     }),
     {
       name: POKEMON_STORE_KEY,
-      version: 2,
+      version: 3,
       migrate: migrateStore,
     },
   ),

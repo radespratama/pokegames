@@ -60,6 +60,29 @@ describe("migratePokemon", () => {
     expect(p.base_stats?.hp).toBe(1);
   });
 
+  it("keeps v2 moves playable and marks them for enrichment", () => {
+    const pokemon = migratePokemon({
+      ...legacy,
+      moves: [{ name: "thunder", power: 60, type: "electric" }],
+      skills: [
+        { name: "spark", power: 45, type: "electric", cooldown: 2 },
+        { name: "slam", power: 65, type: "normal", cooldown: 3 },
+      ],
+    });
+
+    expect(pokemon.moveDataVersion).toBe(2);
+    expect(pokemon.moves[0]).toMatchObject({
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
+    });
+    expect(pokemon.skills[0]).toMatchObject({
+      damageClass: "physical",
+      accuracy: 100,
+      priority: 0,
+    });
+  });
+
   it("migrateStore maps the pokemons array", () => {
     const out = migrateStore({ pokemons: [legacy] }, 0) as {
       pokemons: Array<{ skills: unknown }>;

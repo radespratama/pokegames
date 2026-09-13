@@ -1,10 +1,18 @@
 import axios from "@/libs/axios";
 import { POKEMON_TYPE_ICONS } from "@/utils/constant";
 
-export interface ISkill {
+export type MoveDamageClass = "physical" | "special";
+
+export interface IBattleMove {
   name: string;
   power: number;
   type: string;
+  damageClass: MoveDamageClass;
+  accuracy: number;
+  priority: number;
+}
+
+export interface ISkill extends IBattleMove {
   /** Own turns to wait after use, including the turn it was used. */
   cooldown: number;
 }
@@ -12,6 +20,7 @@ export interface ISkill {
 export interface IMyPokemon {
   name: string;
   nickname: string;
+  moveDataVersion?: 2 | 3;
   sprite?: string;
   sprite_back?: string;
   base_experience?: number;
@@ -36,11 +45,7 @@ export interface IMyPokemon {
     speed: number;
   };
   types: Array<string>;
-  moves: Array<{
-    name: string;
-    power: number;
-    type?: string | null;
-  }>;
+  moves: Array<IBattleMove>;
   /** [Skill 1, Skill 2] */
   skills: [ISkill, ISkill];
 }
