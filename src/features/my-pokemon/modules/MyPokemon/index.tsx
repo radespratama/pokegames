@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import ModeToggle from "../../components/ModeToggle";
-import StatusModal from "../../components/StatusModal";
 import { loadMode, maxPick, saveMode, toSlug, togglePick } from "../../pick";
 import * as T from "./index.style";
 import type { BattleMode } from "../../pick";
@@ -75,7 +74,6 @@ const MyPokemonModule = () => {
   const [picked, setPicked] = useState<Array<string>>([]);
   const [mode, setMode] = useState<BattleMode>(loadMode);
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
-  const [showStatus, setShowStatus] = useState<boolean>(false);
   const [shakeKey, setShakeKey] = useState<string>("");
 
   function releasePokemon(nickname: string) {
@@ -119,10 +117,6 @@ const MyPokemonModule = () => {
       });
   }, [pokemons, updatePokemon]);
 
-  const lastPicked = pokemons.find(
-    (p) => p.nickname === picked[picked.length - 1],
-  );
-
   return (
     <>
       <Modal open={deleteConfirmation} overlay="dark">
@@ -147,12 +141,6 @@ const MyPokemonModule = () => {
           </div>
         </T.DeleteConfirmationModal>
       </Modal>
-
-      <StatusModal
-        pokemon={lastPicked}
-        open={showStatus}
-        onClose={() => setShowStatus(false)}
-      />
 
       <Modal open={showInfoModal} overlay="dark">
         <T.InfoModal>
@@ -313,14 +301,6 @@ const MyPokemonModule = () => {
                 bg="#3b82f6"
                 onClick={() => setShowInfoModal(true)}>
                 ?
-              </RoundControl>
-
-              <RoundControl
-                label="STATUS"
-                bg="#22c55e"
-                disabled={!picked.length}
-                onClick={() => setShowStatus(true)}>
-                i
               </RoundControl>
             </div>
 
