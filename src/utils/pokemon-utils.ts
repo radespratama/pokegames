@@ -111,9 +111,11 @@ function toV2BattleMove(
  * Skill 1 uses types[0], Skill 2 uses types[1] (or types[0]).
  * Pool entries beyond two are ignored; missing entries become placeholders.
  */
+type LegacyMove = { name: string; power: number; type?: string | null };
+
 function buildSkills(
-  pool: Array<{ name: string; power: number }>,
-  types: Array<string>,
+  pool: Array<IBattleMove | LegacyMove>,
+  types: Array<string> = [],
 ): [ISkill, ISkill] {
   const t0 = types[0] || "normal";
   const t1 = types[1] || t0;
@@ -124,7 +126,7 @@ function buildSkills(
     const m = pool.at(i);
     return m
       ? {
-          ...toV2BattleMove(m, type),
+          ...("damageClass" in m ? m : toV2BattleMove(m, type)),
           power: fitPower(m.power, SKILL_RANGES[i]),
           cooldown: cds[i],
         }
