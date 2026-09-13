@@ -1,18 +1,19 @@
 import { useMemo } from "react";
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 import type {
+  IBattleMove,
   IMyPokemon,
   IPokemonDetailResponse,
 } from "@/services/api/pokemons";
 import type { Rng } from "@/features/vs-battle/engine/types";
 import { getDetailPokemon } from "@/services/api/pokemons";
 import {
-  buildMovePool,
-  buildSkills,
-  getBaseStat,
-  scaleStat,
-  toV2BattleMove,
-} from "@/utils/pokemon-utils";
+  assignBattleSlots,
+  createSeededRng,
+  loadBattleMovePool,
+} from "@/features/vs-battle/data/movePool";
+import { loadCachedMove } from "@/features/vs-battle/data/cachedMove";
+import { getBaseStat, scaleStat } from "@/utils/pokemon-utils";
 import { HP_BONUS } from "@/utils/leveling";
 
 /** Highest PokeAPI id with full sprite coverage. */
@@ -32,6 +33,7 @@ export const getDifficultyParams = (playerLevel: number) => {
 
 export function buildEnemy(
   detail: IPokemonDetailResponse,
+  pool: Array<IBattleMove>,
   refLevel: number,
   rng: Rng = Math.random,
 ): IMyPokemon {
@@ -72,10 +74,7 @@ export function buildEnemy(
     );
 
   const types = detail.types.map((t) => t.type.name || "normal");
-  const pool = buildMovePool(detail.moves, 6);
-  const ultimates = pool
-    .slice(0, Math.max(1, types.length))
-    .map((m, i) => toV2BattleMove(m, types[i] || types[0] || "normal"));
+  const { moves, skills } = assignBattleSlots(pool, Math.max(1, types.length));
 
   const animated =
     detail.sprites.versions?.["generation-v"]?.["black-white"]?.animated;
@@ -86,7 +85,7 @@ export function buildEnemy(
     sprite: animated?.front_default || detail.sprites.front_default || "",
     sprite_back: animated?.back_default || detail.sprites.back_default || "",
     base_experience: detail.base_experience || 0,
-    moveDataVersion: 2,
+    moveDataVersion: 3,
     battle_state: { level, experience: 0 },
     base_stats,
     stats: {
@@ -98,11 +97,8 @@ export function buildEnemy(
       speed: scale(speed),
     },
     types,
-    moves: ultimates,
-    skills: buildSkills(
-      pool.slice(ultimates.length, ultimates.length + 2),
-      types,
-    ),
+    moves,
+    skills,
   };
 }
 
@@ -114,9 +110,9 @@ interface Props {
 }
 
 export function useSpawnEnemies({ count, refLevel, seed }: Props) {
+  const queryClient = useQueryClient();
   const ids = useMemo(() => {
     let x = seed || 1;
-    // ponytail: tiny LCG so ids are stable for a session; not crypto, not meant to be.
     const next = () => (x = (x * 1103515245 + 12345) % 2147483648) / 2147483648;
     return Array.from(
       { length: count },
@@ -125,9 +121,19 @@ export function useSpawnEnemies({ count, refLevel, seed }: Props) {
   }, [count, seed]);
 
   const results = useQueries({
-    queries: ids.map((id) => ({
-      queryKey: ["pokemon-detail", id],
-      queryFn: () => getDetailPokemon(id),
+    queries: ids.map((id, index) => ({
+      queryKey: ["battle-enemy", id, seed],
+      queryFn: async () => {
+        const detail = await getDetailPokemon(id);
+        if (!detail) throw new Error(`Pokemon ${id} returned no detail`);
+        const pool = await loadBattleMovePool(
+          detail.moves,
+          Math.max(1, detail.types.length) + 2,
+          createSeededRng(seed + id + index),
+          (name) => loadCachedMove(queryClient, name),
+        );
+        return { detail, pool };
+      },
       staleTime: 1000 * 60 * 60 * 24,
       retry: 1,
     })),
@@ -137,10 +143,23 @@ export function useSpawnEnemies({ count, refLevel, seed }: Props) {
   const isError = results.some((r) => r.isError);
   const enemies = useMemo(() => {
     if (isLoading || isError) return null;
-    return results.map((r) =>
-      buildEnemy(r.data as IPokemonDetailResponse, refLevel),
+    return results.map((r, index) =>
+      buildEnemy(
+        r.data!.detail,
+        r.data!.pool,
+        refLevel,
+        createSeededRng(seed + ids[index] + index + count),
+      ),
     );
-  }, [isLoading, isError, refLevel, ...results.map((r) => r.data)]);
+  }, [
+    isLoading,
+    isError,
+    refLevel,
+    seed,
+    ids,
+    count,
+    ...results.map((r) => r.data),
+  ]);
 
   return { enemies, isLoading, isError };
 }

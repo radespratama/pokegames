@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import * as T from "./index.style";
@@ -20,14 +21,12 @@ import {
 
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { statsAtLevel } from "@/utils/leveling";
+import { baseStatTotal, catchChance, getBaseStat } from "@/utils/pokemon-utils";
 import {
-  baseStatTotal,
-  buildMovePool,
-  buildSkills,
-  catchChance,
-  getBaseStat,
-  toV2BattleMove,
-} from "@/utils/pokemon-utils";
+  assignBattleSlots,
+  loadBattleMovePool,
+} from "@/features/vs-battle/data/movePool";
+import { loadCachedMove } from "@/features/vs-battle/data/cachedMove";
 
 /** Highest base stat in the games (Blissey HP) - the meter's full scale. */
 const MAX_BASE_STAT = 255;
@@ -39,6 +38,7 @@ interface DetailPokemonProps {
 const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
   const navRef = useRef<HTMLDivElement>(null);
   const nicknameRef = useRef<string>("");
+  const queryClient = useQueryClient();
 
   const { data: pokemonDetail, isFetching: isLoading } = usePokemonDetail({
     pokemonName,
@@ -74,7 +74,7 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
   const [nicknameModal, setNicknameModal] = useState<boolean>(false);
   const [nicknameIsValid, setNicknameIsValid] = useState<boolean>(true);
 
-  function onNicknameSave(e: FormEvent) {
+  async function onNicknameSave(e: FormEvent) {
     e.preventDefault();
 
     const isUnique = !pokemons.some(
@@ -103,20 +103,17 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
     const scaledStats = statsAtLevel(base_stats, LEVEL_1);
 
     const typesBuild = pokemonDetail.types.map((t) => t.type.name || "");
-    const movePool = buildMovePool(pokemonDetail.moves, 10);
-
-    movePool.sort((a, b) => b.power - a.power);
-
-    const numberOfUltimates = typesBuild.length > 0 ? typesBuild.length : 1;
-
-    const selectedUltimates = movePool
-      .slice(0, numberOfUltimates)
-      .map((move, index) => {
-        return toV2BattleMove(move, typesBuild[index] || "normal");
-      });
-
-    const skillPool = movePool.slice(numberOfUltimates, numberOfUltimates + 2);
-    const skills = buildSkills(skillPool, typesBuild);
+    const ultimateCount = Math.max(1, typesBuild.length);
+    const pool = await loadBattleMovePool(
+      pokemonDetail.moves,
+      ultimateCount + 2,
+      Math.random,
+      (name) => loadCachedMove(queryClient, name),
+    );
+    const { moves: battleMoves, skills } = assignBattleSlots(
+      pool,
+      ultimateCount,
+    );
 
     const newPokemons = {
       name: pokemonName.toUpperCase(),
@@ -124,10 +121,10 @@ const DetailPokemon = ({ pokemonName }: DetailPokemonProps) => {
       sprite,
       sprite_back: backSprite,
       base_experience: baseExperience,
-      moveDataVersion: 2 as const,
+      moveDataVersion: 3 as const,
       stats: scaledStats,
       types: typesBuild,
-      moves: selectedUltimates,
+      moves: battleMoves,
       skills,
       battle_state: {
         level: LEVEL_1,

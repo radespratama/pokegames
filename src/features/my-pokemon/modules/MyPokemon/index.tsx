@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import ModeToggle from "../../components/ModeToggle";
 import { loadMode, maxPick, saveMode, toSlug, togglePick } from "../../pick";
 import * as T from "./index.style";
@@ -9,10 +10,10 @@ import { usePokemonStore } from "@/store/app/pokemonStore";
 import { Button, DeleteButton, Modal, PokeCard, Text } from "@/components/ui";
 import { getDetailPokemon } from "@/services/api/pokemons";
 import {
-  PLACEHOLDER_SKILL_NAMES,
-  buildMovePool,
-  buildSkills,
-} from "@/utils/pokemon-utils";
+  assignBattleSlots,
+  loadBattleMovePool,
+} from "@/features/vs-battle/data/movePool";
+import { loadCachedMove } from "@/features/vs-battle/data/cachedMove";
 
 const PokedexDecorations = () => (
   <T.PokedexHeaderDeco>
@@ -67,6 +68,7 @@ const RoundControl = ({
 
 const MyPokemonModule = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { pokemons, removePokemon, updatePokemon } = usePokemonStore();
   const [deleteTarget, setDeleteTarget] = useState<string>("");
@@ -99,23 +101,29 @@ const MyPokemonModule = () => {
     });
   };
 
-  // ponytail: backfill runs once per mount, sequential, no retry; placeholder stays if PokeAPI is down.
   const backfilled = useRef(false);
   useEffect(() => {
     if (backfilled.current) return;
     backfilled.current = true;
     pokemons
-      .filter((p) => p.skills[0].name === PLACEHOLDER_SKILL_NAMES[0])
+      .filter((p) => p.moveDataVersion !== 3)
       .forEach((p) => {
         getDetailPokemon(p.name.toLowerCase())
-          .then((detail) => {
+          .then(async (detail) => {
             if (!detail) return;
-            const pool = buildMovePool(detail.moves, 2);
-            updatePokemon(p.nickname, { skills: buildSkills(pool, p.types) });
+            const ultimateCount = Math.max(1, p.types.length);
+            const pool = await loadBattleMovePool(
+              detail.moves,
+              ultimateCount + 2,
+              Math.random,
+              (name) => loadCachedMove(queryClient, name),
+            );
+            const { moves, skills } = assignBattleSlots(pool, ultimateCount);
+            updatePokemon(p.nickname, { moves, skills, moveDataVersion: 3 });
           })
           .catch(() => undefined);
       });
-  }, [pokemons, updatePokemon]);
+  }, [pokemons, queryClient, updatePokemon]);
 
   return (
     <>
