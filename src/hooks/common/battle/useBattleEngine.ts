@@ -71,6 +71,10 @@ export function useBattleEngine({
     enemy: [],
   });
   const [activeHitTarget, setActiveHitTarget] = useState<Side | null>(null);
+  const [active, setActive] = useState<Record<Side, number>>({
+    player: 0,
+    enemy: 0,
+  });
   const [hitKey, setHitKey] = useState(0);
   const [busy, setBusy] = useState(false);
   const [levelUps, setLevelUps] = useState<
@@ -97,6 +101,7 @@ export function useBattleEngine({
       player: initial.player.team.map((c) => c.currentHp),
       enemy: initial.enemy.team.map((c) => c.currentHp),
     });
+    setActive({ player: initial.player.active, enemy: initial.enemy.active });
     saveSession({ mode, team, seed, state: initial });
   }, [state, enemyTeam]);
 
@@ -126,6 +131,8 @@ export function useBattleEngine({
             }));
             later(HIT_EFFECT_MS, () => setActiveHitTarget(null));
           }
+          if (ev.type === "switch")
+            setActive((prev) => ({ ...prev, [ev.side]: ev.to }));
           if (ev.type === "exp") {
             setExpGained((prev) => [...prev, ...ev.grants]);
             const ups = ev.grants.flatMap((g) =>
@@ -189,8 +196,17 @@ export function useBattleEngine({
   }, [navigate, mode, team]);
 
   const view = useMemo(
-    () => ({ hp, activeHitTarget, hitKey, damages, busy, levelUps, expGained }),
-    [hp, activeHitTarget, hitKey, damages, busy, levelUps, expGained],
+    () => ({
+      hp,
+      activeHitTarget,
+      hitKey,
+      damages,
+      busy,
+      levelUps,
+      expGained,
+      active,
+    }),
+    [hp, activeHitTarget, hitKey, damages, busy, levelUps, expGained, active],
   );
 
   return {

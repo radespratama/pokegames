@@ -28,7 +28,7 @@ export const toCombatant = (p: IMyPokemon): Combatant => ({
 
 export const activeOf = (t: Team) => t.team[t.active];
 export const aliveBench = (t: Team) =>
-  t.team.map((c, i) => i).filter((i) => i !== t.active && !t.team[i].fainted);
+  t.team.map((_, i) => i).filter((i) => i !== t.active && !t.team[i].fainted);
 const other = (s: Side): Side => (s === "player" ? "enemy" : "player");
 const clampGauge = (g: number) => Math.min(RULES.GAUGE_MAX, Math.max(0, g));
 
@@ -151,7 +151,7 @@ function isValid(s: BattleState, side: Side, action: BattleAction): boolean {
 function attack(
   s: BattleState,
   side: Side,
-  action: Exclude<BattleAction, { kind: "switch" }>,
+  action: Exclude<BattleAction, { kind: "switch"; to: number }>,
   rng: Rng,
 ): BattleState {
   const atkTeam = side === "player" ? s.player : s.enemy;
@@ -169,26 +169,13 @@ function attack(
   // --- resolve move ---
   let moveName = "Basic Attack";
   let input: DamageInput;
-  let gaugeOnHit = RULES.GAUGE_BASIC_HIT;
+  let gaugeOnHit: number = RULES.GAUGE_BASIC_HIT;
   let gaugeAfter = attacker.gauge;
   let cooldowns = { ...attacker.cooldowns };
 
   if (action.kind === "basic") {
-    input = { power: RULES.BASIC.power, type: null, ...RULES.BASIC, chainMul };
-  } else if (action.kind === "skill1" || action.kind === "skill2") {
-    const skill = attacker.skills[action.kind === "skill1" ? 0 : 1];
-    const rule = action.kind === "skill1" ? RULES.SKILL1 : RULES.SKILL2;
-    moveName = skill.name;
-    input = {
-      power: skill.power,
-      type: skill.type,
-      missChance: rule.missChance,
-      critChance: rule.critChance,
-      chainMul,
-    };
-    gaugeOnHit = RULES.GAUGE_SKILL_HIT;
-    cooldowns = { ...cooldowns, [action.kind]: rule.cooldown };
-  } else {
+    input = { ...RULES.BASIC, type: null, chainMul };
+  } else if (action.kind === "ultimate") {
     const move = attacker.moves[action.index];
     moveName = move.name;
     input = {
@@ -202,6 +189,19 @@ function attack(
     lines.push(
       `>>> ULTIMATE SKILL: ${moveName.toUpperCase()} (x${overchargeMul(attacker.gauge).toFixed(1)})! <<<`,
     );
+  } else {
+    const skill = attacker.skills[action.kind === "skill1" ? 0 : 1];
+    const rule = action.kind === "skill1" ? RULES.SKILL1 : RULES.SKILL2;
+    moveName = skill.name;
+    input = {
+      power: skill.power,
+      type: skill.type,
+      missChance: rule.missChance,
+      critChance: rule.critChance,
+      chainMul,
+    };
+    gaugeOnHit = RULES.GAUGE_SKILL_HIT;
+    cooldowns = { ...cooldowns, [action.kind]: rule.cooldown };
   }
 
   if (action.kind !== "ultimate")

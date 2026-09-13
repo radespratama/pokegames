@@ -5,6 +5,7 @@ import {
   VsBadge,
   VsContainer,
   VsImage,
+  VsLevel,
   VsName,
   VsSide,
 } from "./index.style";
@@ -12,8 +13,8 @@ import type { IMyPokemon } from "@/services/api/pokemons";
 import { TypeCard } from "@/components/ui";
 
 interface IBattleIntroProps {
-  player: IMyPokemon | undefined;
-  enemy: IMyPokemon | null;
+  player: Array<IMyPokemon>;
+  enemy: Array<IMyPokemon>;
   onComplete: () => void;
 }
 
@@ -25,6 +26,9 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
 
     return () => clearTimeout(timer);
   }, [onComplete]);
+
+  const lead = player[0];
+  const foe = enemy[0];
 
   return (
     <IntroOverlay
@@ -45,7 +49,7 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
           animate={{ x: "0%" }}
           transition={{ type: "spring", stiffness: 50, damping: 15 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {player?.types.map((type) => (
+            {lead.types.map((type) => (
               <TypeCard
                 key={type}
                 hasIcon
@@ -54,14 +58,23 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
               />
             ))}
           </div>
-          <VsName>{player?.nickname || "PLAYER"}</VsName>
-          <VsImage
-            src={player?.sprite}
-            alt="Player"
-            style={{
-              transform: "scaleX(-1)",
-            }}
-          />
+          <VsName>{lead.nickname || "PLAYER"}</VsName>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+            {player.map((p, i) => (
+              <div key={p.nickname} style={{ textAlign: "center" }}>
+                <VsImage
+                  src={p.sprite}
+                  alt={p.nickname}
+                  style={{
+                    transform: "scaleX(-1)",
+                    width: i === 0 ? 300 : 140,
+                    height: i === 0 ? 300 : 140,
+                  }}
+                />
+                <VsLevel>Lv. {p.battle_state.level}</VsLevel>
+              </div>
+            ))}
+          </div>
         </VsSide>
 
         {/* ENEMY SIDE (Right) */}
@@ -72,7 +85,7 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
           animate={{ x: "0%" }}
           transition={{ type: "spring", stiffness: 50, damping: 15 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {enemy?.types.map((type) => (
+            {foe.types.map((type) => (
               <TypeCard
                 key={type}
                 hasIcon
@@ -81,8 +94,22 @@ const BattleIntro = ({ player, enemy, onComplete }: IBattleIntroProps) => {
               />
             ))}
           </div>
-          <VsName>{enemy?.name || "ENEMY"}</VsName>
-          <VsImage src={enemy?.sprite} alt="Enemy" />
+          <VsName>{foe.name || "ENEMY"}</VsName>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+            {enemy.map((e, i) => (
+              <div key={e.nickname} style={{ textAlign: "center" }}>
+                <VsImage
+                  src={e.sprite}
+                  alt={e.name}
+                  style={{
+                    width: i === 0 ? 300 : 140,
+                    height: i === 0 ? 300 : 140,
+                  }}
+                />
+                <VsLevel>Lv. {e.battle_state.level}</VsLevel>
+              </div>
+            ))}
+          </div>
         </VsSide>
 
         {/* VS TEXT - Zoom In Effect */}

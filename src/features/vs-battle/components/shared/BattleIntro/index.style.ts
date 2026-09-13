@@ -101,6 +101,14 @@ export const VsName = styled("h2")({
   marginTop: "20px",
 });
 
+export const VsLevel = styled("span")({
+  display: "block",
+  fontFamily: "'VT323', monospace",
+  fontSize: "1.5rem",
+  color: colors["white-800"],
+  textShadow: `2px 2px 0 ${colors["gray-800"]}`,
+});
+
 export const VsBadge = styled(motion.div)({
   position: "absolute",
   top: "50%",

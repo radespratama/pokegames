@@ -243,7 +243,9 @@ const MyPokemonModule = () => {
                   navigate({
                     to: "/vs-battle",
                     search: {
-                      pokemon: selectedPokemon,
+                      mode: "1v1",
+                      team: selectedPokemon,
+                      seed: Date.now(),
                     },
                   })
                 }>

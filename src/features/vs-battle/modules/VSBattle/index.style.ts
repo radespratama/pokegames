@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { colors, skillColor } from "@/utils";
+import { colors } from "@/utils";
 
 export const Container = styled("section")({
   width: "100vw",
@@ -116,182 +116,6 @@ export const MenuTitle = styled("h3")({
   letterSpacing: "2px",
   borderBottom: `4px solid ${colors["gray-300"]}`,
   paddingBottom: "10px",
-});
-
-export const AttackGrid = styled("div")({
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: "12px",
-});
-
-export const StyledButton = styled("button")<{
-  disabled?: boolean;
-  pokemonType?: string;
-}>(({ disabled, pokemonType }) => {
-  const bg = disabled
-    ? skillColor[pokemonType + "-300"]
-    : skillColor[pokemonType + "-200"];
-  const shadowColor = disabled ? colors["gray-400"] : colors["sky-600"];
-  const hoverBg = disabled
-    ? skillColor[pokemonType + "-400"]
-    : skillColor[pokemonType + "-300"];
-
-  return {
-    position: "relative",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    cursor: disabled ? "not-allowed" : "pointer",
-
-    border: `2px solid ${colors["gray-800"]}`,
-    borderRadius: "0px",
-    background: bg,
-    padding: "14px 8px",
-
-    fontSize: "0.9rem",
-    fontWeight: "bold",
-    color: colors["gray-800"],
-    textTransform: "uppercase",
-    outline: "none",
-    transition: "transform 0.1s, background 0.1s",
-
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      boxShadow: `inset -4px -4px ${shadowColor}`,
-      pointerEvents: "none",
-    },
-
-    "&:hover": {
-      backgroundColor: disabled ? bg : hoverBg,
-      transform: disabled ? "none" : "translateY(-2px)",
-      boxShadow: disabled ? "none" : `0 4px 0 ${colors["gray-800"]}`,
-    },
-
-    "&:active": {
-      transform: "translateY(0)",
-      boxShadow: "none",
-      "&::after": {
-        boxShadow: `inset 4px 4px ${shadowColor}`,
-      },
-    },
-  };
-});
-
-export const UltimateGaugeContainer = styled("div")({
-  width: "100%",
-  height: "20px",
-  backgroundColor: "#111",
-  border: `2px solid ${colors["gray-800"]}`,
-  position: "relative",
-  marginBottom: "4px",
-  borderRadius: "4px",
-  overflow: "hidden",
-});
-
-export const UltimateGaugeFill = styled("div")<{ width: number }>(
-  ({ width }) => ({
-    height: "100%",
-    width: `${width}%`,
-    background: "linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b)",
-    backgroundSize: "200% 100%",
-    animation: width >= 100 ? "shimmer 2s infinite linear" : "none",
-    transition: "width 0.3s ease-out",
-
-    "@keyframes shimmer": {
-      "0%": { backgroundPosition: "100% 0" },
-      "100%": { backgroundPosition: "-100% 0" },
-    },
-  }),
-);
-
-export const UltimateText = styled("span")({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  fontSize: "0.75rem",
-  fontWeight: "bold",
-  color: "#fff",
-  textShadow: "1px 1px 0 #000",
-  zIndex: 2,
-  fontFamily: "monospace",
-});
-
-export const UltimateButton = styled("button")<{ isReady: boolean }>(
-  ({ isReady }) => ({
-    gridColumn: "span 2",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "8px",
-    padding: "16px",
-
-    backgroundColor: isReady ? "#b91c1c" : "#374151",
-    backgroundImage: isReady
-      ? "linear-gradient(45deg, #b91c1c 25%, #ef4444 50%, #b91c1c 75%)"
-      : "none",
-    backgroundSize: "200% 200%",
-    animation: isReady ? "pulse-red 1.5s infinite" : "none",
-
-    border: `3px solid ${isReady ? "#fbbf24" : "#1f2937"}`,
-    cursor: isReady ? "pointer" : "not-allowed",
-    color: isReady ? "#fff" : "#9ca3af",
-    opacity: isReady ? 1 : 0.7,
-
-    transform: isReady ? "scale(1)" : "scale(0.98)",
-    transition: "all 0.2s ease",
-
-    "&:hover": {
-      transform: isReady ? "scale(1.02) translateY(-2px)" : "scale(0.98)",
-      boxShadow: isReady ? "0 4px 12px rgba(239, 68, 68, 0.5)" : "none",
-    },
-
-    "@keyframes pulse-red": {
-      "0%": { backgroundPosition: "0% 50%" },
-      "50%": { backgroundPosition: "100% 50%" },
-      "100%": { backgroundPosition: "0% 50%" },
-    },
-  }),
-);
-
-export const ResetButton = styled(StyledButton)({
-  width: "100%",
-  background: colors["green-500"],
-  color: colors["white-800"],
-  "&::after": {
-    boxShadow: `inset -4px -4px ${colors["green-700"]}`,
-  },
-  "&:hover": {
-    background: "#4ade80",
-  },
-  "&:active::after": {
-    boxShadow: `inset 4px 4px ${colors["green-700"]}`,
-  },
-});
-
-export const BasicAttackButton = styled(StyledButton)({
-  width: "100%",
-  background: colors["red-500"],
-  color: colors["white-800"],
-  "&::after": {
-    boxShadow: `inset -4px -4px ${colors["red-700"]}`,
-  },
-  "&:hover": {
-    background: "#ef4444",
-  },
-  "&:disabled": {
-    background: colors["gray-300"],
-    color: colors["gray-500"],
-    cursor: "not-allowed",
-  },
-  "&:active::after": {
-    boxShadow: `inset 4px 4px ${colors["red-700"]}`,
-  },
 });
 
 export const EnemySection = styled("div")({
@@ -472,4 +296,19 @@ export const DamageText = styled("span")<{
     whiteSpace: "nowrap",
     zIndex: 61,
   };
+});
+
+export const EnemyGaugeSlot = styled("div")({ marginTop: "4px" });
+
+export const RunAwayButton = styled("button")({
+  alignSelf: "flex-end",
+  padding: "6px 12px",
+  fontFamily: "monospace",
+  fontWeight: "bold",
+  textTransform: "uppercase",
+  color: colors["white-800"],
+  backgroundColor: colors["red-600"],
+  border: `2px solid ${colors["gray-800"]}`,
+  cursor: "pointer",
+  "&:disabled": { opacity: 0.5, cursor: "not-allowed" },
 });
