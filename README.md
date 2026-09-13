@@ -24,17 +24,19 @@ A Pokemon minigame where you can explore, catch, and battle them all. Built with
 
 <hr />
 
-### ⚔️ Battle Mechanics Info (v1.0)
+### ⚔️ Battle Mechanics Info (v2.0)
 
 **Pokegames introduces a unique Custom RPG Battle System.**
 While we respect the classic **Elemental Type Effectiveness** (e.g., Water is super effective against Fire), the core combat logic is **custom-designed** to fit a web-based mini-RPG experience.
 
 We implemented fresh mechanics such as:
 
-- **Resource Management (Gauge System):** No PP usage. Instead, use **Basic Attacks** to charge your Ultimate Gauge.
-- **Ultimate Skills:** Unleash powerful elemental attacks once your Gauge is full (100%).
+- **Action Set:** Basic Attack, two elemental Skills with cooldowns, and a type-based Ultimate.
+- **Combo Chain:** Basic → Skill 1 → Skill 2 in order multiplies damage (x1.0 / x1.2 / x1.5) and refunds +50 Gauge on the finisher. Breaking the order resets the chain.
+- **Gauge & Overcharge:** Hits and hits taken charge a 0–150 Gauge. Ultimate unlocks at 100 (x2.0) and scales up to x3.0 at 150. Firing it empties the Gauge.
+- **Squad Tactics (3v3):** Pick three Pokemon; one fights while two wait on the bench. Switching costs a turn, fainting forces a switch.
 - **Adaptive Difficulty:** Wild Pokemon use a "Stat Clamping" system in the early game to ensure a fair fight, but unleash their full potential after Level 12.
-- **Custom Scaling:** Stats grow by ~2% compound + Flat HP bonus per level, preventing "One-Shot" scenarios while maintaining progression satisfaction.
+- **Custom Scaling:** Stats are recalculated from base stats each level (~2% compound + flat HP). EXP scales with the level gap; bench members earn 50% of every KO.
 
 ## Features💡
 
@@ -48,13 +50,13 @@ By using Pokegames you can:
 - [x] **Battle System:** Turn-based combat with Wild Pokemon.
 - [x] **Leveling System:** Gain EXP and Level Up to increase stats.
 - [x] **Damage System:** Critical hits, Miss chance, and Super Effective multipliers.
+- [x] **Squad Tactics (3vs3 Team Match):** Pick a team of three, switch mid-battle, shared EXP.
+- [x] **Pokemon Status Information:** Level, EXP, stats and full action set from the Pokedex.
 
 **UPCOMING FEATURES (Roadmap)**
 
-- [ ] Pokemon Status Information (Detail View Update).
 - [ ] **Multiplayer PvP:** Real-time online battles with other players.
 - [ ] Online Account & Cloud Save.
-- [ ] Squad Tactics (3vs3 Team Match).
 
 ## Technology 👨‍💻
 
