@@ -1,7 +1,6 @@
-import type { CSSProperties } from "react";
 import type { Side } from "@/features/vs-battle/engine/types";
 import type { ExpGrant } from "@/utils/leveling";
-import { Text } from "@/components/ui";
+import { Button, Text } from "@/components/ui";
 
 interface Props {
   winner: Side;
@@ -19,18 +18,6 @@ const totals = (grants: Array<ExpGrant>) =>
       {},
     ),
   );
-
-const btn = (bg: string): CSSProperties => ({
-  width: "100%",
-  padding: "12px",
-  border: "2px solid #1f2937",
-  backgroundColor: bg,
-  color: "#fff",
-  fontFamily: "monospace",
-  fontWeight: "bold",
-  textTransform: "uppercase",
-  cursor: "pointer",
-});
 
 const ResultPanel = ({
   winner,
@@ -56,12 +43,12 @@ const ResultPanel = ({
         {u.nickname} reached Lv. {u.level}!
       </Text>
     ))}
-    <button style={btn("#10b981")} onClick={onFindNew}>
+    <Button variant="dark" onClick={onFindNew} style={{ width: "100%" }}>
       Find New Opponent
-    </button>
-    <button style={btn("#374151")} onClick={onLeave}>
+    </Button>
+    <Button variant="light" onClick={onLeave} style={{ width: "100%" }}>
       Back to Pokedex
-    </button>
+    </Button>
   </div>
 );
 
