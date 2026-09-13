@@ -25,9 +25,7 @@ export const getTypeEffectiveness = (
 
   defenderTypes.forEach((defType) => {
     const defender = defType.toLowerCase();
-
-    const attackerChart = TYPE_CHART[attacker];
-    const mod = attackerChart[defender];
+    const mod = TYPE_CHART[attacker]?.[defender];
 
     if (mod !== undefined) {
       multiplier *= mod;

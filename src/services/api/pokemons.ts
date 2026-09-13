@@ -1,4 +1,13 @@
 import axios from "@/libs/axios";
+import { POKEMON_TYPE_ICONS } from "@/utils/constant";
+
+export interface ISkill {
+  name: string;
+  power: number;
+  type: string;
+  /** Own turns to wait after use, including the turn it was used. */
+  cooldown: number;
+}
 
 export interface IMyPokemon {
   name: string;
@@ -32,6 +41,8 @@ export interface IMyPokemon {
     power: number;
     type?: string | null;
   }>;
+  /** [Skill 1, Skill 2] */
+  skills: [ISkill, ISkill];
 }
 
 export interface IPokemon {
@@ -71,6 +82,7 @@ interface IPokemonTypes {
 }
 
 export interface IPokemonDetailResponse {
+  id: number;
   name: string;
   base_experience: number;
   abilities: Array<{
@@ -135,4 +147,33 @@ export const getDetailPokemon = async (
   const result = await axios.get(`/pokemon/${name}`);
 
   return result.data;
+};
+
+/**
+ * PokeAPI has no bulk "pokemon with types" endpoint. 18 type endpoints cover
+ * every species, so one fan-out builds the whole index instead of 1300 detail calls.
+ */
+export const getPokemonTypeIndex = async (): Promise<
+  Record<string, Array<string>>
+> => {
+  const types = Object.keys(POKEMON_TYPE_ICONS);
+
+  const pages = await Promise.all(
+    types.map(async (type) => {
+      const result = await axios.get(`/type/${type}`);
+      return {
+        type,
+        pokemon: result.data.pokemon as Array<{ pokemon: { name: string } }>,
+      };
+    }),
+  );
+
+  const index: Record<string, Array<string>> = {};
+  pages.forEach(({ type, pokemon }) => {
+    pokemon.forEach((entry) => {
+      (index[entry.pokemon.name] ??= []).push(type);
+    });
+  });
+
+  return index;
 };

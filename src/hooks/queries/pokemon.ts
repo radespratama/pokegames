@@ -1,6 +1,10 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-import { getAllPokemon, getDetailPokemon } from "@/services/api/pokemons";
+import {
+  getAllPokemon,
+  getDetailPokemon,
+  getPokemonTypeIndex,
+} from "@/services/api/pokemons";
 
 const usePokemons = ({
   isEnabled,
@@ -50,4 +54,30 @@ const usePokemonDetail = ({
   });
 };
 
-export { usePokemons, usePokemonDetail };
+const usePokemonTypeIndex = () =>
+  useQuery({
+    queryKey: ["pokemon-type-index"],
+    queryFn: getPokemonTypeIndex,
+    staleTime: 1000 * 60 * 60 * 24,
+    retry: false,
+  });
+
+/**
+ * PokeAPI returns the whole list in one call when asked (1351 names, ~12 kB gzipped).
+ * Only fetched once a search starts; infinite scroll keeps using the paged query.
+ */
+const useAllPokemonNames = (isEnabled: boolean) =>
+  useQuery({
+    queryKey: ["pokemons", "all"],
+    queryFn: async () => await getAllPokemon({ limit: 100000, offset: 0 }),
+    staleTime: 1000 * 60 * 60 * 24,
+    enabled: isEnabled,
+    retry: false,
+  });
+
+export {
+  usePokemons,
+  usePokemonDetail,
+  usePokemonTypeIndex,
+  useAllPokemonNames,
+};

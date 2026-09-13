@@ -66,3 +66,7 @@ export const skillColor: { [key: string]: string } = {
   "fairy-200": "#F0B6BC",
   "fairy-300": "#D87881",
 };
+
+/** Pick a type's shade, falling back to normal for abilities/unknown types. */
+export const typeShade = (type: string | undefined, shade: 100 | 200 | 300) =>
+  skillColor[`${type ?? "normal"}-${shade}`] ?? skillColor[`normal-${shade}`];
