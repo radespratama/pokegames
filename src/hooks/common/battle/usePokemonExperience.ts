@@ -1,120 +1,57 @@
 import { useCallback } from "react";
+import type { ExpGrant } from "@/utils/leveling";
 import { usePokemonStore } from "@/store/app/pokemonStore";
-import { scaleStat } from "@/utils/pokemon-utils";
+import { applyExp, expForNext, statsAtLevel } from "@/utils/leveling";
 
 export const usePokemonExperience = () => {
   const { updatePokemon, getPokemonByNickname } = usePokemonStore();
 
-  const getExpForNextLevel = useCallback((level: number): number => {
-    return Math.pow(level + 1, 3);
-  }, []);
-
-  const calculateExpGain = useCallback(
-    (enemyLevel: number, enemyBaseExp = 60) => {
-      return Math.floor((enemyBaseExp * enemyLevel) / 5);
-    },
-    [],
-  );
-
-  const addExp = useCallback(
-    (nickname: string, expGained: number) => {
-      const pokemon = getPokemonByNickname(nickname);
-
-      if (!pokemon) {
-        return { leveled: false, newLevel: 0, expGained: 0 };
-      }
-
-      const currentExp = pokemon.battle_state.experience + expGained;
-      let currentLevel = pokemon.battle_state.level;
-      let leveled = false;
-
-      while (currentExp >= getExpForNextLevel(currentLevel)) {
-        currentLevel += 1;
-        leveled = true;
-      }
-
-      let newStats = { ...pokemon.stats };
-
-      if (leveled && pokemon.base_stats) {
-        const scaledHP = scaleStat(pokemon.base_stats.hp, currentLevel);
-        const bonusHP = currentLevel * 5 + 30;
-
-        newStats = {
-          hp: scaledHP + bonusHP,
-          attack: scaleStat(pokemon.base_stats.attack, currentLevel),
-          defense: scaleStat(pokemon.base_stats.defense, currentLevel),
-          special_attack: scaleStat(
-            pokemon.base_stats.special_attack,
-            currentLevel,
-          ),
-          special_defense: scaleStat(
-            pokemon.base_stats.special_defense,
-            currentLevel,
-          ),
-          speed: scaleStat(pokemon.base_stats.speed, currentLevel),
-        };
-      } else if (leveled) {
-        const ratio =
-          (1 + currentLevel * 0.02) / (1 + (currentLevel - 1) * 0.02);
-
-        newStats = {
-          hp: Math.floor(pokemon.stats.hp * ratio),
-          attack: Math.floor(pokemon.stats.attack * ratio),
-          defense: Math.floor(pokemon.stats.defense * ratio),
-          special_attack: Math.floor(pokemon.stats.special_attack * ratio),
-          special_defense: Math.floor(pokemon.stats.special_defense * ratio),
-          speed: Math.floor(pokemon.stats.speed * ratio),
-        };
-      }
-
+  /** Applies one grant to the store. Returns the levels gained (possibly several). */
+  const grantExp = useCallback(
+    ({ nickname, amount }: ExpGrant) => {
+      const p = getPokemonByNickname(nickname);
+      if (!p) return [];
+      const { level, experience, levelsGained } = applyExp(
+        p.battle_state.level,
+        p.battle_state.experience,
+        amount,
+      );
+      const base = p.base_stats;
       updatePokemon(nickname, {
-        battle_state: {
-          level: currentLevel,
-          experience: currentExp,
-        },
-        ...(leveled && { stats: newStats }),
+        battle_state: { level, experience },
+        ...(levelsGained.length && base
+          ? { stats: statsAtLevel(base, level) }
+          : {}),
       });
-
-      return {
-        leveled,
-        newLevel: currentLevel,
-        expGained,
-        statsIncreased: leveled,
-      };
+      return levelsGained;
     },
-    [getPokemonByNickname, updatePokemon, getExpForNextLevel],
+    [getPokemonByNickname, updatePokemon],
   );
 
   const getExpProgress = useCallback(
     (nickname: string) => {
-      const pokemon = getPokemonByNickname(nickname);
-
-      if (!pokemon) {
+      const p = getPokemonByNickname(nickname);
+      if (!p)
         return {
           current: 0,
           needed: 100,
           percentage: 0,
           minExpForCurrentLevel: 0,
         };
-      }
-
-      const level = pokemon.battle_state.level;
+      const level = p.battle_state.level;
       const minExp = Math.pow(level, 3);
-      const nextExp = getExpForNextLevel(level);
-      const currentExp = pokemon.battle_state.experience;
-      const progress = currentExp - minExp;
-      const range = nextExp - minExp;
-      const percentage = range === 0 ? 0 : (progress / range) * 100;
-
+      const nextExp = expForNext(level);
+      const pct =
+        ((p.battle_state.experience - minExp) / (nextExp - minExp)) * 100;
       return {
-        current: currentExp,
+        current: p.battle_state.experience,
         needed: nextExp,
         minExpForCurrentLevel: minExp,
-        percentage: Math.min(Math.max(percentage, 0), 100),
+        percentage: Math.min(Math.max(pct, 0), 100),
       };
     },
-    [getPokemonByNickname, getExpForNextLevel],
+    [getPokemonByNickname],
   );
 
-  return { addExp, calculateExpGain, getExpProgress, getExpForNextLevel };
+  return { grantExp, getExpProgress, getExpForNextLevel: expForNext };
 };
